@@ -1,0 +1,485 @@
+import { Lesson } from '../types';
+
+export const lessons: Lesson[] = [
+    // WEEK 1
+    {
+        id: 1,
+        week: 1,
+        day: 1,
+        type: 'reading',
+        title: 'Nadav\'s New Club',
+        content: {
+            text: "Nadav loves his new school because there is a variety of things to do. After math class, he goes to the office to see the list of clubs. He is interested in the science club, but he also likes the gaming team. It is a difficult choice!\n\nHe decides to join the gaming team. The guide, Mr. Cohen, welcomes him. \"Nice to meet you,\" says Mr. Cohen. \"We depend on good players.\" Nadav is happy. He realizes that this will be an amazing journey.\n\nLater, Nadav goes to the cafeteria for a meal. He eats a bowl of pasta with salt and pepper. He talks to his friends about the danger of the boss in their favorite video game. They imagine a world where they are the heroes. It is a lovely day.",
+            questions: [
+                { id: 'q1', text: "Where does Nadav go to see the list of clubs?", answer: "the office" },
+                { id: 'q2', text: "What club does Nadav join?", answer: "the gaming team" }
+            ],
+            vocabulary: [
+                { word: "variety", translation: "מגוון" },
+                { word: "choice", translation: "בחירה" },
+                { word: "realize", translation: "להבין/לקלוט" },
+                { word: "journey", translation: "מסע" }
+            ]
+        }
+    },
+    {
+        id: 2,
+        week: 1,
+        day: 2,
+        type: 'grammar',
+        title: 'Present Simple: Daily Routine',
+        content: {
+            rule: "We use the Present Simple to talk about things we do every day or usually. For he/she/it, we add 's' to the verb. Example: He plays, I play.",
+            exercises: [
+                { id: 'e1', question: "Nadav _____ (love) playing video games after school.", answer: "loves" },
+                { id: 'e2', question: "We _____ (eat) a meal together every evening.", answer: "eat" },
+                { id: 'e3', question: "The science teacher _____ (fix) the computers.", answer: "fixes" }
+            ]
+        }
+    },
+    {
+        id: 3,
+        week: 1,
+        day: 3,
+        type: 'reading',
+        title: 'A Family Trip',
+        content: {
+            text: "On Saturday, Nadav goes on a trip with his family. They drive across a bridge and see a high mountain. The view is unusual and beautiful. \"Look at that river!\" says his sister, Shachar.\n\nThey stop at a village to buy some food. They buy lemons and oil for a salad. The people in the village are warm and friendly. Nadav takes a photo of a wide field. He loves geography and nature.\n\nSuddenly, they see a sign: \"Danger! Falling Rocks.\" They need to be careful. Nadav's dad drives slowly. They continue their drive and reach a theater in the forest. A band is playing music. It is a typical weekend for them, full of surprises.",
+            questions: [
+                { id: 'q1', text: "What do they see after the bridge?", answer: "a mountain" },
+                { id: 'q2', text: "What is the sign about?", answer: "falling rocks" }
+            ],
+            vocabulary: [
+                { word: "village", translation: "כפר" },
+                { word: "danger", translation: "סכנה" },
+                { word: "careful", translation: "זהיר" },
+                { word: "typical", translation: "טיפוסי/רגיל" }
+            ]
+        }
+    },
+    {
+        id: 4,
+        week: 1,
+        day: 4,
+        type: 'pronunciation',
+        title: 'Reading Aloud: Nature',
+        content: {
+            text: "The wide world is full of wonders. We walk across the bridge and watch the water in the river. The weather is warm and the wind is whispering. We wonder where the white wolf went. With my wide eyes, I watch the waves.",
+            tips: [
+                "Focus on the 'w' sound: round your lips like you are blowing a candle.",
+                "Practice the 'th' in 'weather' and 'with': put your tongue between your teeth."
+            ]
+        }
+    },
+    {
+        id: 5,
+        week: 1,
+        day: 5,
+        type: 'chatbot',
+        title: 'Chat: Hobbies',
+        content: {
+            topic: "Talk about your favorite hobbies and clubs.",
+            initialMessage: "Hi Nadav! I heard you joined a new club. That's awesome! Which club did you choose and why?"
+        }
+    },
+
+    // WEEK 2
+    {
+        id: 6,
+        week: 2,
+        day: 1,
+        type: 'reading',
+        title: 'The YouTuber Life',
+        content: {
+            text: "Nadav loves watching YouTube. His favorite channel is about gaming and superheroes. The YouTuber, 'GameMaster', makes videos every week. He talks about how to beat difficult levels and unlock special powers.\n\nYesterday, GameMaster uploaded a video about a new superhero game. In the game, the hero can fly and has super strength. Nadav watched the whole video. He learned secret tips. He wants to be a famous YouTuber one day too. He thinks it is a cool job.\n\nHowever, making videos is hard work. You need good lighting and a good camera. You also need to edit the video. Nadav is ready to learn.",
+            questions: [
+                { id: 'q1', text: "Who is Nadav's favorite YouTuber?", answer: "GameMaster" },
+                { id: 'q2', text: "What does Nadav want to be one day?", answer: "a YouTuber" }
+            ],
+            vocabulary: [
+                { word: "upload", translation: "להעלות (קובץ)" },
+                { word: "edit", translation: "לערוך" },
+                { word: "strength", translation: "כוח" }
+            ]
+        }
+    },
+    {
+        id: 7,
+        week: 2,
+        day: 2,
+        type: 'grammar',
+        title: 'Past Simple: Finished Actions',
+        content: {
+            rule: "We use the Past Simple for actions that finished in the past. Regular verbs add '-ed' (watch -> watched). Irregular verbs change (go -> went).",
+            exercises: [
+                { id: 'e1', question: "Yesterday, I _____ (watch) a cool video.", answer: "watched" },
+                { id: 'e2', question: "He _____ (go) to the cinema last night.", answer: "went" },
+                { id: 'e3', question: "We _____ (play) basketball in the park.", answer: "played" }
+            ]
+        }
+    },
+    {
+        id: 8,
+        week: 2,
+        day: 3,
+        type: 'reading',
+        title: 'Spider-Man\'s Story',
+        content: {
+            text: "Spider-Man is a very popular superhero. Peter Parker was a normal student who loved science. One day, a spider bit him. He got amazing powers. He could climb walls and shoot webs.\n\nPeter decided to use his powers to help people. He made a cool suit and called himself Spider-Man. He fights bad guys and saves the city. But he also has normal problems. He has homework and exams.\n\nNadav likes Spider-Man because he is smart and funny. He is also good at technology. Peter makes his own web-shooters. This shows that science is a superpower too!",
+            questions: [
+                { id: 'q1', text: "What did Peter Parker love?", answer: "science" },
+                { id: 'q2', text: "What did Peter make himself?", answer: "web-shooters" }
+            ],
+            vocabulary: [
+                { word: "climb", translation: "לטפס" },
+                { word: "suit", translation: "חליפה" },
+                { word: "smart", translation: "חכם" }
+            ]
+        }
+    },
+    {
+        id: 9,
+        week: 2,
+        day: 4,
+        type: 'pronunciation',
+        title: 'Reading Aloud: Past Events',
+        content: {
+            text: "Yesterday I walked to the park and looked at the birds. I played a game and talked to my friends. We laughed and danced. Then, it started to rain, so we waited under a tree. I loved that day.",
+            tips: [
+                "'-ed' can sound like 't' (walked, looked, laughed).",
+                "'-ed' can sound like 'd' (played, loved)."
+            ]
+        }
+    },
+    {
+        id: 10,
+        week: 2,
+        day: 5,
+        type: 'chatbot',
+        title: 'Chat: Superpowers',
+        content: {
+            topic: "If you could have a superpower.",
+            initialMessage: "Hey! If you could be a superhero for one day, which superpower would you choose? Flying, invisibility, or super strength?"
+        }
+    },
+
+    // WEEK 3
+    {
+        id: 11,
+        week: 3,
+        day: 1,
+        type: 'reading',
+        title: 'Understanding AI',
+        content: {
+            text: "Artificial Intelligence, or AI, is changing our world. Nadav uses AI to help him study. He asks the computer questions, and it answers fast. AI is like a smart robot brain inside the computer.\n\nSome people think AI will do everything in the future. It might drive our cars or cook our food. Nadav thinks this is exciting. He wants to learn how to code so he can build his own AI program.\n\nBut we must be careful. AI needs humans to teach it. It learns from us. If we are good, the AI will be good. It is an important partnership between humans and machines.",
+            questions: [
+                { id: 'q1', text: "What does Nadav use AI for?", answer: "to study" },
+                { id: 'q2', text: "Who needs to teach AI?", answer: "humans" }
+            ],
+            vocabulary: [
+                { word: "artificial", translation: "מלאכותי" },
+                { word: "brain", translation: "מוח" },
+                { word: "partnership", translation: "שותפות" }
+            ]
+        }
+    },
+    {
+        id: 12,
+        week: 3,
+        day: 2,
+        type: 'grammar',
+        title: 'Future Simple: Predictions',
+        content: {
+            rule: "We use 'will' + verb to talk about the future or make predictions. Example: It will rain tomorrow.",
+            exercises: [
+                { id: 'e1', question: "In the future, cars _____ (fly) in the sky.", answer: "will fly" },
+                { id: 'e2', question: "I _____ (be) a programmer when I grow up.", answer: "will be" },
+                { id: 'e3', question: "Robots _____ (help) us at home.", answer: "will help" }
+            ]
+        }
+    },
+    {
+        id: 13,
+        week: 3,
+        day: 3,
+        type: 'reading',
+        title: 'Electric Cars',
+        content: {
+            text: "Electric cars are becoming very popular. They do not use gas like old cars. They use big batteries. This is better for the planet because it is cleaner.\n\nTesla is a famous company that makes electric cars. Some of them can even drive themselves! Nadav's dad wants to buy an electric car. He says it is quiet and smooth. You plug it into the wall to charge it, like a phone.\n\nIn the future, maybe all cars will be electric. This will help stop pollution. Nadav hopes to drive a cool electric sports car when he gets his license.",
+            questions: [
+                { id: 'q1', text: "What do electric cars use instead of gas?", answer: "batteries" },
+                { id: 'q2', text: "What does Nadav want to drive in the future?", answer: "electric sports car" }
+            ],
+            vocabulary: [
+                { word: "pollution", translation: "זיהום" },
+                { word: "charge", translation: "להטעין" },
+                { word: "license", translation: "רישיון" }
+            ]
+        }
+    },
+    {
+        id: 14,
+        week: 3,
+        day: 4,
+        type: 'pronunciation',
+        title: 'Reading Aloud: The Future',
+        content: {
+            text: "The robot ran down the road. It was ready to race. The red car roared like a rocket. Raining is rare in this region. We realize the real reason for the race. Are you ready to ride?",
+            tips: [
+                "Focus on the 'r' sound: do not roll it too much. Curl your tongue back.",
+                "Practice the flow: 'ready to race' should sound smooth."
+            ]
+        }
+    },
+    {
+        id: 15,
+        week: 3,
+        day: 5,
+        type: 'chatbot',
+        title: 'Chat: Future Tech',
+        content: {
+            topic: "Robots and the Future.",
+            initialMessage: "Hello! Do you think you will have a robot helper in your house in the future? What would you ask it to do?"
+        }
+    },
+
+    // WEEK 4
+    {
+        id: 16,
+        week: 4,
+        day: 1,
+        type: 'reading',
+        title: 'Amazing Drones',
+        content: {
+            text: "Drones are small flying machines. You control them with a remote or a phone. Some drones have cameras. They can take photos from high in the sky. Nadav thinks drones are awesome.\n\nThere are even drone races! Pilots wear special goggles to see what the drone sees. It feels like they are flying inside the drone. The drones fly very fast through hoops and tunnels.\n\nFarmers also use drones to check their fields. Police use them to find lost people. Drones are not just toys; they are very useful tools for many jobs.",
+            questions: [
+                { id: 'q1', text: "What do pilots wear to see?", answer: "special goggles" },
+                { id: 'q2', text: "Who uses drones to check fields?", answer: "farmers" }
+            ],
+            vocabulary: [
+                { word: "remote", translation: "שלט" },
+                { word: "goggles", translation: "משקפת מגן" },
+                { word: "useful", translation: "שימושי" }
+            ]
+        }
+    },
+    {
+        id: 17,
+        week: 4,
+        day: 2,
+        type: 'grammar',
+        title: 'Comparatives: Comparing Things',
+        content: {
+            rule: "To compare two things, add '-er' to short adjectives (fast -> faster) or use 'more' for long ones (expensive -> more expensive). Use 'than' after.",
+            exercises: [
+                { id: 'e1', question: "A drone is _____ (fast) than a bike.", answer: "faster" },
+                { id: 'e2', question: "This game is _____ (exciting) than that one.", answer: "more exciting" },
+                { id: 'e3', question: "My phone is _____ (small) than my tablet.", answer: "smaller" }
+            ]
+        }
+    },
+    {
+        id: 18,
+        week: 4,
+        day: 3,
+        type: 'reading',
+        title: 'The Smart Home',
+        content: {
+            text: "Imagine a house where the lights turn on when you walk in. The fridge orders milk when you run out. This is called a \"Smart Home\" or the \"Internet of Things\".\n\nIn a smart home, devices talk to each other. You can tell your house, \"I am cold,\" and the heater turns on. Nadav wants a smart room. He wants his blinds to open automatically in the morning.\n\nThis technology makes life easier. But you need good internet. If the internet stops, your house might stop working! It is funny to think about a smart toaster needing wifi.",
+            questions: [
+                { id: 'q1', text: "What orders milk when you run out?", answer: "the fridge" },
+                { id: 'q2', text: "What does a smart toaster need?", answer: "wifi" }
+            ],
+            vocabulary: [
+                { word: "devices", translation: "מכשירים" },
+                { word: "automatically", translation: "באופן אוטומטי" },
+                { word: "heater", translation: "תנור חימום" }
+            ]
+        }
+    },
+    {
+        id: 19,
+        week: 4,
+        day: 4,
+        type: 'pronunciation',
+        title: 'Reading Aloud: Vowels',
+        content: {
+            text: "This is a bit tricky. The ship is big, but the sheep is sleeping. Sit on the seat and feel the heat. Did you fit your feet in the shoes? It is a hit to eat the meat.",
+            tips: [
+                "Short 'i' (ship, sit, fit) is quick.",
+                "Long 'ea/ee' (sheep, seat, heat) is a longer smile sound."
+            ]
+        }
+    },
+    {
+        id: 20,
+        week: 4,
+        day: 5,
+        type: 'chatbot',
+        title: 'Chat: Gadgets',
+        content: {
+            topic: "Cool Gadgets.",
+            initialMessage: "Hi! What is the coolest gadget you have or want to have? A drone, a smart watch, or something else?"
+        }
+    },
+
+    // WEEK 5
+    {
+        id: 21,
+        week: 5,
+        day: 1,
+        type: 'reading',
+        title: 'Virtual Reality',
+        content: {
+            text: "Virtual Reality, or VR, is a technology that takes you to another world. You wear a headset over your eyes. Suddenly, you are not in your room. You are in space, or under the ocean!\n\nNadav tried VR at the mall. He played a game where he had to fight dragons with a sword. It felt so real. He moved his arms and the game copied him.\n\nVR is great for gaming, but also for learning. Doctors use it to practice operations. Students use it to visit historical places without traveling. It is the future of entertainment.",
+            questions: [
+                { id: 'q1', text: "What do you wear for VR?", answer: "a headset" },
+                { id: 'q2', text: "What did Nadav fight in the game?", answer: "dragons" }
+            ],
+            vocabulary: [
+                { word: "headset", translation: "אוזניות/קסדה (VR)" },
+                { word: "sword", translation: "חרב" },
+                { word: "entertainment", translation: "בידור" }
+            ]
+        }
+    },
+    {
+        id: 22,
+        week: 5,
+        day: 2,
+        type: 'grammar',
+        title: 'Superlatives: The Best and Worst',
+        content: {
+            rule: "To say something is the number one, add '-est' (fast -> the fastest) or use 'the most' (expensive -> the most expensive).",
+            exercises: [
+                { id: 'e1', question: "Jupiter is the _____ (big) planet.", answer: "biggest" },
+                { id: 'e2', question: "This is the _____ (fun) game I have.", answer: "funniest" },
+                { id: 'e3', question: "He is the _____ (famous) player.", answer: "most famous" }
+            ]
+        }
+    },
+    {
+        id: 23,
+        week: 5,
+        day: 3,
+        type: 'reading',
+        title: 'Clean Energy',
+        content: {
+            text: "We use a lot of electricity. Usually, we burn coal or oil to make it. This is bad for the Earth. But there is a better way: Renewable Energy. This means energy that does not run out.\n\nSolar power comes from the sun. Wind power comes from the wind. You can see big wind turbines on hills. They spin and make electricity. Solar panels are on roofs to catch sunlight.\n\nNadav thinks this is important. If we use the sun and wind, we keep the air clean. It is free energy from nature. We just need the technology to catch it.",
+            questions: [
+                { id: 'q1', text: "Where does solar power come from?", answer: "the sun" },
+                { id: 'q2', text: "What do wind turbines make?", answer: "electricity" }
+            ],
+            vocabulary: [
+                { word: "renewable", translation: "מתחדש" },
+                { word: "coal", translation: "פחם" },
+                { word: "turbines", translation: "טורבינות" }
+            ]
+        }
+    },
+    {
+        id: 24,
+        week: 5,
+        day: 4,
+        type: 'pronunciation',
+        title: 'Reading Aloud: Clusters',
+        content: {
+            text: "The strong spring stream is strange. I scream for ice cream on the screen. The spray spreads in the spring. Don't stress on the street. Strike the string straight.",
+            tips: [
+                "Practice 'str' (street, strong): say s-t-r quickly together.",
+                "Practice 'spr' (spring, spray): say s-p-r quickly."
+            ]
+        }
+    },
+    {
+        id: 25,
+        week: 5,
+        day: 5,
+        type: 'chatbot',
+        title: 'Chat: VR Worlds',
+        content: {
+            topic: "Visiting Virtual Worlds.",
+            initialMessage: "Hello! If you could visit any place in Virtual Reality right now, where would you go? Space, a volcano, or maybe the past?"
+        }
+    },
+
+    // WEEK 6
+    {
+        id: 26,
+        week: 6,
+        day: 1,
+        type: 'reading',
+        title: 'Learning to Code',
+        content: {
+            text: "Coding is the language of computers. When you write code, you give instructions to the machine. It is like writing a recipe for a cake, but for a program.\n\nNadav is learning Python. It is a coding language. He writes lines of text, and the computer draws shapes. He feels like a wizard. If he makes a mistake, it is called a 'bug'. He has to find the bug and fix it.\n\nCoders build everything we use: apps, websites, and games. It is a very useful skill. Nadav wants to build his own app for his friends.",
+            questions: [
+                { id: 'q1', text: "What is a mistake in code called?", answer: "a bug" },
+                { id: 'q2', text: "What language is Nadav learning?", answer: "Python" }
+            ],
+            vocabulary: [
+                { word: "instructions", translation: "הוראות" },
+                { word: "recipe", translation: "מתכון" },
+                { word: "wizard", translation: "קוסם" }
+            ]
+        }
+    },
+    {
+        id: 27,
+        week: 6,
+        day: 2,
+        type: 'grammar',
+        title: 'Modals: Should and Must',
+        content: {
+            rule: "Use 'should' for advice (good idea). Use 'must' for rules (necessary). Example: You should eat fruit. You must stop at red lights.",
+            exercises: [
+                { id: 'e1', question: "You _____ (should/must) brush your teeth every day.", answer: "should" },
+                { id: 'e2', question: "Drivers _____ (should/must) stop at the stop sign.", answer: "must" },
+                { id: 'e3', question: "It is raining, you _____ (should/must) take an umbrella.", answer: "should" }
+            ]
+        }
+    },
+    {
+        id: 28,
+        week: 6,
+        day: 3,
+        type: 'reading',
+        title: 'Social Media Safety',
+        content: {
+            text: "Social media is fun, but you must be safe. Apps like TikTok and Instagram let you share photos and videos. It is fun to see what your friends are doing.\n\nBut not everyone online is a friend. You should never give your address or phone number to strangers. Also, people only show the good parts of their lives. Do not feel bad if their life looks perfect. It is not always real.\n\nNadav has a private account. Only his real friends can see his posts. This is the best way to enjoy social media safely.",
+            questions: [
+                { id: 'q1', text: "What should you never give to strangers?", answer: "address or phone number" },
+                { id: 'q2', text: "What kind of account does Nadav have?", answer: "private account" }
+            ],
+            vocabulary: [
+                { word: "strangers", translation: "זרים" },
+                { word: "private", translation: "פרטי" },
+                { word: "account", translation: "חשבון" }
+            ]
+        }
+    },
+    {
+        id: 29,
+        week: 6,
+        day: 4,
+        type: 'pronunciation',
+        title: 'Reading Aloud: Sentences',
+        content: {
+            text: "I should go home now. We must finish the game. Can you help me with the code? I will post the photo later. Please don't share my password. Be safe and have fun.",
+            tips: [
+                "Stress the important words (verbs and nouns).",
+                "Don't stress small words like 'the', 'a', 'to'."
+            ]
+        }
+    },
+    {
+        id: 30,
+        week: 6,
+        day: 5,
+        type: 'chatbot',
+        title: 'Chat: Online Life',
+        content: {
+            topic: "Social Media and Safety.",
+            initialMessage: "Hi! Do you use social media? What is your favorite app? How do you stay safe online?"
+        }
+    }
+];

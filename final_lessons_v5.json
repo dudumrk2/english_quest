@@ -1,0 +1,848 @@
+{
+  "meta": {
+    "instructions": "English lessons for Nadav"
+  },
+  "lessons": [
+    {
+      "id": 1,
+      "week": 1,
+      "day": 1,
+      "type": "reading",
+      "title": "Week 1 Lesson 1",
+      "content": {
+        "text": "Nadav loves his new school because there is a variety of things to do. After math class, he goes to the office to see the list of clubs. He is interested in the science club, but he also likes the gaming team. It is a difficult choice! He decides to join the gaming team. The guide, Mr. Cohen, welcomes him. \"Nice to meet you,\" says Mr. Cohen. \"We depend on good players.\" Nadav is happy. He realizes that this will be an amazing journey. Later, Nadav goes to the cafeteria for a meal. He eats a bowl of pasta with salt and pepper. He talks to his friends about the danger of the boss in their favorite video game. They imagine a world where they are the heroes. It is a lovely day.\n\n(Bonus Vocabulary: activity, English, nation)",
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Question 1",
+            "answer": "Answer 1"
+          },
+          {
+            "id": "q2",
+            "text": "Question 2",
+            "answer": "Answer 2"
+          }
+        ],
+        "vocabulary": [
+          {
+            "word": "bowl",
+            "translation": "קערה"
+          },
+          {
+            "word": "choice",
+            "translation": "בחירה"
+          },
+          {
+            "word": "club",
+            "translation": "מועדון"
+          },
+          {
+            "word": "danger",
+            "translation": "סכנה"
+          },
+          {
+            "word": "guide",
+            "translation": "מדריך"
+          },
+          {
+            "word": "journey",
+            "translation": "מסע"
+          },
+          {
+            "word": "list",
+            "translation": "רשימה"
+          },
+          {
+            "word": "math",
+            "translation": "חשבון"
+          },
+          {
+            "word": "meal",
+            "translation": "ארוחה"
+          },
+          {
+            "word": "office",
+            "translation": "משרד"
+          },
+          {
+            "word": "pepper",
+            "translation": "פלפל"
+          },
+          {
+            "word": "salt",
+            "translation": "מלח"
+          },
+          {
+            "word": "science",
+            "translation": "מדע"
+          },
+          {
+            "word": "team",
+            "translation": "קבוצה"
+          },
+          {
+            "word": "variety",
+            "translation": "מגוון"
+          },
+          {
+            "word": "world",
+            "translation": "עולם"
+          },
+          {
+            "word": "depend on",
+            "translation": "להיות תלוי ב"
+          },
+          {
+            "word": "imagine",
+            "translation": "לדמיין"
+          },
+          {
+            "word": "join",
+            "translation": "להצטרף"
+          },
+          {
+            "word": "realize",
+            "translation": "להבין"
+          },
+          {
+            "word": "welcome",
+            "translation": "לקבל בברכה"
+          },
+          {
+            "word": "amazing",
+            "translation": "מדהים"
+          },
+          {
+            "word": "interested in",
+            "translation": "מתעניין ב"
+          },
+          {
+            "word": "lovely",
+            "translation": "מקסים"
+          },
+          {
+            "word": "love",
+            "translation": "לאהוב"
+          },
+          {
+            "word": "Nice to meet you",
+            "translation": "נעים להכיר אותך"
+          },
+          {
+            "word": "activity",
+            "translation": "פעילות"
+          },
+          {
+            "word": "English",
+            "translation": "אנגלית"
+          },
+          {
+            "word": "nation",
+            "translation": "אומה"
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "week": 1,
+      "day": 2,
+      "type": "grammar",
+      "title": "Week 1 Lesson 2",
+      "content": {
+        "rule": "Grammar Rule",
+        "exercises": [
+          {
+            "id": "e1",
+            "question": "...",
+            "answer": "..."
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "week": 1,
+      "day": 3,
+      "type": "reading",
+      "title": "Week 1 Lesson 3",
+      "content": {
+        "text": "On Saturday, Nadav goes on a trip with his family. They drive across a bridge and see a high mountain. The view is unusual and beautiful. \"Look at that river!\" says his sister, Shachar. They stop at a village to buy lemons and oil for a salad. The people are warm and friendly. Nadav loves geography. Suddenly, they see a sign: \"Danger! Falling Rocks.\" They need to be careful. They continue their drive and reach a theater in the forest. A band is playing music. It is a typical weekend.\n\n(Bonus Vocabulary: physics, writing, amaze)",
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Question 1",
+            "answer": "Answer 1"
+          },
+          {
+            "id": "q2",
+            "text": "Question 2",
+            "answer": "Answer 2"
+          }
+        ],
+        "vocabulary": [
+          {
+            "word": "band",
+            "translation": "להקה"
+          },
+          {
+            "word": "bridge",
+            "translation": "גשר"
+          },
+          {
+            "word": "geography",
+            "translation": "גיאוגרפיה"
+          },
+          {
+            "word": "lemon",
+            "translation": "לימון"
+          },
+          {
+            "word": "mountain",
+            "translation": "הר"
+          },
+          {
+            "word": "oil",
+            "translation": "שמן"
+          },
+          {
+            "word": "river",
+            "translation": "נהר"
+          },
+          {
+            "word": "theater",
+            "translation": "תיאטרון"
+          },
+          {
+            "word": "village",
+            "translation": "כפר"
+          },
+          {
+            "word": "continue",
+            "translation": "להמשיך"
+          },
+          {
+            "word": "careful",
+            "translation": "זהיר"
+          },
+          {
+            "word": "typical",
+            "translation": "טיפוסי"
+          },
+          {
+            "word": "unusual",
+            "translation": "לא רגיל"
+          },
+          {
+            "word": "usual",
+            "translation": "רגיל"
+          },
+          {
+            "word": "warm",
+            "translation": "חמים"
+          },
+          {
+            "word": "across",
+            "translation": "מעבר ל"
+          },
+          {
+            "word": "physics",
+            "translation": "פיזיקה"
+          },
+          {
+            "word": "writing",
+            "translation": "כתיבה"
+          },
+          {
+            "word": "amaze",
+            "translation": "להדהים"
+          }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "week": 1,
+      "day": 4,
+      "type": "pronunciation",
+      "title": "Week 1 Lesson 4",
+      "content": {
+        "text": "Placeholder text.",
+        "tips": [
+          "Tip 1",
+          "Tip 2"
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "week": 1,
+      "day": 5,
+      "type": "chatbot",
+      "title": "Week 1 Lesson 5",
+      "content": {
+        "topic": "Discussion Topic",
+        "initialMessage": "Hello!"
+      }
+    },
+    {
+      "id": 6,
+      "week": 2,
+      "day": 1,
+      "type": "reading",
+      "title": "Basketball & YouTube",
+      "content": {
+        "text": "Nadav loves watching YouTube, especially a channel called 'HoopsLife'. The YouTuber, a former player, teaches basketball skills. Yesterday, he uploaded a video about the history of basketball, explaining how James Naismith invented it in 1891 with two peach baskets. The YouTuber showed how to do a perfect jump shot and explained why teamwork is the main key to winning any game. He said, \"You must follow the rules, but also be creative.\" Nadav practiced the moves in his yard. He imagines being on a famous team one day. He knows it's a long journey, but he is ready to work hard.\n\n(Bonus Vocabulary: fall in love, feed, fill in)",
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Question 1",
+            "answer": "Answer 1"
+          },
+          {
+            "id": "q2",
+            "text": "Question 2",
+            "answer": "Answer 2"
+          }
+        ],
+        "vocabulary": [
+          {
+            "word": "form",
+            "translation": "טופס"
+          },
+          {
+            "word": "history",
+            "translation": "היסטוריה"
+          },
+          {
+            "word": "follow",
+            "translation": "לעקוב"
+          },
+          {
+            "word": "main",
+            "translation": "עיקרי"
+          },
+          {
+            "word": "any",
+            "translation": "כל"
+          },
+          {
+            "word": "fall in love",
+            "translation": "להתאהב"
+          },
+          {
+            "word": "feed",
+            "translation": "להאכיל"
+          },
+          {
+            "word": "fill in",
+            "translation": "למלא"
+          }
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "week": 2,
+      "day": 2,
+      "type": "grammar",
+      "title": "Week 2 Lesson 2",
+      "content": {
+        "rule": "Grammar Rule",
+        "exercises": [
+          {
+            "id": "e1",
+            "question": "...",
+            "answer": "..."
+          }
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "week": 2,
+      "day": 3,
+      "type": "reading",
+      "title": "Week 2 Lesson 3",
+      "content": {
+        "text": "Spider-Man is a popular superhero. Peter Parker was a student who loved science. One day, a spider bit him and he got amazing powers. He decided to use his powers to help people. He fights bad guys and saves the city. It's not an easy job. He has to form a plan. Usually, he follows the bad guys and confronts them directly. He receives a lot of praise.\n\n(Bonus Vocabulary: fix, open, prefer)",
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Question 1",
+            "answer": "Answer 1"
+          },
+          {
+            "id": "q2",
+            "text": "Question 2",
+            "answer": "Answer 2"
+          }
+        ],
+        "vocabulary": [
+          {
+            "word": "job",
+            "translation": "עבודה"
+          },
+          {
+            "word": "receive",
+            "translation": "לקבל"
+          },
+          {
+            "word": "directly",
+            "translation": "ישירות"
+          },
+          {
+            "word": "fix",
+            "translation": "לתקן"
+          },
+          {
+            "word": "open",
+            "translation": "לפתוח"
+          },
+          {
+            "word": "prefer",
+            "translation": "להעדיף"
+          }
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "week": 2,
+      "day": 4,
+      "type": "pronunciation",
+      "title": "Week 2 Lesson 4",
+      "content": {
+        "text": "Placeholder text.",
+        "tips": [
+          "Tip 1",
+          "Tip 2"
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "week": 2,
+      "day": 5,
+      "type": "chatbot",
+      "title": "Week 2 Lesson 5",
+      "content": {
+        "topic": "Discussion Topic",
+        "initialMessage": "Hello!"
+      }
+    },
+    {
+      "id": 11,
+      "week": 3,
+      "day": 1,
+      "type": "reading",
+      "title": "Week 3 Lesson 1",
+      "content": {
+        "text": "AI is changing our world. It is a smart robot brain. We must be careful how we use it. It can be a good helper.\n\n(Bonus Vocabulary: serve, shake hands, certain)",
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Question 1",
+            "answer": "Answer 1"
+          },
+          {
+            "id": "q2",
+            "text": "Question 2",
+            "answer": "Answer 2"
+          }
+        ],
+        "vocabulary": [
+          {
+            "word": "serve",
+            "translation": "להגיש"
+          },
+          {
+            "word": "shake hands",
+            "translation": "ללחוץ ידיים"
+          },
+          {
+            "word": "certain",
+            "translation": "בטוח"
+          }
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "week": 3,
+      "day": 2,
+      "type": "grammar",
+      "title": "Week 3 Lesson 2",
+      "content": {
+        "rule": "Grammar Rule",
+        "exercises": [
+          {
+            "id": "e1",
+            "question": "...",
+            "answer": "..."
+          }
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "week": 3,
+      "day": 3,
+      "type": "reading",
+      "title": "Week 3 Lesson 3",
+      "content": {
+        "text": "Electric cars are cleaner. They use big batteries. You charge them like a phone. They are quiet and smooth.\n\n(Bonus Vocabulary: dangerous, foreign, possible)",
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Question 1",
+            "answer": "Answer 1"
+          },
+          {
+            "id": "q2",
+            "text": "Question 2",
+            "answer": "Answer 2"
+          }
+        ],
+        "vocabulary": [
+          {
+            "word": "dangerous",
+            "translation": "מסוכן"
+          },
+          {
+            "word": "foreign",
+            "translation": "זר"
+          },
+          {
+            "word": "possible",
+            "translation": "אפשרי"
+          }
+        ]
+      }
+    },
+    {
+      "id": 14,
+      "week": 3,
+      "day": 4,
+      "type": "pronunciation",
+      "title": "Week 3 Lesson 4",
+      "content": {
+        "text": "Placeholder text.",
+        "tips": [
+          "Tip 1",
+          "Tip 2"
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "week": 3,
+      "day": 5,
+      "type": "chatbot",
+      "title": "Week 3 Lesson 5",
+      "content": {
+        "topic": "Discussion Topic",
+        "initialMessage": "Hello!"
+      }
+    },
+    {
+      "id": 16,
+      "week": 4,
+      "day": 1,
+      "type": "reading",
+      "title": "Week 4 Lesson 1",
+      "content": {
+        "text": "Drones are flying machines with cameras. They are useful tools. Farmers use them to check fields.\n\n(Bonus Vocabulary: wide, according to, anybody)",
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Question 1",
+            "answer": "Answer 1"
+          },
+          {
+            "id": "q2",
+            "text": "Question 2",
+            "answer": "Answer 2"
+          }
+        ],
+        "vocabulary": [
+          {
+            "word": "wide",
+            "translation": "רחב"
+          },
+          {
+            "word": "according to",
+            "translation": "לפי"
+          },
+          {
+            "word": "anybody",
+            "translation": "מישהו"
+          }
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "week": 4,
+      "day": 2,
+      "type": "grammar",
+      "title": "Week 4 Lesson 2",
+      "content": {
+        "rule": "Grammar Rule",
+        "exercises": [
+          {
+            "id": "e1",
+            "question": "...",
+            "answer": "..."
+          }
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "week": 4,
+      "day": 3,
+      "type": "reading",
+      "title": "Week 4 Lesson 3",
+      "content": {
+        "text": "A smart home has devices that talk to each other. It makes life easier. The fridge can order milk.\n\n(Bonus Vocabulary: around here, I'd love to, next to)",
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Question 1",
+            "answer": "Answer 1"
+          },
+          {
+            "id": "q2",
+            "text": "Question 2",
+            "answer": "Answer 2"
+          }
+        ],
+        "vocabulary": [
+          {
+            "word": "around here",
+            "translation": "בסביבה"
+          },
+          {
+            "word": "I'd love to",
+            "translation": "הייתי שמח ל"
+          },
+          {
+            "word": "next to",
+            "translation": "ליד"
+          }
+        ]
+      }
+    },
+    {
+      "id": 19,
+      "week": 4,
+      "day": 4,
+      "type": "pronunciation",
+      "title": "Week 4 Lesson 4",
+      "content": {
+        "text": "Placeholder text.",
+        "tips": [
+          "Tip 1",
+          "Tip 2"
+        ]
+      }
+    },
+    {
+      "id": 20,
+      "week": 4,
+      "day": 5,
+      "type": "chatbot",
+      "title": "Week 4 Lesson 5",
+      "content": {
+        "topic": "Discussion Topic",
+        "initialMessage": "Hello!"
+      }
+    },
+    {
+      "id": 21,
+      "week": 5,
+      "day": 1,
+      "type": "reading",
+      "title": "Week 5 Lesson 1",
+      "content": {
+        "text": "VR takes you to another world. You wear a headset. It feels real. You can visit space.\n\n(Bonus Vocabulary: What about, would you like)",
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Question 1",
+            "answer": "Answer 1"
+          },
+          {
+            "id": "q2",
+            "text": "Question 2",
+            "answer": "Answer 2"
+          }
+        ],
+        "vocabulary": [
+          {
+            "word": "What about",
+            "translation": "מה לגבי"
+          },
+          {
+            "word": "would you like",
+            "translation": "האם תרצה"
+          }
+        ]
+      }
+    },
+    {
+      "id": 22,
+      "week": 5,
+      "day": 2,
+      "type": "grammar",
+      "title": "Week 5 Lesson 2",
+      "content": {
+        "rule": "Grammar Rule",
+        "exercises": [
+          {
+            "id": "e1",
+            "question": "...",
+            "answer": "..."
+          }
+        ]
+      }
+    },
+    {
+      "id": 23,
+      "week": 5,
+      "day": 3,
+      "type": "reading",
+      "title": "Week 5 Lesson 3",
+      "content": {
+        "text": "Renewable energy does not run out. Solar power is from the sun. It is clean and good for the planet.",
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Question 1",
+            "answer": "Answer 1"
+          },
+          {
+            "id": "q2",
+            "text": "Question 2",
+            "answer": "Answer 2"
+          }
+        ],
+        "vocabulary": []
+      }
+    },
+    {
+      "id": 24,
+      "week": 5,
+      "day": 4,
+      "type": "pronunciation",
+      "title": "Week 5 Lesson 4",
+      "content": {
+        "text": "Placeholder text.",
+        "tips": [
+          "Tip 1",
+          "Tip 2"
+        ]
+      }
+    },
+    {
+      "id": 25,
+      "week": 5,
+      "day": 5,
+      "type": "chatbot",
+      "title": "Week 5 Lesson 5",
+      "content": {
+        "topic": "Discussion Topic",
+        "initialMessage": "Hello!"
+      }
+    },
+    {
+      "id": 26,
+      "week": 6,
+      "day": 1,
+      "type": "reading",
+      "title": "Week 6 Lesson 1",
+      "content": {
+        "text": "Coding is the language of computers. A mistake is called a 'bug'. Coders build apps.",
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Question 1",
+            "answer": "Answer 1"
+          },
+          {
+            "id": "q2",
+            "text": "Question 2",
+            "answer": "Answer 2"
+          }
+        ],
+        "vocabulary": []
+      }
+    },
+    {
+      "id": 27,
+      "week": 6,
+      "day": 2,
+      "type": "grammar",
+      "title": "Week 6 Lesson 2",
+      "content": {
+        "rule": "Grammar Rule",
+        "exercises": [
+          {
+            "id": "e1",
+            "question": "...",
+            "answer": "..."
+          }
+        ]
+      }
+    },
+    {
+      "id": 28,
+      "week": 6,
+      "day": 3,
+      "type": "reading",
+      "title": "Week 6 Lesson 3",
+      "content": {
+        "text": "Be safe on social media. Never give your address to strangers. A private account is best.",
+        "questions": [
+          {
+            "id": "q1",
+            "text": "Question 1",
+            "answer": "Answer 1"
+          },
+          {
+            "id": "q2",
+            "text": "Question 2",
+            "answer": "Answer 2"
+          }
+        ],
+        "vocabulary": []
+      }
+    },
+    {
+      "id": 29,
+      "week": 6,
+      "day": 4,
+      "type": "pronunciation",
+      "title": "Week 6 Lesson 4",
+      "content": {
+        "text": "Placeholder text.",
+        "tips": [
+          "Tip 1",
+          "Tip 2"
+        ]
+      }
+    },
+    {
+      "id": 30,
+      "week": 6,
+      "day": 5,
+      "type": "chatbot",
+      "title": "Week 6 Lesson 5",
+      "content": {
+        "topic": "Discussion Topic",
+        "initialMessage": "Hello!"
+      }
+    }
+  ]
+}
