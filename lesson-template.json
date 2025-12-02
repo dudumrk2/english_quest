@@ -1,0 +1,782 @@
+{
+    "meta": {
+        "instructions": "This template defines 30 English learning lessons for a 6-week program targeting 12-year-old students (gaming enthusiasts). Each week has 5 lessons following this pattern: Day 1-Reading, Day 2-Grammar, Day 3-Reading, Day 4-Pronunciation, Day 5-Chatbot. Topics should be engaging (gaming, technology, space, sports, etc.). Language level: A2-B1.",
+        "lessonTypes": {
+            "reading": {
+                "description": "Reading comprehension with questions and vocabulary",
+                "fields": {
+                    "text": "200-250 words passage on engaging topic",
+                    "questions": "2 comprehension questions with answers",
+                    "vocabulary": "3-4 key words with Hebrew translations"
+                }
+            },
+            "grammar": {
+                "description": "Grammar point with examples and exercises",
+                "fields": {
+                    "rule": "Clear explanation of grammar rule with example",
+                    "exercises": "3 fill-in-the-blank exercises with answers"
+                }
+            },
+            "chatbot": {
+                "description": "Conversational practice on a topic",
+                "fields": {
+                    "topic": "Discussion topic/question",
+                    "initialMessage": "Friendly opening message from AI"
+                }
+            },
+            "pronunciation": {
+                "description": "Reading aloud practice with pronunciation tips",
+                "fields": {
+                    "text": "100-150 words text to read aloud",
+                    "tips": "2 pronunciation tips focusing on specific sounds/patterns"
+                }
+            }
+        }
+    },
+    "lessons": [
+        {
+            "id": 1,
+            "week": 1,
+            "day": 1,
+            "type": "reading",
+            "title": "LESSON_TITLE_HERE",
+            "content": {
+                "text": "READING_PASSAGE_HERE (200-250 words about gaming/technology)",
+                "questions": [
+                    {
+                        "id": "q1",
+                        "text": "QUESTION_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "q2",
+                        "text": "QUESTION_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    }
+                ],
+                "vocabulary": [
+                    {
+                        "word": "ENGLISH_WORD_1",
+                        "translation": "HEBREW_TRANSLATION_1"
+                    },
+                    {
+                        "word": "ENGLISH_WORD_2",
+                        "translation": "HEBREW_TRANSLATION_2"
+                    },
+                    {
+                        "word": "ENGLISH_WORD_3",
+                        "translation": "HEBREW_TRANSLATION_3"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "week": 1,
+            "day": 2,
+            "type": "grammar",
+            "title": "GRAMMAR_TOPIC_HERE",
+            "content": {
+                "rule": "GRAMMAR_RULE_EXPLANATION_HERE (e.g., Present Simple for daily routines)",
+                "exercises": [
+                    {
+                        "id": "e1",
+                        "question": "SENTENCE_WITH_BLANK_HERE (e.g., I ___ (play) games every day.)",
+                        "answer": "CORRECT_ANSWER_HERE (e.g., play)"
+                    },
+                    {
+                        "id": "e2",
+                        "question": "SENTENCE_WITH_BLANK_HERE",
+                        "answer": "CORRECT_ANSWER_HERE"
+                    },
+                    {
+                        "id": "e3",
+                        "question": "SENTENCE_WITH_BLANK_HERE",
+                        "answer": "CORRECT_ANSWER_HERE"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "week": 1,
+            "day": 3,
+            "type": "reading",
+            "title": "LESSON_TITLE_HERE",
+            "content": {
+                "text": "READING_PASSAGE_HERE (200-250 words)",
+                "questions": [
+                    {
+                        "id": "q1",
+                        "text": "QUESTION_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "q2",
+                        "text": "QUESTION_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    }
+                ],
+                "vocabulary": [
+                    {
+                        "word": "ENGLISH_WORD_1",
+                        "translation": "HEBREW_TRANSLATION_1"
+                    },
+                    {
+                        "word": "ENGLISH_WORD_2",
+                        "translation": "HEBREW_TRANSLATION_2"
+                    },
+                    {
+                        "word": "ENGLISH_WORD_3",
+                        "translation": "HEBREW_TRANSLATION_3"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4,
+            "week": 1,
+            "day": 4,
+            "type": "pronunciation",
+            "title": "Reading Aloud: TOPIC_HERE",
+            "content": {
+                "text": "TEXT_TO_READ_ALOUD_HERE (100-150 words)",
+                "tips": [
+                    "TIP_1_HERE (e.g., Focus on 'th' sound)",
+                    "TIP_2_HERE (e.g., Pause after periods)"
+                ]
+            }
+        },
+        {
+            "id": 5,
+            "week": 1,
+            "day": 5,
+            "type": "chatbot",
+            "title": "Chat: TOPIC_HERE",
+            "content": {
+                "topic": "DISCUSSION_TOPIC_HERE (e.g., Favorite video games)",
+                "initialMessage": "FRIENDLY_OPENING_MESSAGE_HERE (e.g., Hi! What's your favorite game?)"
+            }
+        },
+        {
+            "id": 6,
+            "week": 2,
+            "day": 1,
+            "type": "reading",
+            "title": "LESSON_TITLE_HERE",
+            "content": {
+                "text": "READING_PASSAGE_HERE",
+                "questions": [
+                    {
+                        "id": "q1",
+                        "text": "QUESTION_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "q2",
+                        "text": "QUESTION_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    }
+                ],
+                "vocabulary": [
+                    {
+                        "word": "WORD_1",
+                        "translation": "TRANSLATION_1"
+                    },
+                    {
+                        "word": "WORD_2",
+                        "translation": "TRANSLATION_2"
+                    },
+                    {
+                        "word": "WORD_3",
+                        "translation": "TRANSLATION_3"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 7,
+            "week": 2,
+            "day": 2,
+            "type": "grammar",
+            "title": "GRAMMAR_TOPIC_HERE",
+            "content": {
+                "rule": "GRAMMAR_RULE_HERE",
+                "exercises": [
+                    {
+                        "id": "e1",
+                        "question": "EXERCISE_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "e2",
+                        "question": "EXERCISE_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    },
+                    {
+                        "id": "e3",
+                        "question": "EXERCISE_3_HERE",
+                        "answer": "ANSWER_3_HERE"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 8,
+            "week": 2,
+            "day": 3,
+            "type": "reading",
+            "title": "LESSON_TITLE_HERE",
+            "content": {
+                "text": "READING_PASSAGE_HERE",
+                "questions": [
+                    {
+                        "id": "q1",
+                        "text": "QUESTION_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "q2",
+                        "text": "QUESTION_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    }
+                ],
+                "vocabulary": [
+                    {
+                        "word": "WORD_1",
+                        "translation": "TRANSLATION_1"
+                    },
+                    {
+                        "word": "WORD_2",
+                        "translation": "TRANSLATION_2"
+                    },
+                    {
+                        "word": "WORD_3",
+                        "translation": "TRANSLATION_3"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 9,
+            "week": 2,
+            "day": 4,
+            "type": "pronunciation",
+            "title": "Reading Aloud: TOPIC_HERE",
+            "content": {
+                "text": "TEXT_TO_READ_HERE",
+                "tips": [
+                    "TIP_1_HERE",
+                    "TIP_2_HERE"
+                ]
+            }
+        },
+        {
+            "id": 10,
+            "week": 2,
+            "day": 5,
+            "type": "chatbot",
+            "title": "Chat: TOPIC_HERE",
+            "content": {
+                "topic": "DISCUSSION_TOPIC_HERE",
+                "initialMessage": "OPENING_MESSAGE_HERE"
+            }
+        },
+        {
+            "id": 11,
+            "week": 3,
+            "day": 1,
+            "type": "reading",
+            "title": "LESSON_TITLE_HERE",
+            "content": {
+                "text": "READING_PASSAGE_HERE",
+                "questions": [
+                    {
+                        "id": "q1",
+                        "text": "QUESTION_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "q2",
+                        "text": "QUESTION_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    }
+                ],
+                "vocabulary": [
+                    {
+                        "word": "WORD_1",
+                        "translation": "TRANSLATION_1"
+                    },
+                    {
+                        "word": "WORD_2",
+                        "translation": "TRANSLATION_2"
+                    },
+                    {
+                        "word": "WORD_3",
+                        "translation": "TRANSLATION_3"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 12,
+            "week": 3,
+            "day": 2,
+            "type": "grammar",
+            "title": "GRAMMAR_TOPIC_HERE",
+            "content": {
+                "rule": "GRAMMAR_RULE_HERE",
+                "exercises": [
+                    {
+                        "id": "e1",
+                        "question": "EXERCISE_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "e2",
+                        "question": "EXERCISE_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    },
+                    {
+                        "id": "e3",
+                        "question": "EXERCISE_3_HERE",
+                        "answer": "ANSWER_3_HERE"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 13,
+            "week": 3,
+            "day": 3,
+            "type": "reading",
+            "title": "LESSON_TITLE_HERE",
+            "content": {
+                "text": "READING_PASSAGE_HERE",
+                "questions": [
+                    {
+                        "id": "q1",
+                        "text": "QUESTION_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "q2",
+                        "text": "QUESTION_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    }
+                ],
+                "vocabulary": [
+                    {
+                        "word": "WORD_1",
+                        "translation": "TRANSLATION_1"
+                    },
+                    {
+                        "word": "WORD_2",
+                        "translation": "TRANSLATION_2"
+                    },
+                    {
+                        "word": "WORD_3",
+                        "translation": "TRANSLATION_3"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 14,
+            "week": 3,
+            "day": 4,
+            "type": "pronunciation",
+            "title": "Reading Aloud: TOPIC_HERE",
+            "content": {
+                "text": "TEXT_TO_READ_HERE",
+                "tips": [
+                    "TIP_1_HERE",
+                    "TIP_2_HERE"
+                ]
+            }
+        },
+        {
+            "id": 15,
+            "week": 3,
+            "day": 5,
+            "type": "chatbot",
+            "title": "Chat: TOPIC_HERE",
+            "content": {
+                "topic": "DISCUSSION_TOPIC_HERE",
+                "initialMessage": "OPENING_MESSAGE_HERE"
+            }
+        },
+        {
+            "id": 16,
+            "week": 4,
+            "day": 1,
+            "type": "reading",
+            "title": "LESSON_TITLE_HERE",
+            "content": {
+                "text": "READING_PASSAGE_HERE",
+                "questions": [
+                    {
+                        "id": "q1",
+                        "text": "QUESTION_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "q2",
+                        "text": "QUESTION_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    }
+                ],
+                "vocabulary": [
+                    {
+                        "word": "WORD_1",
+                        "translation": "TRANSLATION_1"
+                    },
+                    {
+                        "word": "WORD_2",
+                        "translation": "TRANSLATION_2"
+                    },
+                    {
+                        "word": "WORD_3",
+                        "translation": "TRANSLATION_3"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 17,
+            "week": 4,
+            "day": 2,
+            "type": "grammar",
+            "title": "GRAMMAR_TOPIC_HERE",
+            "content": {
+                "rule": "GRAMMAR_RULE_HERE",
+                "exercises": [
+                    {
+                        "id": "e1",
+                        "question": "EXERCISE_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "e2",
+                        "question": "EXERCISE_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    },
+                    {
+                        "id": "e3",
+                        "question": "EXERCISE_3_HERE",
+                        "answer": "ANSWER_3_HERE"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 18,
+            "week": 4,
+            "day": 3,
+            "type": "reading",
+            "title": "LESSON_TITLE_HERE",
+            "content": {
+                "text": "READING_PASSAGE_HERE",
+                "questions": [
+                    {
+                        "id": "q1",
+                        "text": "QUESTION_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "q2",
+                        "text": "QUESTION_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    }
+                ],
+                "vocabulary": [
+                    {
+                        "word": "WORD_1",
+                        "translation": "TRANSLATION_1"
+                    },
+                    {
+                        "word": "WORD_2",
+                        "translation": "TRANSLATION_2"
+                    },
+                    {
+                        "word": "WORD_3",
+                        "translation": "TRANSLATION_3"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 19,
+            "week": 4,
+            "day": 4,
+            "type": "pronunciation",
+            "title": "Reading Aloud: TOPIC_HERE",
+            "content": {
+                "text": "TEXT_TO_READ_HERE",
+                "tips": [
+                    "TIP_1_HERE",
+                    "TIP_2_HERE"
+                ]
+            }
+        },
+        {
+            "id": 20,
+            "week": 4,
+            "day": 5,
+            "type": "chatbot",
+            "title": "Chat: TOPIC_HERE",
+            "content": {
+                "topic": "DISCUSSION_TOPIC_HERE",
+                "initialMessage": "OPENING_MESSAGE_HERE"
+            }
+        },
+        {
+            "id": 21,
+            "week": 5,
+            "day": 1,
+            "type": "reading",
+            "title": "LESSON_TITLE_HERE",
+            "content": {
+                "text": "READING_PASSAGE_HERE",
+                "questions": [
+                    {
+                        "id": "q1",
+                        "text": "QUESTION_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "q2",
+                        "text": "QUESTION_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    }
+                ],
+                "vocabulary": [
+                    {
+                        "word": "WORD_1",
+                        "translation": "TRANSLATION_1"
+                    },
+                    {
+                        "word": "WORD_2",
+                        "translation": "TRANSLATION_2"
+                    },
+                    {
+                        "word": "WORD_3",
+                        "translation": "TRANSLATION_3"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 22,
+            "week": 5,
+            "day": 2,
+            "type": "grammar",
+            "title": "GRAMMAR_TOPIC_HERE",
+            "content": {
+                "rule": "GRAMMAR_RULE_HERE",
+                "exercises": [
+                    {
+                        "id": "e1",
+                        "question": "EXERCISE_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "e2",
+                        "question": "EXERCISE_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    },
+                    {
+                        "id": "e3",
+                        "question": "EXERCISE_3_HERE",
+                        "answer": "ANSWER_3_HERE"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 23,
+            "week": 5,
+            "day": 3,
+            "type": "reading",
+            "title": "LESSON_TITLE_HERE",
+            "content": {
+                "text": "READING_PASSAGE_HERE",
+                "questions": [
+                    {
+                        "id": "q1",
+                        "text": "QUESTION_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "q2",
+                        "text": "QUESTION_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    }
+                ],
+                "vocabulary": [
+                    {
+                        "word": "WORD_1",
+                        "translation": "TRANSLATION_1"
+                    },
+                    {
+                        "word": "WORD_2",
+                        "translation": "TRANSLATION_2"
+                    },
+                    {
+                        "word": "WORD_3",
+                        "translation": "TRANSLATION_3"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 24,
+            "week": 5,
+            "day": 4,
+            "type": "pronunciation",
+            "title": "Reading Aloud: TOPIC_HERE",
+            "content": {
+                "text": "TEXT_TO_READ_HERE",
+                "tips": [
+                    "TIP_1_HERE",
+                    "TIP_2_HERE"
+                ]
+            }
+        },
+        {
+            "id": 25,
+            "week": 5,
+            "day": 5,
+            "type": "chatbot",
+            "title": "Chat: TOPIC_HERE",
+            "content": {
+                "topic": "DISCUSSION_TOPIC_HERE",
+                "initialMessage": "OPENING_MESSAGE_HERE"
+            }
+        },
+        {
+            "id": 26,
+            "week": 6,
+            "day": 1,
+            "type": "reading",
+            "title": "LESSON_TITLE_HERE",
+            "content": {
+                "text": "READING_PASSAGE_HERE",
+                "questions": [
+                    {
+                        "id": "q1",
+                        "text": "QUESTION_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "q2",
+                        "text": "QUESTION_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    }
+                ],
+                "vocabulary": [
+                    {
+                        "word": "WORD_1",
+                        "translation": "TRANSLATION_1"
+                    },
+                    {
+                        "word": "WORD_2",
+                        "translation": "TRANSLATION_2"
+                    },
+                    {
+                        "word": "WORD_3",
+                        "translation": "TRANSLATION_3"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 27,
+            "week": 6,
+            "day": 2,
+            "type": "grammar",
+            "title": "GRAMMAR_TOPIC_HERE",
+            "content": {
+                "rule": "GRAMMAR_RULE_HERE",
+                "exercises": [
+                    {
+                        "id": "e1",
+                        "question": "EXERCISE_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "e2",
+                        "question": "EXERCISE_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    },
+                    {
+                        "id": "e3",
+                        "question": "EXERCISE_3_HERE",
+                        "answer": "ANSWER_3_HERE"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 28,
+            "week": 6,
+            "day": 3,
+            "type": "reading",
+            "title": "LESSON_TITLE_HERE",
+            "content": {
+                "text": "READING_PASSAGE_HERE",
+                "questions": [
+                    {
+                        "id": "q1",
+                        "text": "QUESTION_1_HERE",
+                        "answer": "ANSWER_1_HERE"
+                    },
+                    {
+                        "id": "q2",
+                        "text": "QUESTION_2_HERE",
+                        "answer": "ANSWER_2_HERE"
+                    }
+                ],
+                "vocabulary": [
+                    {
+                        "word": "WORD_1",
+                        "translation": "TRANSLATION_1"
+                    },
+                    {
+                        "word": "WORD_2",
+                        "translation": "TRANSLATION_2"
+                    },
+                    {
+                        "word": "WORD_3",
+                        "translation": "TRANSLATION_3"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 29,
+            "week": 6,
+            "day": 4,
+            "type": "pronunciation",
+            "title": "Reading Aloud: TOPIC_HERE",
+            "content": {
+                "text": "TEXT_TO_READ_HERE",
+                "tips": [
+                    "TIP_1_HERE",
+                    "TIP_2_HERE"
+                ]
+            }
+        },
+        {
+            "id": 30,
+            "week": 6,
+            "day": 5,
+            "type": "chatbot",
+            "title": "Chat: TOPIC_HERE",
+            "content": {
+                "topic": "DISCUSSION_TOPIC_HERE",
+                "initialMessage": "OPENING_MESSAGE_HERE"
+            }
+        }
+    ]
+}
