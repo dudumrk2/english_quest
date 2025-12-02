@@ -1,11 +1,11 @@
 # Instructions for AI: Fill Lesson Template
 
 ## Overview
-You are tasked with creating engaging English learning content for a 12-year-old student who loves gaming and technology. Fill the `lesson-template.json` file with complete lesson content for all 30 lessons (6 weeks, 5 days per week).
+You are tasked with creating engaging English learning content for a 12-year-old student who loves basketball, gaming and technology. Fill the `lesson-template.json` file with complete lesson content for all 30 lessons (6 weeks, 5 days per week).
 
 ## Target Audience
 - **Age**: 12 years old
-- **Interests**: Video games, YouTube, technology, space, sports, superheroes
+- **Interests**: Basketball, gaming, technology, space, sports, superheroes
 - **English Level**: A2-B1 (Elementary to Pre-Intermediate)
 - **Name**: Nadav (you can personalize examples with this name)
 
