@@ -1,0 +1,75 @@
+import React from 'react';
+import { Mail, Download, Star } from 'lucide-react';
+import confetti from 'canvas-confetti';
+
+export function WeeklySummary({ week, onContinue }) {
+    React.useEffect(() => {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+    }, []);
+
+    const handleEmail = () => {
+        const subject = `English Progress Report - Week ${week}`;
+        const body = `Hi! Here is Nadav's progress for Week ${week}.\n\nCompleted all 5 missions!\nScore: 100%\n\nGreat job!`;
+        window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    };
+
+    const handleExport = () => {
+        const csvContent = "data:text/csv;charset=utf-8,Week,Day,Task,Status\n" +
+            `Week ${week},1,Reading,Completed\n` +
+            `Week ${week},2,Grammar,Completed\n` +
+            `Week ${week},3,Reading,Completed\n` +
+            `Week ${week},4,Pronunciation,Completed\n` +
+            `Week ${week},5,Chat,Completed`;
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `week_${week}_report.csv`);
+        document.body.appendChild(link);
+        link.click();
+    };
+
+    return (
+        <div className="max-w-2xl mx-auto text-center space-y-8">
+            <div className="glass-panel p-12 border-2 border-yellow-500/50 shadow-[0_0_50px_rgba(234,179,8,0.2)]">
+                <div className="flex justify-center mb-6">
+                    <Star size={64} className="text-yellow-400 fill-yellow-400 animate-bounce" />
+                </div>
+                <h2 className="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
+                    Mission Accomplished!
+                </h2>
+                <p className="text-xl text-slate-300 mb-8">
+                    You have completed all missions for Week {week}. Outstanding work, Commander!
+                </p>
+
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="bg-slate-800 p-4 rounded-xl">
+                        <div className="text-3xl font-bold text-white">5/5</div>
+                        <div className="text-sm text-slate-400">Missions</div>
+                    </div>
+                    <div className="bg-slate-800 p-4 rounded-xl">
+                        <div className="text-3xl font-bold text-emerald-400">100%</div>
+                        <div className="text-sm text-slate-400">Accuracy</div>
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                    <button onClick={handleEmail} className="btn-primary flex items-center justify-center gap-2">
+                        <Mail size={20} /> Send Report to Parents
+                    </button>
+                    <button onClick={handleExport} className="bg-slate-700 text-white py-3 px-6 rounded-lg font-semibold hover:bg-slate-600 flex items-center justify-center gap-2">
+                        <Download size={20} /> Export to Excel
+                    </button>
+                </div>
+            </div>
+
+            <button onClick={onContinue} className="text-slate-400 hover:text-white underline">
+                Continue to Next Week
+            </button>
+        </div>
+    );
+}
