@@ -1,5 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Mic, Send, Volume2 } from 'lucide-react';
+import {
+    Box,
+    Typography,
+    TextField,
+    Button,
+    Card,
+    CardContent,
+    Divider,
+    Stack,
+    IconButton,
+    Avatar,
+    Paper,
+    Fade,
+} from '@mui/material';
+import {
+    SmartToy as RobotIcon,
+    Person as PersonIcon,
+    Mic as MicIcon,
+    MicOff as MicOffIcon,
+    Send as SendIcon,
+    VolumeUp as VolumeIcon,
+    Stop as StopIcon,
+} from '@mui/icons-material';
+import { getChatResponse } from '../services/gemini';
 
 export function TaskChat({ lesson, onComplete }) {
     const [messages, setMessages] = useState([
@@ -7,29 +30,42 @@ export function TaskChat({ lesson, onComplete }) {
     ]);
     const [input, setInput] = useState('');
     const [isListening, setIsListening] = useState(false);
+    const [isTyping, setIsTyping] = useState(false);
     const recognitionRef = useRef(null);
+    const messagesEndRef = useRef(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
 
     useEffect(() => {
+        scrollToBottom();
+    }, [messages, isTyping]);
+
+    useEffect(() => {
+        // Initialize speech recognition
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognitionRef.current = new SpeechRecognition();
             recognitionRef.current.continuous = false;
             recognitionRef.current.lang = 'en-US';
 
+            recognitionRef.current.onstart = () => setIsListening(true);
+            recognitionRef.current.onend = () => setIsListening(false);
+            recognitionRef.current.onerror = () => setIsListening(false);
+
             recognitionRef.current.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
                 setInput(transcript);
-                setIsListening(false);
             };
-
-            recognitionRef.current.onerror = () => setIsListening(false);
-            recognitionRef.current.onend = () => setIsListening(false);
         }
     }, []);
 
     const speak = (text) => {
+        window.speechSynthesis.cancel(); // Stop previous speech
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
+        utterance.rate = 0.9; // Slightly slower for clarity
         window.speechSynthesis.speak(utterance);
     };
 
@@ -37,79 +73,220 @@ export function TaskChat({ lesson, onComplete }) {
         if (isListening) {
             recognitionRef.current?.stop();
         } else {
-            setIsListening(true);
             recognitionRef.current?.start();
         }
     };
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (!input.trim()) return;
 
-        const newMessages = [...messages, { role: 'user', text: input }];
-        setMessages(newMessages);
+        const userMsg = { role: 'user', text: input };
+        setMessages(prev => [...prev, userMsg]);
         setInput('');
+        setIsTyping(true);
 
-        // Simple mock AI response logic
-        setTimeout(() => {
-            let responseText = "That's interesting! Tell me more.";
-            if (newMessages.length > 3) {
-                responseText = "Great conversation! You've completed this mission.";
-                setTimeout(onComplete, 3000);
-            } else if (input.toLowerCase().includes('game')) {
-                responseText = "Games are awesome. Which one do you play the most?";
-            } else if (input.toLowerCase().includes('school')) {
-                responseText = "School is important. What is your favorite subject?";
-            }
+        // Call Gemini AI
+        try {
+            const responseText = await getChatResponse(messages, input);
 
+            setIsTyping(false);
             setMessages(prev => [...prev, { role: 'assistant', text: responseText }]);
             speak(responseText);
-        }, 1000);
+
+            // Check if we should complete the lesson (simple heuristic: 5 exchanges)
+            if (messages.length > 8) {
+                setTimeout(() => {
+                    speak("Great job! You have completed this conversation practice.");
+                    onComplete();
+                }, 5000);
+            }
+
+        } catch (error) {
+            console.error("Chat Error:", error);
+            setIsTyping(false);
+            setMessages(prev => [...prev, { role: 'assistant', text: "Sorry, I had a glitch. Can you say that again?" }]);
+        }
     };
 
     return (
-        <div className="max-w-2xl mx-auto h-[600px] flex flex-col glass-panel overflow-hidden">
-            <div className="p-4 bg-slate-800/50 border-b border-slate-700 flex justify-between items-center">
-                <h3 className="font-bold text-blue-400">AI Tutor</h3>
-                <span className="text-xs text-slate-500">Topic: {lesson.content.topic}</span>
-            </div>
+        <Box sx={{ maxWidth: 800, mx: 'auto', p: { xs: 2, md: 3 }, height: '85vh', display: 'flex', flexDirection: 'column' }}>
+            {/* Header */}
+            <Paper
+                elevation={2}
+                sx={{
+                    p: 2,
+                    mb: 2,
+                    background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                    color: 'white',
+                    borderRadius: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 2
+                }}
+            >
+                <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.2)', width: 48, height: 48 }}>
+                    <RobotIcon />
+                </Avatar>
+                <Box>
+                    <Typography variant="h6" fontWeight={700}>
+                        AI Tutor
+                    </Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.9, display: 'block' }}>
+                        Topic: {lesson.content.topic}
+                    </Typography>
+                </Box>
+            </Paper>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {/* Chat Area */}
+            <Paper
+                elevation={1}
+                sx={{
+                    flex: 1,
+                    mb: 2,
+                    bgcolor: '#f0f4f8',
+                    overflowY: 'auto',
+                    p: 2,
+                    borderRadius: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 2
+                }}
+            >
                 {messages.map((msg, idx) => (
-                    <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[80%] p-3 rounded-xl ${msg.role === 'user'
-                                ? 'bg-blue-600 text-white rounded-tr-none'
-                                : 'bg-slate-700 text-slate-200 rounded-tl-none'
-                            }`}>
-                            {msg.text}
-                            {msg.role === 'assistant' && (
-                                <button onClick={() => speak(msg.text)} className="ml-2 opacity-50 hover:opacity-100">
-                                    <Volume2 size={14} />
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                ))}
-            </div>
+                    <Box
+                        key={idx}
+                        sx={{
+                            display: 'flex',
+                            justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                            alignItems: 'flex-end',
+                            gap: 1
+                        }}
+                    >
+                        {msg.role === 'assistant' && (
+                            <Avatar sx={{ bgcolor: 'secondary.main', width: 32, height: 32 }}>
+                                <RobotIcon fontSize="small" />
+                            </Avatar>
+                        )}
 
-            <div className="p-4 bg-slate-800/50 border-t border-slate-700 flex gap-2">
-                <button
+                        <Paper
+                            elevation={1}
+                            sx={{
+                                p: 2,
+                                maxWidth: '75%',
+                                borderRadius: 3,
+                                borderBottomLeftRadius: msg.role === 'assistant' ? 0 : 3,
+                                borderBottomRightRadius: msg.role === 'user' ? 0 : 3,
+                                bgcolor: msg.role === 'user' ? 'primary.main' : 'white',
+                                color: msg.role === 'user' ? 'white' : '#1a202c', // Force dark text on white bubble
+                                position: 'relative'
+                            }}
+                        >
+                            <Typography variant="body1" sx={{ lineHeight: 1.5 }}>
+                                {msg.text}
+                            </Typography>
+                            {msg.role === 'assistant' && (
+                                <IconButton
+                                    size="small"
+                                    onClick={() => speak(msg.text)}
+                                    sx={{
+                                        position: 'absolute',
+                                        bottom: -30,
+                                        left: 0,
+                                        opacity: 0.6,
+                                        '&:hover': { opacity: 1 },
+                                        color: 'text.secondary'
+                                    }}
+                                >
+                                    <VolumeIcon fontSize="small" />
+                                </IconButton>
+                            )}
+                        </Paper>
+
+                        {msg.role === 'user' && (
+                            <Avatar sx={{ bgcolor: 'primary.dark', width: 32, height: 32 }}>
+                                <PersonIcon fontSize="small" />
+                            </Avatar>
+                        )}
+                    </Box>
+                ))}
+
+                {isTyping && (
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', ml: 5 }}>
+                        <Box sx={{
+                            width: 8, height: 8, bgcolor: '#90caf9', borderRadius: '50%',
+                            animation: 'bounce 1.4s infinite ease-in-out both'
+                        }} />
+                        <Box sx={{
+                            width: 8, height: 8, bgcolor: '#90caf9', borderRadius: '50%',
+                            animation: 'bounce 1.4s infinite ease-in-out both',
+                            animationDelay: '0.16s'
+                        }} />
+                        <Box sx={{
+                            width: 8, height: 8, bgcolor: '#90caf9', borderRadius: '50%',
+                            animation: 'bounce 1.4s infinite ease-in-out both',
+                            animationDelay: '0.32s'
+                        }} />
+                        <style>
+                            {`
+                @keyframes bounce {
+                  0%, 80%, 100% { transform: scale(0); }
+                  40% { transform: scale(1); }
+                }
+              `}
+                        </style>
+                    </Box>
+                )}
+                <div ref={messagesEndRef} />
+            </Paper>
+
+            {/* Input Area */}
+            <Paper
+                elevation={3}
+                sx={{
+                    p: 2,
+                    borderRadius: 3,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    bgcolor: 'background.paper'
+                }}
+            >
+                <IconButton
                     onClick={toggleMic}
-                    className={`p-3 rounded-full transition-colors ${isListening ? 'bg-red-500 animate-pulse' : 'bg-slate-700 hover:bg-slate-600'}`}
+                    color={isListening ? 'error' : 'default'}
+                    sx={{
+                        border: isListening ? '2px solid' : '1px solid #e0e0e0',
+                        animation: isListening ? 'pulse 1.5s infinite' : 'none'
+                    }}
                 >
-                    <Mic size={20} />
-                </button>
-                <input
-                    type="text"
+                    {isListening ? <StopIcon /> : <MicIcon />}
+                </IconButton>
+
+                <TextField
+                    fullWidth
+                    variant="standard"
+                    placeholder="Type your message..."
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                    placeholder="Type or speak..."
-                    className="flex-1 bg-slate-900 border border-slate-700 rounded-full px-4 focus:outline-none focus:border-blue-500"
+                    InputProps={{ disableUnderline: true }}
+                    sx={{ px: 2 }}
                 />
-                <button onClick={handleSend} className="p-3 bg-blue-600 rounded-full hover:bg-blue-500">
-                    <Send size={20} />
-                </button>
-            </div>
-        </div>
+
+                <IconButton
+                    color="primary"
+                    onClick={handleSend}
+                    disabled={!input.trim()}
+                    sx={{
+                        bgcolor: input.trim() ? 'primary.main' : 'action.disabledBackground',
+                        color: 'white',
+                        '&:hover': { bgcolor: 'primary.dark' },
+                        '&.Mui-disabled': { color: 'rgba(255,255,255,0.5)' }
+                    }}
+                >
+                    <SendIcon />
+                </IconButton>
+            </Paper>
+        </Box>
     );
 }

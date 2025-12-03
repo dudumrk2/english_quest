@@ -48,11 +48,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <Stack spacing={4}>
                 {weeks.map((week) => {
                     const weekLessons = lessons.filter((l) => l.week === week);
-                    const isWeekLocked =
-                        week > 1 &&
-                        !lessons
-                            .filter((l) => l.week === week - 1)
-                            .every((l) => completedLessons.includes(l.id));
+                    const isWeekLocked = false; // Unlocked for demo
                     const progress = getWeekProgress(week);
 
                     return (
@@ -61,8 +57,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                                 {weekLessons.map((lesson: Lesson) => {
                                     const isCompleted = completedLessons.includes(lesson.id);
                                     const isCurrent = lesson.id === currentLessonId;
-                                    const isLocked =
-                                        !isCompleted && !isCurrent && lesson.id > currentLessonId;
+                                    // const isLocked = false; // Unlocked for demo
                                     const TaskIcon = taskIcons[lesson.type] || ReadingIcon;
 
                                     return (
@@ -85,8 +80,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
                                                 }
                                                 isCompleted={isCompleted}
                                                 isCurrent={isCurrent}
-                                                isLocked={isLocked || isWeekLocked}
-                                                onClick={() => !isLocked && !isWeekLocked && onStartLesson(lesson)}
+                                                isLocked={false} // Unlocked for demo
+                                                onClick={() => onStartLesson(lesson)}
                                             />
                                         </Grid>
                                     );
