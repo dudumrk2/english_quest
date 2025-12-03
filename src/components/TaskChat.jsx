@@ -39,6 +39,10 @@ export function TaskChat({ lesson, onComplete }) {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [lesson.id]);
+
+    useEffect(() => {
         scrollToBottom();
     }, [messages, isTyping]);
 

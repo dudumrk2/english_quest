@@ -104,6 +104,10 @@ export function TaskReading({ lesson, onComplete }) {
     const [showFeedback, setShowFeedback] = useState(false);
     const [summary, setSummary] = useState('');
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [lesson.id]);
+
     const handleSubmit = () => {
         setShowFeedback(true);
         const allCorrect = lesson.content.questions.every(
@@ -249,9 +253,9 @@ export function TaskReading({ lesson, onComplete }) {
                                                 ),
                                             }}
                                         />
-                                        {showError && (
-                                            <Alert severity="error" sx={{ mt: 1 }} variant="outlined">
-                                                Correct answer: <strong>{q.answer}</strong>
+                                        {showError && answers[q.id]?.trim() && (
+                                            <Alert severity="info" sx={{ mt: 1 }} variant="outlined">
+                                                💡 Hint: Look for the answer in the text. It starts with "{q.answer.substring(0, Math.min(4, q.answer.length))}..."
                                             </Alert>
                                         )}
                                     </Box>

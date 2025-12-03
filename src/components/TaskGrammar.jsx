@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
@@ -22,6 +22,10 @@ import {
 export function TaskGrammar({ lesson, onComplete }) {
     const [answers, setAnswers] = useState({});
     const [showFeedback, setShowFeedback] = useState(false);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [lesson.id]);
 
     const handleSubmit = () => {
         setShowFeedback(true);
@@ -131,13 +135,12 @@ export function TaskGrammar({ lesson, onComplete }) {
                                                                         ? isCorrect
                                                                             ? 'success.main'
                                                                             : 'error.main'
-                                                                        : '#1a202c', // Force dark text
+                                                                        : '#000000', // Pure black for maximum visibility
                                                                 },
                                                                 // Default visible line
                                                                 '& .MuiInput-underline:before': {
-                                                                    borderBottom: '2px solid #94a3b8 !important' // Always visible slate color
+                                                                    borderBottom: '2px solid #94a3b8 !important' // Always visible
                                                                 },
-                                                                // Hover state
                                                                 '& .MuiInput-underline:hover:before': {
                                                                     borderBottom: '2px solid #64748b !important' // Darker on hover
                                                                 },
@@ -163,9 +166,10 @@ export function TaskGrammar({ lesson, onComplete }) {
                                             ))}
                                         </Typography>
 
-                                        {showError && (
-                                            <Alert severity="error" sx={{ mt: 1, ml: 4, maxWidth: 400 }} variant="outlined">
-                                                Correct answer: <strong>{ex.answer}</strong>
+                                        {showError && answers[ex.id]?.trim() && (
+                                            <Alert severity="info" sx={{ mt: 1, ml: 4, maxWidth: 400 }} variant="outlined">
+                                                💡 Hint: Try using "{ex.answer.substring(0, Math.min(3, ex.answer.length))}..."
+                                                {ex.answer.includes(' ') && ' (check your verb form)'}
                                             </Alert>
                                         )}
                                     </Box>
