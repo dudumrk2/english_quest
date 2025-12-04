@@ -121,6 +121,7 @@ export function TaskGrammar({ lesson, onComplete }) {
                                                         <TextField
                                                             variant="standard"
                                                             size="small"
+                                                            placeholder={`${ex.answer[0]}...`}
                                                             value={answers[ex.id] || ''}
                                                             onChange={(e) => setAnswers({ ...answers, [ex.id]: e.target.value })}
                                                             error={showError}
@@ -168,8 +169,8 @@ export function TaskGrammar({ lesson, onComplete }) {
 
                                         {showError && answers[ex.id]?.trim() && (
                                             <Alert severity="info" sx={{ mt: 1, ml: 4, maxWidth: 400 }} variant="outlined">
-                                                💡 Hint: Try using "{ex.answer.substring(0, Math.min(3, ex.answer.length))}..."
-                                                {ex.answer.includes(' ') && ' (check your verb form)'}
+                                                💡 Hint: The answer starts with "{ex.answer[0]}". Check the rule above!
+                                                {ex.answer.includes(' ') && ' (Note: this answer has multiple words)'}
                                             </Alert>
                                         )}
                                     </Box>
