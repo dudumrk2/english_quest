@@ -122,6 +122,94 @@ export function TaskGrammar({ lesson, onComplete }) {
 
                         <Stack spacing={4}>
                             {lesson.content.exercises.map((ex, idx) => {
+                                // Check if this is a multiple choice exercise (has options)
+                                if (ex.options && ex.options.length > 0) {
+                                    const isCorrect = answers[ex.id] === ex.answer;
+                                    const showResult = showFeedback;
+
+                                    // Helper to highlight target word
+                                    const renderQuestion = () => {
+                                        if (!ex.targetWord) return ex.question;
+                                        const parts = ex.question.split(ex.targetWord);
+                                        return (
+                                            <span>
+                                                {parts.map((part, i) => (
+                                                    <React.Fragment key={i}>
+                                                        {part}
+                                                        {i < parts.length - 1 && (
+                                                            <Box component="span" sx={{
+                                                                fontWeight: '800',
+                                                                color: 'primary.main',
+                                                                textDecoration: 'underline',
+                                                                mx: 0.5
+                                                            }}>
+                                                                {ex.targetWord}
+                                                            </Box>
+                                                        )}
+                                                    </React.Fragment>
+                                                ))}
+                                            </span>
+                                        );
+                                    };
+
+                                    return (
+                                        <Box key={ex.id} sx={{ mb: 4 }}>
+                                            <Stack direction="row" alignItems="center" spacing={2} mb={2}>
+                                                <Box component="span" sx={{ fontWeight: 'bold', color: 'text.secondary', minWidth: '24px' }}>
+                                                    {idx + 1}.
+                                                </Box>
+                                                <Typography variant="h6" sx={{ fontSize: '1.2rem' }}>
+                                                    {renderQuestion()}
+                                                </Typography>
+                                            </Stack>
+
+                                            <Stack direction="row" spacing={2} sx={{ ml: 5 }}>
+                                                {ex.options.map((option) => {
+                                                    const isSelected = answers[ex.id] === option;
+                                                    let color = 'primary';
+                                                    let variant = isSelected ? 'contained' : 'outlined';
+
+                                                    if (showResult) {
+                                                        if (option === ex.answer) {
+                                                            color = 'success';
+                                                            variant = 'contained';
+                                                        } else if (isSelected && option !== ex.answer) {
+                                                            color = 'error';
+                                                            variant = 'contained';
+                                                        }
+                                                    }
+
+                                                    return (
+                                                        <Button
+                                                            key={option}
+                                                            variant={variant}
+                                                            color={color}
+                                                            onClick={() => !showResult && setAnswers({ ...answers, [ex.id]: option })}
+                                                            sx={{
+                                                                minWidth: 120,
+                                                                textTransform: 'none',
+                                                                fontWeight: 600,
+                                                                fontSize: '1rem'
+                                                            }}
+                                                        >
+                                                            {option}
+                                                        </Button>
+                                                    );
+                                                })}
+                                            </Stack>
+
+                                            {showResult && answers[ex.id] !== ex.answer && (
+                                                <Alert severity="info" sx={{ mt: 2, ml: 5, maxWidth: 400 }} variant="outlined">
+                                                    <span>
+                                                        👀 The correct answer is: <strong>{ex.answer}</strong>
+                                                    </span>
+                                                </Alert>
+                                            )}
+                                        </Box>
+                                    );
+                                }
+
+                                // Default fill-in-the-blank behavior
                                 // Split question by '_____' or just use the question if no placeholder
                                 const parts = ex.question.split(/_{3,}/);
                                 const isCorrect = answers[ex.id]?.toLowerCase().trim() === ex.answer.toLowerCase();

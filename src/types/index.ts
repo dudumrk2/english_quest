@@ -38,6 +38,8 @@ export interface Exercise {
     id: string;
     question: string;
     answer: string;
+    targetWord?: string;
+    options?: string[];
 }
 
 export interface ChatContent {
