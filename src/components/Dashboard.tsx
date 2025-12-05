@@ -22,9 +22,12 @@ const taskIcons: Record<string, React.ElementType> = {
 export const Dashboard: React.FC<DashboardProps> = ({
     currentLessonId,
     completedLessons,
+    skippedLessons,
     onStartLesson,
 }) => {
-    const weeks = [1, 2, 3, 4, 5, 6];
+    const weeks = Array.from(new Set(lessons.map((lesson) => lesson.week))).sort(
+        (a, b) => a - b
+    );
 
     const getWeekProgress = (week: number): number => {
         const weekLessons = lessons.filter((l) => l.week === week);
@@ -35,62 +38,68 @@ export const Dashboard: React.FC<DashboardProps> = ({
     return (
         <Box>
             {/* Header */}
-            <Box textAlign="center" mb={6}>
+            < Box textAlign="center" mb={6} >
                 <GradientText variant="h3" gutterBottom>
                     Mission Control
                 </GradientText>
                 <Typography variant="h6" color="text.secondary">
                     Select your next mission, Commander
                 </Typography>
-            </Box>
+            </Box >
 
             {/* Weeks Grid */}
-            <Stack spacing={4}>
-                {weeks.map((week) => {
-                    const weekLessons = lessons.filter((l) => l.week === week);
-                    const isWeekLocked = false; // Unlocked for demo
-                    const progress = getWeekProgress(week);
+            < Stack spacing={4} >
+                {
+                    weeks.map((week) => {
+                        const weekLessons = lessons.filter((l) => l.week === week);
+                        const isWeekLocked = false; // Unlocked for demo
+                        const progress = getWeekProgress(week);
 
-                    return (
-                        <WeekContainer key={week} week={week} progress={progress} isLocked={isWeekLocked}>
-                            <Grid container spacing={2}>
-                                {weekLessons.map((lesson: Lesson) => {
-                                    const isCompleted = completedLessons.includes(lesson.id);
-                                    const isCurrent = lesson.id === currentLessonId;
-                                    // const isLocked = false; // Unlocked for demo
-                                    const TaskIcon = taskIcons[lesson.type] || ReadingIcon;
+                        return (
+                            <WeekContainer key={week} week={week} progress={progress} isLocked={isWeekLocked}>
+                                <Grid container spacing={2}>
+                                    {weekLessons.map((lesson: Lesson) => {
+                                        const isCompleted = completedLessons.includes(lesson.id);
+                                        const isSkipped = skippedLessons?.includes(lesson.id) ?? false;
+                                        const isCurrent = lesson.id === currentLessonId;
+                                        // const isLocked = false; // Unlocked for demo
+                                        const TaskIcon = taskIcons[lesson.type] || ReadingIcon;
 
-                                    return (
-                                        <Grid item xs={12} sm={6} md={4} lg={2.4} key={lesson.id}>
-                                            <LessonCard
-                                                day={lesson.day}
-                                                title={lesson.title}
-                                                type={lesson.type}
-                                                icon={
-                                                    <TaskIcon
-                                                        sx={{
-                                                            fontSize: 40,
-                                                            color: isCompleted
-                                                                ? 'success.main'
-                                                                : isCurrent
-                                                                    ? 'primary.main'
-                                                                    : 'text.secondary',
-                                                        }}
-                                                    />
-                                                }
-                                                isCompleted={isCompleted}
-                                                isCurrent={isCurrent}
-                                                isLocked={false} // Unlocked for demo
-                                                onClick={() => onStartLesson(lesson)}
-                                            />
-                                        </Grid>
-                                    );
-                                })}
-                            </Grid>
-                        </WeekContainer>
-                    );
-                })}
-            </Stack>
-        </Box>
+                                        return (
+                                            <Grid item xs={12} sm={6} md={4} lg={2.4} key={lesson.id}>
+                                                <LessonCard
+                                                    day={lesson.day}
+                                                    title={lesson.title}
+                                                    type={lesson.type}
+                                                    icon={
+                                                        <TaskIcon
+                                                            sx={{
+                                                                fontSize: 40,
+                                                                color: isCompleted
+                                                                    ? 'success.main'
+                                                                    : isSkipped
+                                                                        ? 'warning.main'
+                                                                        : isCurrent
+                                                                            ? 'primary.main'
+                                                                            : 'text.secondary',
+                                                            }}
+                                                        />
+                                                    }
+                                                    isCompleted={isCompleted}
+                                                    isSkipped={isSkipped}
+                                                    isCurrent={isCurrent}
+                                                    isLocked={false} // Unlocked for demo
+                                                    onClick={() => onStartLesson(lesson)}
+                                                />
+                                            </Grid>
+                                        );
+                                    })}
+                                </Grid>
+                            </WeekContainer>
+                        );
+                    })
+                }
+            </Stack >
+        </Box >
     );
 };

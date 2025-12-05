@@ -83,12 +83,31 @@ export function TaskReading({ lesson, onComplete }) {
     const [showFeedback, setShowFeedback] = useState(false);
     const [summary, setSummary] = useState('');
 
+    const [attempts, setAttempts] = useState({});
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [lesson.id]);
 
     const handleSubmit = () => {
         setShowFeedback(true);
+
+        // Track attempts for incorrect answers
+        const newAttempts = { ...attempts };
+        let attemptsChanged = false;
+
+        lesson.content.questions.forEach(q => {
+            const isCorrect = answers[q.id]?.toLowerCase().trim() === q.answer.toLowerCase();
+            if (!isCorrect) {
+                newAttempts[q.id] = (newAttempts[q.id] || 0) + 1;
+                attemptsChanged = true;
+            }
+        });
+
+        if (attemptsChanged) {
+            setAttempts(newAttempts);
+        }
+
         const allCorrect = lesson.content.questions.every(
             (q) => answers[q.id]?.toLowerCase().trim() === q.answer.toLowerCase()
         );
@@ -205,7 +224,15 @@ export function TaskReading({ lesson, onComplete }) {
                                         />
                                         {showError && answers[q.id]?.trim() && (
                                             <Alert severity="info" sx={{ mt: 1 }} variant="outlined">
-                                                💡 Hint: Look for the answer in the text. It starts with "{q.answer.substring(0, Math.min(4, q.answer.length))}..."
+                                                {(attempts[q.id] || 0) >= 3 ? (
+                                                    <span>
+                                                        👀 The correct answer is: <strong>{q.answer}</strong>
+                                                    </span>
+                                                ) : (
+                                                    <span>
+                                                        💡 Hint: Look for the answer in the text. It starts with "{q.answer.substring(0, Math.min(4, q.answer.length))}..."
+                                                    </span>
+                                                )}
                                             </Alert>
                                         )}
                                     </Box>
@@ -253,23 +280,44 @@ export function TaskReading({ lesson, onComplete }) {
                 </Card>
 
                 {/* Submit Button */}
-                <Button
-                    fullWidth
-                    variant="contained"
-                    size="large"
-                    onClick={handleSubmit}
-                    sx={{
-                        py: 1.5,
-                        fontSize: '1.1rem',
-                        fontWeight: 600,
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        '&:hover': {
-                            background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
-                        },
-                    }}
-                >
-                    Check Answers & Complete Lesson
-                </Button>
+                <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+                    <Button
+                        fullWidth
+                        variant="outlined"
+                        size="large"
+                        onClick={() => onComplete(true)}
+                        sx={{
+                            py: 1.5,
+                            fontSize: '1.1rem',
+                            fontWeight: 600,
+                            color: 'text.secondary',
+                            borderWidth: 2,
+                            '&:hover': {
+                                borderWidth: 2,
+                                bgcolor: 'rgba(0,0,0,0.05)'
+                            }
+                        }}
+                    >
+                        Skip Lesson
+                    </Button>
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        size="large"
+                        onClick={handleSubmit}
+                        sx={{
+                            py: 1.5,
+                            fontSize: '1.1rem',
+                            fontWeight: 600,
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
+                            },
+                        }}
+                    >
+                        Check Answers & Complete Lesson
+                    </Button>
+                </Stack>
             </Stack>
         </Box>
     );

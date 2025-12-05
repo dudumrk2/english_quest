@@ -8,6 +8,7 @@ export interface LessonCardProps {
     type: string;
     icon: React.ReactNode;
     isCompleted: boolean;
+    isSkipped: boolean;
     isCurrent: boolean;
     isLocked: boolean;
     onClick: () => void;
@@ -19,6 +20,7 @@ export const LessonCard: React.FC<LessonCardProps> = ({
     type,
     icon,
     isCompleted,
+    isSkipped,
     isCurrent,
     isLocked,
     onClick,
@@ -31,14 +33,18 @@ export const LessonCard: React.FC<LessonCardProps> = ({
                 border: '2px solid',
                 borderColor: isCompleted
                     ? 'success.main'
-                    : isCurrent
-                        ? 'primary.main'
-                        : 'rgba(255, 255, 255, 0.1)',
+                    : isSkipped
+                        ? 'warning.main'
+                        : isCurrent
+                            ? 'primary.main'
+                            : 'rgba(255, 255, 255, 0.1)',
                 bgcolor: isCompleted
                     ? 'rgba(16, 185, 129, 0.1)'
-                    : isCurrent
-                        ? 'rgba(59, 130, 246, 0.1)'
-                        : 'background.paper',
+                    : isSkipped
+                        ? 'rgba(245, 158, 11, 0.1)'
+                        : isCurrent
+                            ? 'rgba(59, 130, 246, 0.1)'
+                            : 'background.paper',
                 transform: isCurrent ? 'scale(1.05)' : 'scale(1)',
                 transition: 'all 0.3s ease',
                 '&:hover': {
@@ -54,6 +60,7 @@ export const LessonCard: React.FC<LessonCardProps> = ({
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
                             <Chip label={`Day ${day}`} size="small" sx={{ fontWeight: 600 }} />
                             {isCompleted && <CheckCircle color="success" fontSize="small" />}
+                            {isSkipped && <Typography variant="caption" sx={{ color: 'warning.main', fontWeight: 'bold' }}>SKIP</Typography>}
                             {isLocked && <Lock fontSize="small" />}
                             {isCurrent && (
                                 <PlayArrow

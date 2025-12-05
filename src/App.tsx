@@ -35,9 +35,9 @@ function AppContent() {
         setView('lesson');
     };
 
-    const handleLessonComplete = () => {
+    const handleLessonComplete = (skipped: boolean = false) => {
         if (activeLesson) {
-            completeLesson(activeLesson.id);
+            completeLesson(activeLesson.id, 100, skipped);
 
             if (activeLesson.day === 5) {
                 setView('summary');
@@ -68,6 +68,7 @@ function AppContent() {
             <Dashboard
                 currentLessonId={state.currentLessonId}
                 completedLessons={state.completedLessons}
+                skippedLessons={state.skippedLessons}
                 onStartLesson={handleStartLesson}
             />
         );

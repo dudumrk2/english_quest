@@ -56,6 +56,7 @@ export interface User {
 // App State Types
 export interface AppState {
     completedLessons: number[];
+    skippedLessons: number[];
     currentLessonId: number;
     points: number;
     streak: number;
@@ -85,12 +86,13 @@ export interface LayoutProps {
 export interface DashboardProps {
     currentLessonId: number;
     completedLessons: number[];
+    skippedLessons?: number[];
     onStartLesson: (lesson: Lesson) => void;
 }
 
 export interface TaskProps {
     lesson: Lesson;
-    onComplete: () => void;
+    onComplete: (skipped?: boolean) => void;
 }
 
 export interface WeeklySummaryProps {

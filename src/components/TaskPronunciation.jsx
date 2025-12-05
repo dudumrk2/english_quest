@@ -445,29 +445,50 @@ export function TaskPronunciation({ lesson, onComplete }) {
 
                 {/* Complete Button */}
                 <Box mt={4}>
-                    <Button
-                        fullWidth
-                        variant="contained"
-                        size="large"
-                        onClick={handleComplete}
-                        disabled={!readingComplete || summary.trim().length === 0}
-                        sx={{
-                            py: 1.5,
-                            fontSize: '1.1rem',
-                            fontWeight: 600,
-                            background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-                            color: '#1a4731',
-                            '&:hover': {
-                                background: 'linear-gradient(135deg, #36c96a 0%, #2ec7ab 100%)',
-                            },
-                            '&.Mui-disabled': {
-                                background: '#e2e8f0',
-                                color: '#94a3b8'
-                            }
-                        }}
-                    >
-                        {readingComplete ? "Complete Lesson" : "Finish Reading First"}
-                    </Button>
+                    <Stack direction="row" spacing={2}>
+                        <Button
+                            fullWidth
+                            variant="outlined"
+                            size="large"
+                            onClick={() => onComplete(true)}
+                            sx={{
+                                py: 1.5,
+                                fontSize: '1.1rem',
+                                fontWeight: 600,
+                                color: 'text.secondary',
+                                borderWidth: 2,
+                                '&:hover': {
+                                    borderWidth: 2,
+                                    bgcolor: 'rgba(0,0,0,0.05)'
+                                }
+                            }}
+                        >
+                            Skip Lesson
+                        </Button>
+                        <Button
+                            fullWidth
+                            variant="contained"
+                            size="large"
+                            onClick={handleComplete}
+                            disabled={!readingComplete || summary.trim().length === 0}
+                            sx={{
+                                py: 1.5,
+                                fontSize: '1.1rem',
+                                fontWeight: 600,
+                                background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                                color: '#1a4731',
+                                '&:hover': {
+                                    background: 'linear-gradient(135deg, #36c96a 0%, #2ec7ab 100%)',
+                                },
+                                '&.Mui-disabled': {
+                                    background: '#e2e8f0',
+                                    color: '#94a3b8'
+                                }
+                            }}
+                        >
+                            {readingComplete ? "Complete Lesson" : "Finish Reading First"}
+                        </Button>
+                    </Stack>
                 </Box>
             </Stack>
         </Box >

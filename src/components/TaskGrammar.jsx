@@ -23,12 +23,31 @@ export function TaskGrammar({ lesson, onComplete }) {
     const [answers, setAnswers] = useState({});
     const [showFeedback, setShowFeedback] = useState(false);
 
+    const [attempts, setAttempts] = useState({});
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [lesson.id]);
 
     const handleSubmit = () => {
         setShowFeedback(true);
+
+        // Track attempts for incorrect answers
+        const newAttempts = { ...attempts };
+        let attemptsChanged = false;
+
+        lesson.content.exercises.forEach(ex => {
+            const isCorrect = answers[ex.id]?.toLowerCase().trim() === ex.answer.toLowerCase();
+            if (!isCorrect) {
+                newAttempts[ex.id] = (newAttempts[ex.id] || 0) + 1;
+                attemptsChanged = true;
+            }
+        });
+
+        if (attemptsChanged) {
+            setAttempts(newAttempts);
+        }
+
         const allCorrect = lesson.content.exercises.every(
             (ex) => answers[ex.id]?.toLowerCase().trim() === ex.answer.toLowerCase()
         );
@@ -169,8 +188,16 @@ export function TaskGrammar({ lesson, onComplete }) {
 
                                         {showError && answers[ex.id]?.trim() && (
                                             <Alert severity="info" sx={{ mt: 1, ml: 4, maxWidth: 400 }} variant="outlined">
-                                                💡 Hint: The answer starts with "{ex.answer[0]}". Check the rule above!
-                                                {ex.answer.includes(' ') && ' (Note: this answer has multiple words)'}
+                                                {(attempts[ex.id] || 0) >= 3 ? (
+                                                    <span>
+                                                        👀 The correct answer is: <strong>{ex.answer}</strong>
+                                                    </span>
+                                                ) : (
+                                                    <span>
+                                                        💡 Hint: The answer starts with "{ex.answer[0]}". Check the rule above!
+                                                        {ex.answer.includes(' ') && ' (Note: this answer has multiple words)'}
+                                                    </span>
+                                                )}
                                             </Alert>
                                         )}
                                     </Box>
@@ -178,28 +205,48 @@ export function TaskGrammar({ lesson, onComplete }) {
                             })}
                         </Stack>
 
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            size="large"
-                            onClick={handleSubmit}
-                            sx={{
-                                mt: 6,
-                                py: 2,
-                                fontSize: '1.2rem',
-                                fontWeight: 700,
-                                background: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
-                                color: 'white',
-                                '&:hover': {
-                                    background: 'linear-gradient(135deg, #f5c94c 0%, #fc8e6d 100%)',
-                                    transform: 'translateY(-2px)',
-                                    boxShadow: 4,
-                                },
-                                transition: 'all 0.3s ease',
-                            }}
-                        >
-                            Check Answers
-                        </Button>
+                        <Stack direction="row" spacing={2} mt={6}>
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                size="large"
+                                onClick={() => onComplete(true)}
+                                sx={{
+                                    py: 2,
+                                    fontSize: '1.1rem',
+                                    fontWeight: 700,
+                                    color: 'text.secondary',
+                                    borderWidth: 2,
+                                    '&:hover': {
+                                        borderWidth: 2,
+                                        bgcolor: 'rgba(0,0,0,0.05)'
+                                    }
+                                }}
+                            >
+                                Skip Lesson
+                            </Button>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                size="large"
+                                onClick={handleSubmit}
+                                sx={{
+                                    py: 2,
+                                    fontSize: '1.2rem',
+                                    fontWeight: 700,
+                                    background: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
+                                    color: 'white',
+                                    '&:hover': {
+                                        background: 'linear-gradient(135deg, #f5c94c 0%, #fc8e6d 100%)',
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: 4,
+                                    },
+                                    transition: 'all 0.3s ease',
+                                }}
+                            >
+                                Check Answers
+                            </Button>
+                        </Stack>
                     </CardContent>
                 </Card>
             </Stack>

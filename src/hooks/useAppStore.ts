@@ -10,7 +10,7 @@ interface WeeklyProgress {
 
 interface AppStore {
     state: AppState;
-    completeLesson: (lessonId: number, score?: number) => void;
+    completeLesson: (lessonId: number, score?: number, skipped?: boolean) => void;
     getCurrentLesson: () => Lesson;
     getWeeklyProgress: (weekNum: number) => WeeklyProgress;
 }
@@ -23,6 +23,7 @@ export function useAppStore(userEmail?: string): AppStore {
         const saved = localStorage.getItem(storageKey);
         return saved ? JSON.parse(saved) : {
             completedLessons: [],
+            skippedLessons: [],
             currentLessonId: 1,
             points: 0,
             streak: 0,
@@ -43,6 +44,7 @@ export function useAppStore(userEmail?: string): AppStore {
         } else {
             setState({
                 completedLessons: [],
+                skippedLessons: [],
                 currentLessonId: 1,
                 points: 0,
                 streak: 0,
@@ -51,19 +53,21 @@ export function useAppStore(userEmail?: string): AppStore {
         }
     }, [storageKey]);
 
-    const completeLesson = (lessonId: number, score: number = 100): void => {
+    const completeLesson = (lessonId: number, score: number = 100, skipped: boolean = false): void => {
         setState(prev => {
-            if (prev.completedLessons.includes(lessonId)) return prev;
+            if (prev.completedLessons.includes(lessonId) || prev.skippedLessons?.includes(lessonId)) return prev;
 
-            const newCompleted = [...prev.completedLessons, lessonId];
+            const newCompleted = skipped ? prev.completedLessons : [...prev.completedLessons, lessonId];
+            const newSkipped = skipped ? [...(prev.skippedLessons || []), lessonId] : (prev.skippedLessons || []);
             const nextLessonId = lessonId < 30 ? lessonId + 1 : lessonId;
 
             return {
                 ...prev,
                 completedLessons: newCompleted,
+                skippedLessons: newSkipped,
                 currentLessonId: nextLessonId,
-                points: prev.points + score,
-                streak: prev.streak + 1
+                points: skipped ? prev.points : prev.points + score,
+                streak: skipped ? prev.streak : prev.streak + 1
             };
         });
     };
