@@ -136,7 +136,7 @@ export function TaskGrammar({ lesson, onComplete }) {
                                                                         ? isCorrect
                                                                             ? 'success.main'
                                                                             : 'error.main'
-                                                                        : '#000000', // Pure black for maximum visibility
+                                                                        : '#ffffff', // White for dark mode visibility
                                                                 },
                                                                 // Default visible line
                                                                 '& .MuiInput-underline:before': {

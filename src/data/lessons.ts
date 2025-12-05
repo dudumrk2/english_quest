@@ -2,8 +2,172 @@ import { Lesson } from '../types';
 
 export const lessons: Lesson[] = [
     {
-        "id": 1,
+        "id": 101,
         "week": 1,
+        "day": 1,
+        "type": "reading",
+        "title": "Welcome to the Club",
+        "content": {
+            "text": "Nadav wants to join a new club at school. There is a list of many activities. He can choose the band, the science club, or the theater group. It is a hard choice. He asks the guide for help. The guide says, 'We welcome new members!' Nadav decides to join the team. He is interested in English and history, but math is his main subject. He likes writing stories and can imagine a variety of fun things. He hopes to amaze his friends in the world. He needs to fill in a form first. It is a usual day.",
+            "questions": [
+                {
+                    "id": "q1",
+                    "text": "What does Nadav want to join?",
+                    "answer": "the team"
+                },
+                {
+                    "id": "q2",
+                    "text": "What is his main subject?",
+                    "answer": "math"
+                }
+            ],
+            "vocabulary": [
+                { "word": "club", "translation": "מועדון" },
+                { "word": "list", "translation": "רשימה" },
+                { "word": "activity", "translation": "פעילות" },
+                { "word": "band", "translation": "להקה" },
+                { "word": "science", "translation": "מדע" },
+                { "word": "theater", "translation": "תיאטרון" },
+                { "word": "choice", "translation": "בחירה" },
+                { "word": "guide", "translation": "מדריך" },
+                { "word": "welcome", "translation": "לקבל בברכה" },
+                { "word": "join", "translation": "להצטרף" },
+                { "word": "team", "translation": "צוות/קבוצה" },
+                { "word": "interested in", "translation": "מתעניין ב" },
+                { "word": "English", "translation": "אנגלית" },
+                { "word": "history", "translation": "היסטוריה" },
+                { "word": "math", "translation": "מתמטיקה" },
+                { "word": "main", "translation": "עיקרי" },
+                { "word": "writing", "translation": "כתיבה" },
+                { "word": "imagine", "translation": "לדמיין" },
+                { "word": "variety", "translation": "מגוון" },
+                { "word": "world", "translation": "עולם" },
+                { "word": "usual", "translation": "רגיל" },
+                { "word": "amaze", "translation": "להדהים" },
+                { "word": "fill in", "translation": "למלא" },
+                { "word": "form", "translation": "טופס" }
+            ]
+        }
+    },
+    {
+        "id": 102,
+        "week": 1,
+        "day": 2,
+        "type": "grammar",
+        "title": "Nouns, Verbs, Adjectives",
+        "content": {
+            "rule": "Nouns are people, places, or things (e.g., lemon, office). Verbs are actions (e.g., run, eat). Adjectives describe nouns (e.g., happy, big).",
+            "exercises": [
+                { "id": "e1", "question": "The _____ (lemon) is yellow.", "answer": "lemon" },
+                { "id": "e2", "question": "I _____ (feed) the cat.", "answer": "feed" },
+                { "id": "e3", "question": "It is a _____ (lovely) day.", "answer": "lovely" },
+                { "id": "e4", "question": "She _____ (open) the door.", "answer": "opens" },
+                { "id": "e5", "question": "The _____ (bridge) is long.", "answer": "bridge" },
+                { "id": "e6", "question": "He is _____ (careful).", "answer": "careful" },
+                { "id": "e7", "question": "They _____ (fix) the car.", "answer": "fix" },
+                { "id": "e8", "question": "The _____ (physics) test was hard.", "answer": "physics" },
+                { "id": "e9", "question": "We _____ (serve) lunch.", "answer": "serve" },
+                { "id": "e10", "question": "A _____ (typical) day.", "answer": "typical" },
+                { "id": "e11", "question": "He has a good _____ (job).", "answer": "job" },
+                { "id": "e12", "question": "I _____ (brush) my teeth.", "answer": "brush" },
+                { "id": "e13", "question": "She uses a _____ (comb).", "answer": "comb" },
+                { "id": "e14", "question": "We _____ (pay) cash.", "answer": "pay" },
+                { "id": "e15", "question": "They _____ (sleep) late.", "answer": "sleep" },
+                { "id": "e16", "question": "I _____ (work) hard.", "answer": "work" },
+                { "id": "e17", "question": "Can you _____ (help) me?", "answer": "help" },
+                { "id": "e18", "question": "I _____ (love) this color.", "answer": "love" },
+                { "id": "e19", "question": "What is the _____ (point)?", "answer": "point" },
+                { "id": "e20", "question": "He is in the _____ (office).", "answer": "office" }
+            ]
+        }
+    },
+    {
+        "id": 103,
+        "week": 1,
+        "day": 3,
+        "type": "reading",
+        "title": "A Journey to the Mountains",
+        "content": {
+            "text": "Nadav goes on a journey to the mountains. He drives across the nation. He crosses a bridge over a river. The view is amazing. He sees a small village. He is careful because the road is dangerous and has oil. It is possible to see foreign tourists. It is an unusual travel experience. He stops to eat a meal. He has a bowl of soup with salt and pepper. It is warm and tasty. He takes a photo of the wide valley. He loves nature and geography.",
+            "questions": [
+                { "id": "q1", "text": "Where does Nadav go?", "answer": "to the mountains" },
+                { "id": "q2", "text": "What is on the road?", "answer": "oil" }
+            ],
+            "vocabulary": [
+                { "word": "journey", "translation": "מסע" },
+                { "word": "mountain", "translation": "הר" },
+                { "word": "drive", "translation": "לנהוג" },
+                { "word": "across", "translation": "לרוחב/מעבר ל" },
+                { "word": "nation", "translation": "אומה" },
+                { "word": "bridge", "translation": "גשר" },
+                { "word": "river", "translation": "נהר" },
+                { "word": "amazing", "translation": "מדהים" },
+                { "word": "village", "translation": "כפר" },
+                { "word": "careful", "translation": "זהיר" },
+                { "word": "dangerous", "translation": "מסוכן" },
+                { "word": "oil", "translation": "שמן/נפט" },
+                { "word": "possible", "translation": "אפשרי" },
+                { "word": "foreign", "translation": "זר" },
+                { "word": "unusual", "translation": "לא רגיל" },
+                { "word": "travel", "translation": "לטייל" },
+                { "word": "meal", "translation": "ארוחה" },
+                { "word": "bowl", "translation": "קערה" },
+                { "word": "salt", "translation": "מלח" },
+                { "word": "pepper", "translation": "פלפל" },
+                { "word": "warm", "translation": "חמים" },
+                { "word": "wide", "translation": "רחב" },
+                { "word": "geography", "translation": "גיאוגרפיה" }
+            ]
+        }
+    },
+    {
+        "id": 104,
+        "week": 1,
+        "day": 4,
+        "type": "pronunciation",
+        "title": "Meeting New Friends",
+        "content": {
+            "text": "Hello! Nice to meet you. Would you like to shake hands? I'd love to be your friend. What about you? Do you prefer tea or coffee? I realize we have a lot in common. Let's continue our talk directly. According to the plan, we meet next to the park. Is anybody around here? I am certain we will receive a gift. Just follow me. We depend on you. Don't fall in love too fast!",
+            "tips": [
+                "Say 'Nice to meet you' with a smile.",
+                "Link words together: 'Would you' sounds like 'Would-ja'."
+            ],
+            "vocabulary": [
+                { "word": "Nice to meet you", "translation": "נעים להכיר" },
+                { "word": "Would you like", "translation": "האם תרצה" },
+                { "word": "shake hands", "translation": "ללחוץ ידיים" },
+                { "word": "I'd love to", "translation": "אשמח מאוד" },
+                { "word": "What about", "translation": "מה לגבי" },
+                { "word": "prefer", "translation": "להעדיף" },
+                { "word": "realize", "translation": "להבין" },
+                { "word": "continue", "translation": "להמשיך" },
+                { "word": "directly", "translation": "ישירות" },
+                { "word": "According to", "translation": "לפי" },
+                { "word": "next to", "translation": "ליד" },
+                { "word": "anybody", "translation": "מישהו" },
+                { "word": "around here", "translation": "בסביבה" },
+                { "word": "certain", "translation": "בטוח" },
+                { "word": "receive", "translation": "לקבל" },
+                { "word": "follow", "translation": "לעקוב" },
+                { "word": "depend on", "translation": "תלוי ב" },
+                { "word": "fall in love", "translation": "להתאהב" }
+            ]
+        }
+    },
+    {
+        "id": 105,
+        "week": 1,
+        "day": 5,
+        "type": "chatbot",
+        "title": "Chat: Introductions",
+        "content": {
+            "topic": "Meeting new people and making friends.",
+            "initialMessage": "Hi! I'm your new AI friend. Nice to meet you! What is your name and what do you like to do?"
+        }
+    },
+    {
+        "id": 1,
+        "week": 2,
         "day": 1,
         "type": "reading",
         "title": "Nadav's New Club",
@@ -59,7 +223,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 2,
-        "week": 1,
+        "week": 2,
         "day": 2,
         "type": "grammar",
         "title": "Present Simple: Daily Routine",
@@ -146,7 +310,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 3,
-        "week": 1,
+        "week": 2,
         "day": 3,
         "type": "reading",
         "title": "A Family Trip",
@@ -202,7 +366,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 4,
-        "week": 1,
+        "week": 2,
         "day": 4,
         "type": "pronunciation",
         "title": "Reading Aloud: Nature",
@@ -234,7 +398,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 5,
-        "week": 1,
+        "week": 2,
         "day": 5,
         "type": "chatbot",
         "title": "Chat: Hobbies",
@@ -245,7 +409,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 6,
-        "week": 2,
+        "week": 3,
         "day": 1,
         "type": "reading",
         "title": "The Basketball YouTuber",
@@ -301,7 +465,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 7,
-        "week": 2,
+        "week": 3,
         "day": 2,
         "type": "grammar",
         "title": "Past Simple: Finished Actions",
@@ -388,7 +552,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 8,
-        "week": 2,
+        "week": 3,
         "day": 3,
         "type": "reading",
         "title": "Spider-Man's Story",
@@ -444,7 +608,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 9,
-        "week": 2,
+        "week": 3,
         "day": 4,
         "type": "pronunciation",
         "title": "Reading Aloud: Past Events",
@@ -476,7 +640,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 10,
-        "week": 2,
+        "week": 3,
         "day": 5,
         "type": "chatbot",
         "title": "Chat: Superpowers",
@@ -487,7 +651,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 11,
-        "week": 3,
+        "week": 4,
         "day": 1,
         "type": "reading",
         "title": "Understanding AI",
@@ -543,7 +707,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 12,
-        "week": 3,
+        "week": 4,
         "day": 2,
         "type": "grammar",
         "title": "Future Simple: Predictions",
@@ -630,7 +794,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 13,
-        "week": 3,
+        "week": 4,
         "day": 3,
         "type": "reading",
         "title": "Electric Cars",
@@ -686,7 +850,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 14,
-        "week": 3,
+        "week": 4,
         "day": 4,
         "type": "pronunciation",
         "title": "Reading Aloud: The Future",
@@ -718,7 +882,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 15,
-        "week": 3,
+        "week": 4,
         "day": 5,
         "type": "chatbot",
         "title": "Chat: Future Tech",
@@ -729,7 +893,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 16,
-        "week": 4,
+        "week": 5,
         "day": 1,
         "type": "reading",
         "title": "Amazing Drones",
@@ -785,7 +949,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 17,
-        "week": 4,
+        "week": 5,
         "day": 2,
         "type": "grammar",
         "title": "Comparatives: Comparing Things",
@@ -872,7 +1036,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 18,
-        "week": 4,
+        "week": 5,
         "day": 3,
         "type": "reading",
         "title": "The Smart Home",
@@ -928,7 +1092,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 19,
-        "week": 4,
+        "week": 5,
         "day": 4,
         "type": "pronunciation",
         "title": "Reading Aloud: Vowels",
@@ -960,7 +1124,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 20,
-        "week": 4,
+        "week": 5,
         "day": 5,
         "type": "chatbot",
         "title": "Chat: Gadgets",
@@ -971,7 +1135,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 21,
-        "week": 5,
+        "week": 6,
         "day": 1,
         "type": "reading",
         "title": "Virtual Reality",
@@ -1027,7 +1191,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 22,
-        "week": 5,
+        "week": 6,
         "day": 2,
         "type": "grammar",
         "title": "Superlatives: The Best and Worst",
@@ -1114,7 +1278,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 23,
-        "week": 5,
+        "week": 6,
         "day": 3,
         "type": "reading",
         "title": "Clean Energy",
@@ -1170,7 +1334,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 24,
-        "week": 5,
+        "week": 6,
         "day": 4,
         "type": "pronunciation",
         "title": "Reading Aloud: Clusters",
@@ -1202,7 +1366,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 25,
-        "week": 5,
+        "week": 6,
         "day": 5,
         "type": "chatbot",
         "title": "Chat: VR Worlds",
@@ -1213,7 +1377,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 26,
-        "week": 6,
+        "week": 7,
         "day": 1,
         "type": "reading",
         "title": "Learning to Code",
@@ -1269,7 +1433,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 27,
-        "week": 6,
+        "week": 7,
         "day": 2,
         "type": "grammar",
         "title": "Modals: Should and Must",
@@ -1356,7 +1520,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 28,
-        "week": 6,
+        "week": 7,
         "day": 3,
         "type": "reading",
         "title": "Social Media Safety",
@@ -1412,7 +1576,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 29,
-        "week": 6,
+        "week": 7,
         "day": 4,
         "type": "pronunciation",
         "title": "Reading Aloud: Sentences",
@@ -1444,7 +1608,7 @@ export const lessons: Lesson[] = [
     },
     {
         "id": 30,
-        "week": 6,
+        "week": 7,
         "day": 5,
         "type": "chatbot",
         "title": "Chat: Online Life",

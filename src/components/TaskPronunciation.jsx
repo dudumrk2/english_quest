@@ -14,6 +14,7 @@ import {
     Fade,
     Grid,
     TextField,
+    Tooltip,
 } from '@mui/material';
 import {
     RecordVoiceOver as PronunciationIcon,
@@ -27,81 +28,61 @@ import {
     VolumeUp as VolumeIcon,
 } from '@mui/icons-material';
 
-// Robust "Safe Flip" Card Component (Reused)
-function VocabFlipCard({ word, translation }) {
-    const [isFlipped, setIsFlipped] = useState(false);
-    const [isAnimating, setIsAnimating] = useState(false);
-    const [showBack, setShowBack] = useState(false);
+// Helper to render text with vocabulary tooltips
+const renderTextWithTooltips = (text, vocabulary) => {
+    if (!text || !vocabulary) return text;
 
-    const handleFlip = () => {
-        if (isAnimating) return;
+    // Sort by length desc to match longest first
+    const sortedVocab = [...vocabulary].sort((a, b) => b.word.length - a.word.length);
 
-        setIsAnimating(true);
+    const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-        setTimeout(() => {
-            setShowBack(!showBack);
-            setIsFlipped(!isFlipped);
-        }, 150);
+    // Create pattern: \b(word1|word2|...)\b
+    const pattern = new RegExp(`\\b(${sortedVocab.map(v => escapeRegExp(v.word)).join('|')})\\b`, 'gi');
 
-        setTimeout(() => {
-            setIsAnimating(false);
-        }, 300);
-    };
+    const parts = text.split(pattern);
 
-    return (
-        <Card
-            onClick={handleFlip}
-            elevation={3}
-            sx={{
-                height: 120,
-                cursor: 'pointer',
-                position: 'relative',
-                transition: 'transform 0.3s ease-in-out, background 0.3s ease',
-                transform: isAnimating ? 'rotateY(90deg)' : 'rotateY(0deg)',
-                background: showBack
-                    ? 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' // Pink for Hebrew
-                    : 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', // Green for English (matching theme)
-                color: 'white', // Always white text on colored card
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                '&:hover': {
-                    transform: isAnimating ? 'rotateY(90deg)' : 'scale(1.02)',
-                    boxShadow: 6
-                }
-            }}
-        >
-            <CardContent sx={{ width: '100%', p: 2, '&:last-child': { pb: 2 } }}>
-                <Typography
-                    variant={showBack ? "h5" : "h6"}
-                    fontWeight={700}
-                    dir={showBack ? "rtl" : "ltr"}
-                    sx={{
-                        mb: 1,
-                        textShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                        color: 'white' // Explicit white
-                    }}
+    return parts.map((part, index) => {
+        const vocabMatch = sortedVocab.find(v => v.word.toLowerCase() === part.toLowerCase());
+
+        if (vocabMatch) {
+            return (
+                <Tooltip
+                    key={index}
+                    title={<Typography variant="h6" sx={{ p: 1 }}>{vocabMatch.translation}</Typography>}
+                    arrow
+                    placement="top"
+                    enterTouchDelay={0}
                 >
-                    {showBack ? translation : word}
-                </Typography>
-                <Typography
-                    variant="caption"
-                    sx={{
-                        opacity: 0.9,
-                        display: 'block',
-                        fontSize: '0.75rem',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px',
-                        color: 'white' // Explicit white
-                    }}
-                >
-                    {showBack ? "Tap for English" : "Tap for Hebrew"}
-                </Typography>
-            </CardContent>
-        </Card>
-    );
-}
+                    <span
+                        style={{
+                            fontWeight: 'bold',
+                            color: '#1976d2',
+                            cursor: 'help',
+                            borderBottom: '2px dotted #1976d2',
+                            transition: 'all 0.2s',
+                            display: 'inline-block',
+                            margin: '0 2px',
+                        }}
+                        onMouseEnter={(e) => {
+                            e.target.style.backgroundColor = '#1976d2';
+                            e.target.style.color = 'white';
+                            e.target.style.borderRadius = '4px';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.target.style.backgroundColor = 'transparent';
+                            e.target.style.color = '#1976d2';
+                            e.target.style.borderRadius = '0px';
+                        }}
+                    >
+                        {part}
+                    </span>
+                </Tooltip>
+            );
+        }
+        return part;
+    });
+};
 
 export function TaskPronunciation({ lesson, onComplete }) {
     const [attempts, setAttempts] = useState(0);
@@ -289,8 +270,9 @@ export function TaskPronunciation({ lesson, onComplete }) {
                                 borderRadius: 2,
                                 border: '1px solid #e2e8f0'
                             }}
+                            component="div"
                         >
-                            "{lesson.content.text}"
+                            {renderTextWithTooltips(lesson.content.text, lesson.content.vocabulary)}
                         </Typography>
 
                         {/* Tips */}
@@ -310,32 +292,7 @@ export function TaskPronunciation({ lesson, onComplete }) {
                     </CardContent>
                 </Card>
 
-                {/* Vocabulary Section (Optional) */}
-                {lesson.content.vocabulary && lesson.content.vocabulary.length > 0 && (
-                    <Card elevation={2}>
-                        <CardContent sx={{ p: 3 }}>
-                            <Stack direction="row" spacing={1} alignItems="center" mb={2}>
-                                <TranslateIcon color="secondary" />
-                                <Typography variant="h6" fontWeight={600}>
-                                    Vocabulary
-                                </Typography>
-                                <Chip
-                                    label={`${lesson.content.vocabulary.length} words`}
-                                    size="small"
-                                    color="secondary"
-                                />
-                            </Stack>
-                            <Divider sx={{ mb: 3 }} />
-                            <Grid container spacing={2}>
-                                {lesson.content.vocabulary.map((vocab, idx) => (
-                                    <Grid item xs={6} sm={4} md={3} key={idx}>
-                                        <VocabFlipCard word={vocab.word} translation={vocab.translation} />
-                                    </Grid>
-                                ))}
-                            </Grid>
-                        </CardContent>
-                    </Card>
-                )}
+
 
                 {/* Recording Action Area */}
                 <Box textAlign="center" py={2}>
