@@ -3,9 +3,13 @@ export interface Lesson {
     id: number;
     week: number;
     day: number;
-    type: 'reading' | 'grammar' | 'chatbot' | 'pronunciation';
+    type: 'reading' | 'grammar' | 'chatbot' | 'pronunciation' | 'vocabulary';
     title: string;
-    content: ReadingContent | GrammarContent | ChatContent | PronunciationContent;
+    content: ReadingContent | GrammarContent | ChatContent | PronunciationContent | VocabularyContent;
+}
+
+export interface VocabularyContent {
+    description?: string;
 }
 
 export interface ReadingContent {

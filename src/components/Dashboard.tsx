@@ -7,6 +7,7 @@ import {
     School as GrammarIcon,
     Chat as ChatIcon,
     RecordVoiceOver as PronunciationIcon,
+    Translate as TranslateIcon,
 } from '@mui/icons-material';
 import { LessonCard } from './common/LessonCard';
 import { WeekContainer } from './common/WeekContainer';
@@ -17,6 +18,7 @@ const taskIcons: Record<string, React.ElementType> = {
     grammar: GrammarIcon,
     chatbot: ChatIcon,
     pronunciation: PronunciationIcon,
+    vocabulary: TranslateIcon,
 };
 
 export const Dashboard: React.FC<DashboardProps> = ({

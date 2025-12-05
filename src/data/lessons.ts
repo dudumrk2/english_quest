@@ -1616,5 +1616,75 @@ export const lessons: Lesson[] = [
             "topic": "Social Media and Safety.",
             "initialMessage": "Hi! Do you use social media? What is your favorite app? How do you stay safe online?"
         }
+    },
+    {
+        "id": 106,
+        "week": 1,
+        "day": 6,
+        "type": "vocabulary",
+        "title": "Weekly Vocabulary Review",
+        "content": {
+            "description": "Review all words from Week 1"
+        }
+    },
+    {
+        "id": 31,
+        "week": 2,
+        "day": 6,
+        "type": "vocabulary",
+        "title": "Weekly Vocabulary Review",
+        "content": {
+            "description": "Review all words from Week 2"
+        }
+    },
+    {
+        "id": 32,
+        "week": 3,
+        "day": 6,
+        "type": "vocabulary",
+        "title": "Weekly Vocabulary Review",
+        "content": {
+            "description": "Review all words from Week 3"
+        }
+    },
+    {
+        "id": 33,
+        "week": 4,
+        "day": 6,
+        "type": "vocabulary",
+        "title": "Weekly Vocabulary Review",
+        "content": {
+            "description": "Review all words from Week 4"
+        }
+    },
+    {
+        "id": 34,
+        "week": 5,
+        "day": 6,
+        "type": "vocabulary",
+        "title": "Weekly Vocabulary Review",
+        "content": {
+            "description": "Review all words from Week 5"
+        }
+    },
+    {
+        "id": 35,
+        "week": 6,
+        "day": 6,
+        "type": "vocabulary",
+        "title": "Weekly Vocabulary Review",
+        "content": {
+            "description": "Review all words from Week 6"
+        }
+    },
+    {
+        "id": 36,
+        "week": 7,
+        "day": 6,
+        "type": "vocabulary",
+        "title": "Weekly Vocabulary Review",
+        "content": {
+            "description": "Review all words from Week 7"
+        }
     }
 ];

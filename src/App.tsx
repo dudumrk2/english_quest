@@ -8,6 +8,7 @@ import { TaskReading } from './components/TaskReading';
 import { TaskGrammar } from './components/TaskGrammar';
 import { TaskChat } from './components/TaskChat';
 import { TaskPronunciation } from './components/TaskPronunciation';
+import { TaskVocabulary } from './components/TaskVocabulary';
 import { WeeklySummary } from './components/WeeklySummary';
 import { Login } from './components/Login';
 import { useAppStore } from './hooks/useAppStore';
@@ -21,7 +22,7 @@ type ViewType = 'dashboard' | 'lesson' | 'summary';
 
 function AppContent() {
     const { user, isAuthenticated } = useAuth();
-    const { state, completeLesson, getWeeklyProgress } = useAppStore(user?.email);
+    const { state, completeLesson } = useAppStore(user?.email);
     const [view, setView] = useState<ViewType>('dashboard');
     const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
 
@@ -39,8 +40,24 @@ function AppContent() {
         if (activeLesson) {
             completeLesson(activeLesson.id, 100, skipped);
 
-            if (activeLesson.day === 5) {
+            if (activeLesson.day === 6) { // Review is usually last day now? Or 5?
+                // If I add day 6, update this logic.
+                // The original logic was activeLesson.day === 5 -> summary.
+                // Now summaries might happen after day 6? Or IS the summary day 6?
+                // User said "add at the end of each week A LESSON".
+                // So now week has 6 lessons.
+                // If it is day 6 (Vocabulary), then Summary.
+                // BUT, Week 1 currently has 5 days.
+                // If I add Vocabulary as Day 6 (or whatever is last), I need to handle it.
+                // Let's assume day 6 is the end now.
                 setView('summary');
+            } else if (activeLesson.day === 5 && activeLesson.week < 100) {
+                // Wait, if I add day 6, day 5 is no longer the end.
+                // So I should only show summary after the last lesson.
+                // Let's just say "Summary" button logic is in WeeklySummary component, here we just switch views.
+                // For now, I will modify the condition: IF day 6 -> summary. IF day 5 -> dashboard? 
+                // Actually, if I add Day 6 to ALL weeks, they all end on Day 6.
+                setView('dashboard');
             } else {
                 setView('dashboard');
             }
@@ -60,6 +77,7 @@ function AppContent() {
                 case 'grammar': return <TaskGrammar {...commonProps} />;
                 case 'chatbot': return <TaskChat {...commonProps} />;
                 case 'pronunciation': return <TaskPronunciation {...commonProps} />;
+                case 'vocabulary': return <TaskVocabulary {...commonProps} />;
                 default: return <div>Unknown task type</div>;
             }
         }
