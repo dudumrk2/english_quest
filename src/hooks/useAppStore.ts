@@ -13,6 +13,8 @@ interface AppStore {
     completeLesson: (lessonId: number, score?: number, skipped?: boolean) => void;
     getCurrentLesson: () => Lesson;
     getWeeklyProgress: (weekNum: number) => WeeklyProgress;
+    saveLessonAnswers: (lessonId: number, answers: any) => void;
+    clearLessonAnswers: (lessonId: number) => void;
 }
 
 export function useAppStore(userEmail?: string): AppStore {
@@ -21,13 +23,22 @@ export function useAppStore(userEmail?: string): AppStore {
     // Load state from localStorage or use defaults
     const [state, setState] = useState<AppState>(() => {
         const saved = localStorage.getItem(storageKey);
-        return saved ? JSON.parse(saved) : {
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            // Migration for existing data
+            if (!parsed.lessonAnswers) {
+                parsed.lessonAnswers = {};
+            }
+            return parsed;
+        }
+        return {
             completedLessons: [],
             skippedLessons: [],
             currentLessonId: 1,
             points: 0,
             streak: 0,
-            lastLogin: null
+            lastLogin: null,
+            lessonAnswers: {}
         };
     });
 
@@ -40,7 +51,12 @@ export function useAppStore(userEmail?: string): AppStore {
     useEffect(() => {
         const saved = localStorage.getItem(storageKey);
         if (saved) {
-            setState(JSON.parse(saved));
+            const parsed = JSON.parse(saved);
+            // Migration for existing data
+            if (!parsed.lessonAnswers) {
+                parsed.lessonAnswers = {};
+            }
+            setState(parsed);
         } else {
             setState({
                 completedLessons: [],
@@ -48,7 +64,8 @@ export function useAppStore(userEmail?: string): AppStore {
                 currentLessonId: 1,
                 points: 0,
                 streak: 0,
-                lastLogin: null
+                lastLogin: null,
+                lessonAnswers: {}
             });
         }
     }, [storageKey]);
@@ -72,6 +89,27 @@ export function useAppStore(userEmail?: string): AppStore {
         });
     };
 
+    const saveLessonAnswers = (lessonId: number, answers: any) => {
+        setState(prev => ({
+            ...prev,
+            lessonAnswers: {
+                ...prev.lessonAnswers,
+                [lessonId]: answers
+            }
+        }));
+    };
+
+    const clearLessonAnswers = (lessonId: number) => {
+        setState(prev => {
+            const newAnswers = { ...prev.lessonAnswers };
+            delete newAnswers[lessonId];
+            return {
+                ...prev,
+                lessonAnswers: newAnswers
+            };
+        });
+    };
+
     const getCurrentLesson = (): Lesson => {
         return lessons.find(l => l.id === state.currentLessonId) || lessons[0];
     };
@@ -90,6 +128,8 @@ export function useAppStore(userEmail?: string): AppStore {
         state,
         completeLesson,
         getCurrentLesson,
-        getWeeklyProgress
+        getWeeklyProgress,
+        saveLessonAnswers,
+        clearLessonAnswers
     };
 }

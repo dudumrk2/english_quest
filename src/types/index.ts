@@ -67,6 +67,7 @@ export interface AppState {
     points: number;
     streak: number;
     lastLogin: string | null;
+    lessonAnswers: Record<number, any>;
 }
 
 // Message Types

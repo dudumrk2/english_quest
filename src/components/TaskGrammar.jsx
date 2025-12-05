@@ -17,13 +17,34 @@ import {
     Cancel as CancelIcon,
     Lightbulb as TipIcon,
     Assignment as PracticeIcon,
+    Delete as DeleteIcon,
 } from '@mui/icons-material';
 
-export function TaskGrammar({ lesson, onComplete }) {
-    const [answers, setAnswers] = useState({});
+export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAnswers, onClearAnswers }) {
+    const [answers, setAnswers] = useState(initialAnswers);
     const [showFeedback, setShowFeedback] = useState(false);
 
     const [attempts, setAttempts] = useState({});
+
+    // Update local state and parent state
+    const handleAnswerChange = (id, value) => {
+        const newAnswers = { ...answers, [id]: value };
+        setAnswers(newAnswers);
+        if (onSaveAnswers) {
+            onSaveAnswers(newAnswers);
+        }
+    };
+
+    const handleClear = () => {
+        if (window.confirm('Are you sure you want to clear all answers?')) {
+            setAnswers({});
+            setShowFeedback(false);
+            setAttempts({});
+            if (onClearAnswers) {
+                onClearAnswers();
+            }
+        }
+    };
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -112,11 +133,23 @@ export function TaskGrammar({ lesson, onComplete }) {
                 {/* Practice Exercises Card */}
                 <Card elevation={2}>
                     <CardContent sx={{ p: 4 }}>
-                        <Stack direction="row" spacing={1} alignItems="center" mb={3}>
-                            <PracticeIcon color="primary" />
-                            <Typography variant="h6" fontWeight={600}>
-                                Practice Exercises
-                            </Typography>
+                        <Stack direction="row" spacing={1} alignItems="center" mb={3} justifyContent="space-between">
+                            <Stack direction="row" spacing={1} alignItems="center">
+                                <PracticeIcon color="primary" />
+                                <Typography variant="h6" fontWeight={600}>
+                                    Practice Exercises
+                                </Typography>
+                            </Stack>
+                            {Object.keys(answers).length > 0 && (
+                                <Button
+                                    startIcon={<DeleteIcon />}
+                                    color="error"
+                                    onClick={handleClear}
+                                    sx={{ textTransform: 'none' }}
+                                >
+                                    Clear Answers
+                                </Button>
+                            )}
                         </Stack>
                         <Divider sx={{ mb: 4 }} />
 
@@ -171,8 +204,11 @@ export function TaskGrammar({ lesson, onComplete }) {
 
                                                     if (showResult) {
                                                         if (option === ex.answer) {
-                                                            color = 'success';
-                                                            variant = 'contained';
+                                                            // Reveal correct answer only if selected OR max attempts reached
+                                                            if (isSelected || (attempts[ex.id] || 0) >= 2) {
+                                                                color = 'success';
+                                                                variant = 'contained';
+                                                            }
                                                         } else if (isSelected && option !== ex.answer) {
                                                             color = 'error';
                                                             variant = 'contained';
@@ -184,7 +220,7 @@ export function TaskGrammar({ lesson, onComplete }) {
                                                             key={option}
                                                             variant={variant}
                                                             color={color}
-                                                            onClick={() => !showResult && setAnswers({ ...answers, [ex.id]: option })}
+                                                            onClick={() => !showResult && handleAnswerChange(ex.id, option)}
                                                             sx={{
                                                                 minWidth: 120,
                                                                 textTransform: 'none',
@@ -200,9 +236,15 @@ export function TaskGrammar({ lesson, onComplete }) {
 
                                             {showResult && answers[ex.id] !== ex.answer && (
                                                 <Alert severity="info" sx={{ mt: 2, ml: 5, maxWidth: 400 }} variant="outlined">
-                                                    <span>
-                                                        👀 The correct answer is: <strong>{ex.answer}</strong>
-                                                    </span>
+                                                    {(attempts[ex.id] || 0) >= 2 ? (
+                                                        <span>
+                                                            👀 The correct answer is: <strong>{ex.answer}</strong>
+                                                        </span>
+                                                    ) : (
+                                                        <span>
+                                                            ❌ Try again!
+                                                        </span>
+                                                    )}
                                                 </Alert>
                                             )}
                                         </Box>
@@ -230,7 +272,7 @@ export function TaskGrammar({ lesson, onComplete }) {
                                                             size="small"
                                                             placeholder={`${ex.answer[0]}...`}
                                                             value={answers[ex.id] || ''}
-                                                            onChange={(e) => setAnswers({ ...answers, [ex.id]: e.target.value })}
+                                                            onChange={(e) => handleAnswerChange(ex.id, e.target.value)}
                                                             error={showError}
                                                             sx={{
                                                                 width: 140,

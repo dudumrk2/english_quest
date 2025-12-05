@@ -22,7 +22,7 @@ type ViewType = 'dashboard' | 'lesson' | 'summary';
 
 function AppContent() {
     const { user, isAuthenticated } = useAuth();
-    const { state, completeLesson } = useAppStore(user?.email);
+    const { state, completeLesson, saveLessonAnswers, clearLessonAnswers } = useAppStore(user?.email);
     const [view, setView] = useState<ViewType>('dashboard');
     const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
 
@@ -70,7 +70,13 @@ function AppContent() {
         }
 
         if (view === 'lesson' && activeLesson) {
-            const commonProps = { lesson: activeLesson, onComplete: handleLessonComplete };
+            const commonProps = {
+                lesson: activeLesson,
+                onComplete: handleLessonComplete,
+                initialAnswers: state.lessonAnswers?.[activeLesson.id] || {},
+                onSaveAnswers: (answers: any) => saveLessonAnswers(activeLesson.id, answers),
+                onClearAnswers: () => clearLessonAnswers(activeLesson.id)
+            };
 
             switch (activeLesson.type) {
                 case 'reading': return <TaskReading {...commonProps} />;

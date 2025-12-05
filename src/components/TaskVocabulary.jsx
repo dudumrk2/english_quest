@@ -16,13 +16,14 @@ import {
     VolumeUp,
     CheckCircle,
     Cancel,
-    Translate as TranslateIcon
+    Translate as TranslateIcon,
+    Delete as DeleteIcon
 } from '@mui/icons-material';
 import { lessons } from '../data/lessons';
 
-export function TaskVocabulary({ lesson, onComplete }) {
+export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSaveAnswers, onClearAnswers }) {
     const [words, setWords] = useState([]);
-    const [answers, setAnswers] = useState({});
+    const [answers, setAnswers] = useState(initialAnswers);
     const [showFeedback, setShowFeedback] = useState(false);
     const [completedCount, setCompletedCount] = useState(0);
 
@@ -48,7 +49,27 @@ export function TaskVocabulary({ lesson, onComplete }) {
 
         // Shuffle words for better practice? Maybe keep them in order for now.
         setWords(weekWords);
+        setWords(weekWords);
     }, [lesson.week]);
+
+    const handleAnswerChange = (word, value) => {
+        const newAnswers = { ...answers, [word]: value };
+        setAnswers(newAnswers);
+        if (onSaveAnswers) {
+            onSaveAnswers(newAnswers);
+        }
+    };
+
+    const handleClear = () => {
+        if (window.confirm('Are you sure you want to clear all answers?')) {
+            setAnswers({});
+            setShowFeedback(false);
+            setCompletedCount(0);
+            if (onClearAnswers) {
+                onClearAnswers();
+            }
+        }
+    };
 
     const speak = (text) => {
         window.speechSynthesis.cancel();
@@ -118,6 +139,19 @@ export function TaskVocabulary({ lesson, onComplete }) {
                 </Stack>
             </Box>
 
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                {Object.keys(answers).length > 0 && (
+                    <Button
+                        startIcon={<DeleteIcon />}
+                        color="error"
+                        onClick={handleClear}
+                        sx={{ textTransform: 'none' }}
+                    >
+                        Clear Answers
+                    </Button>
+                )}
+            </Box>
+
             <Card elevation={3}>
                 <CardContent sx={{ p: 4 }}>
                     <Grid container spacing={4}>
@@ -152,7 +186,7 @@ export function TaskVocabulary({ lesson, onComplete }) {
                                             placeholder="תרגום לעברית..."
                                             dir="rtl"
                                             value={answers[item.word] || ''}
-                                            onChange={(e) => setAnswers({ ...answers, [item.word]: e.target.value })}
+                                            onChange={(e) => handleAnswerChange(item.word, e.target.value)}
                                             error={isError}
                                             InputProps={{
                                                 endAdornment: showFeedback && (

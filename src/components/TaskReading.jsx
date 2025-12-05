@@ -20,6 +20,7 @@ import {
     Translate as TranslateIcon,
     QuestionAnswer as QuestionIcon,
     Create as WriteIcon,
+    Delete as DeleteIcon,
 } from '@mui/icons-material';
 
 // Helper to render text with vocabulary tooltips
@@ -78,16 +79,44 @@ const renderTextWithTooltips = (text, vocabulary) => {
     });
 };
 
-export function TaskReading({ lesson, onComplete }) {
-    const [answers, setAnswers] = useState({});
+export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAnswers, onClearAnswers }) {
+    const [answers, setAnswers] = useState(initialAnswers.answers || {});
     const [showFeedback, setShowFeedback] = useState(false);
-    const [summary, setSummary] = useState('');
+    const [summary, setSummary] = useState(initialAnswers.summary || '');
 
     const [attempts, setAttempts] = useState({});
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [lesson.id]);
+
+    const handleAnswerChange = (id, value) => {
+        const newAnswers = { ...answers, [id]: value };
+        setAnswers(newAnswers);
+        if (onSaveAnswers) {
+            onSaveAnswers({ answers: newAnswers, summary });
+        }
+    };
+
+    const handleSummaryChange = (e) => {
+        const value = e.target.value;
+        setSummary(value);
+        if (onSaveAnswers) {
+            onSaveAnswers({ answers, summary: value });
+        }
+    };
+
+    const handleClear = () => {
+        if (window.confirm('Are you sure you want to clear all answers?')) {
+            setAnswers({});
+            setSummary('');
+            setShowFeedback(false);
+            setAttempts({});
+            if (onClearAnswers) {
+                onClearAnswers();
+            }
+        }
+    };
 
     const handleSubmit = () => {
         setShowFeedback(true);
@@ -143,6 +172,19 @@ export function TaskReading({ lesson, onComplete }) {
                 </Stack>
             </Box>
 
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                {(Object.keys(answers).length > 0 || summary.length > 0) && (
+                    <Button
+                        startIcon={<DeleteIcon />}
+                        color="error"
+                        onClick={handleClear}
+                        sx={{ textTransform: 'none' }}
+                    >
+                        Clear Answers
+                    </Button>
+                )}
+            </Box>
+
             <Stack spacing={3}>
                 {/* Reading Text */}
                 <Card elevation={2}>
@@ -196,9 +238,7 @@ export function TaskReading({ lesson, onComplete }) {
                                             fullWidth
                                             size="small"
                                             value={answers[q.id] || ''}
-                                            onChange={(e) =>
-                                                setAnswers({ ...answers, [q.id]: e.target.value })
-                                            }
+                                            onChange={(e) => handleAnswerChange(q.id, e.target.value)}
                                             placeholder="Type your answer..."
                                             error={showError}
                                             sx={{
@@ -260,7 +300,7 @@ export function TaskReading({ lesson, onComplete }) {
                             multiline
                             rows={4}
                             value={summary}
-                            onChange={(e) => setSummary(e.target.value)}
+                            onChange={handleSummaryChange}
                             placeholder="כתוב את הסיכום שלך כאן..."
                             dir="rtl"
                             sx={{

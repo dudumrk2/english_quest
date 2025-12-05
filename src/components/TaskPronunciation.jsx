@@ -26,6 +26,7 @@ import {
     Translate as TranslateIcon,
     Create as WriteIcon,
     VolumeUp as VolumeIcon,
+    Delete as DeleteIcon,
 } from '@mui/icons-material';
 
 // Helper to render text with vocabulary tooltips
@@ -84,11 +85,11 @@ const renderTextWithTooltips = (text, vocabulary) => {
     });
 };
 
-export function TaskPronunciation({ lesson, onComplete }) {
+export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onSaveAnswers, onClearAnswers }) {
     const [attempts, setAttempts] = useState(0);
     const [isRecording, setIsRecording] = useState(false);
     const [feedback, setFeedback] = useState(null);
-    const [summary, setSummary] = useState('');
+    const [summary, setSummary] = useState(initialAnswers.summary || '');
     const [readingComplete, setReadingComplete] = useState(false);
     const [audioURL, setAudioURL] = useState(null);
     const recognitionRef = useRef(null);
@@ -98,6 +99,23 @@ export function TaskPronunciation({ lesson, onComplete }) {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [lesson.id]);
+
+    const handleSummaryChange = (e) => {
+        const value = e.target.value;
+        setSummary(value);
+        if (onSaveAnswers) {
+            onSaveAnswers({ summary: value });
+        }
+    };
+
+    const handleClear = () => {
+        if (window.confirm('Are you sure you want to clear your notes?')) {
+            setSummary('');
+            if (onClearAnswers) {
+                onClearAnswers();
+            }
+        }
+    };
 
     const startRecording = async () => {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -247,6 +265,19 @@ export function TaskPronunciation({ lesson, onComplete }) {
                         </Typography>
                     </Box>
                 </Stack>
+            </Box>
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                {summary.length > 0 && (
+                    <Button
+                        startIcon={<DeleteIcon />}
+                        color="error"
+                        onClick={handleClear}
+                        sx={{ textTransform: 'none' }}
+                    >
+                        Clear Notes
+                    </Button>
+                )}
             </Box>
 
             <Stack spacing={4}>
@@ -429,7 +460,7 @@ export function TaskPronunciation({ lesson, onComplete }) {
                             multiline
                             rows={4}
                             value={summary}
-                            onChange={(e) => setSummary(e.target.value)}
+                            onChange={handleSummaryChange}
                             placeholder="כתוב את התרגום/סיכום שלך כאן..."
                             dir="rtl"
                             sx={{
