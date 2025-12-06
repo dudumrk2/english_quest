@@ -20,8 +20,8 @@ import {
     Translate as TranslateIcon,
     QuestionAnswer as QuestionIcon,
     Create as WriteIcon,
-    Delete as DeleteIcon,
 } from '@mui/icons-material';
+import { triggerCelebration } from '../utils/confetti';
 
 // Helper to render text with vocabulary tooltips
 const renderTextWithTooltips = (text, vocabulary) => {
@@ -106,17 +106,7 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
         }
     };
 
-    const handleClear = () => {
-        if (window.confirm('Are you sure you want to clear all answers?')) {
-            setAnswers({});
-            setSummary('');
-            setShowFeedback(false);
-            setAttempts({});
-            if (onClearAnswers) {
-                onClearAnswers();
-            }
-        }
-    };
+    // Clear logic moved to Dashboard
 
     const handleSubmit = () => {
         setShowFeedback(true);
@@ -142,6 +132,7 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
         );
 
         if (allCorrect && summary.trim().length > 0) {
+            triggerCelebration();
             setTimeout(() => onComplete(), 1500);
         }
     };
@@ -173,16 +164,7 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
             </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-                {(Object.keys(answers).length > 0 || summary.length > 0) && (
-                    <Button
-                        startIcon={<DeleteIcon />}
-                        color="error"
-                        onClick={handleClear}
-                        sx={{ textTransform: 'none' }}
-                    >
-                        Clear Answers
-                    </Button>
-                )}
+                {/* Clear logic moved to Dashboard */}
             </Box>
 
             <Stack spacing={3}>

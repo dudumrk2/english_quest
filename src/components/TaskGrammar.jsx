@@ -17,8 +17,8 @@ import {
     Cancel as CancelIcon,
     Lightbulb as TipIcon,
     Assignment as PracticeIcon,
-    Delete as DeleteIcon,
 } from '@mui/icons-material';
+import { triggerCelebration } from '../utils/confetti';
 
 export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAnswers, onClearAnswers }) {
     const [answers, setAnswers] = useState(initialAnswers);
@@ -35,16 +35,8 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
         }
     };
 
-    const handleClear = () => {
-        if (window.confirm('Are you sure you want to clear all answers?')) {
-            setAnswers({});
-            setShowFeedback(false);
-            setAttempts({});
-            if (onClearAnswers) {
-                onClearAnswers();
-            }
-        }
-    };
+    // Clear logic moved to Dashboard
+
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -74,6 +66,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
         );
 
         if (allCorrect) {
+            triggerCelebration();
             setTimeout(() => onComplete(), 1500);
         }
     };
@@ -140,16 +133,6 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
                                     Practice Exercises
                                 </Typography>
                             </Stack>
-                            {Object.keys(answers).length > 0 && (
-                                <Button
-                                    startIcon={<DeleteIcon />}
-                                    color="error"
-                                    onClick={handleClear}
-                                    sx={{ textTransform: 'none' }}
-                                >
-                                    Clear Answers
-                                </Button>
-                            )}
                         </Stack>
                         <Divider sx={{ mb: 4 }} />
 
@@ -220,7 +203,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
                                                             key={option}
                                                             variant={variant}
                                                             color={color}
-                                                            onClick={() => !showResult && handleAnswerChange(ex.id, option)}
+                                                            onClick={() => handleAnswerChange(ex.id, option)}
                                                             sx={{
                                                                 minWidth: 120,
                                                                 textTransform: 'none',

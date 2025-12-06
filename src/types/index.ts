@@ -94,7 +94,9 @@ export interface DashboardProps {
     currentLessonId: number;
     completedLessons: number[];
     skippedLessons?: number[];
+    lessonAnswers: Record<number, any>;
     onStartLesson: (lesson: Lesson) => void;
+    onClearLesson: (lessonId: number) => void;
 }
 
 export interface TaskProps {

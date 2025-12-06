@@ -26,8 +26,8 @@ import {
     Translate as TranslateIcon,
     Create as WriteIcon,
     VolumeUp as VolumeIcon,
-    Delete as DeleteIcon,
 } from '@mui/icons-material';
+import { triggerCelebration } from '../utils/confetti';
 
 // Helper to render text with vocabulary tooltips
 const renderTextWithTooltips = (text, vocabulary) => {
@@ -108,14 +108,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
         }
     };
 
-    const handleClear = () => {
-        if (window.confirm('Are you sure you want to clear your notes?')) {
-            setSummary('');
-            if (onClearAnswers) {
-                onClearAnswers();
-            }
-        }
-    };
+    // Clear logic moved to Dashboard
 
     const startRecording = async () => {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -232,6 +225,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
 
         if (newAttempts >= 3 || accuracy > 80) {
             setReadingComplete(true);
+            if (accuracy > 80) triggerCelebration();
         }
     };
 
@@ -268,16 +262,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
             </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-                {summary.length > 0 && (
-                    <Button
-                        startIcon={<DeleteIcon />}
-                        color="error"
-                        onClick={handleClear}
-                        sx={{ textTransform: 'none' }}
-                    >
-                        Clear Notes
-                    </Button>
-                )}
+                {/* Clear logic moved to Dashboard */}
             </Box>
 
             <Stack spacing={4}>

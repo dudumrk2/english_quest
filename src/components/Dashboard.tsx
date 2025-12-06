@@ -25,7 +25,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
     currentLessonId,
     completedLessons,
     skippedLessons,
+    lessonAnswers,
     onStartLesson,
+    onClearLesson,
 }) => {
     const weeks = Array.from(new Set(lessons.map((lesson) => lesson.week))).sort(
         (a, b) => a - b
@@ -67,8 +69,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                                         // const isLocked = false; // Unlocked for demo
                                         const TaskIcon = taskIcons[lesson.type] || ReadingIcon;
 
+                                        const hasData = lessonAnswers[lesson.id] && Object.keys(lessonAnswers[lesson.id]).length > 0;
+
                                         return (
-                                            <Grid item xs={12} sm={6} md={4} lg={2.4} key={lesson.id}>
+                                            <Grid xs={12} sm={6} md={4} lg={2.4} key={lesson.id}>
                                                 <LessonCard
                                                     day={lesson.day}
                                                     title={lesson.title}
@@ -91,6 +95,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
                                                     isSkipped={isSkipped}
                                                     isCurrent={isCurrent}
                                                     isLocked={false} // Unlocked for demo
+                                                    hasData={!!hasData}
+                                                    onClear={(e) => {
+                                                        e.stopPropagation();
+                                                        onClearLesson(lesson.id);
+                                                    }}
                                                     onClick={() => onStartLesson(lesson)}
                                                 />
                                             </Grid>

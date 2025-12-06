@@ -16,9 +16,9 @@ import {
     VolumeUp,
     CheckCircle,
     Cancel,
-    Translate as TranslateIcon,
-    Delete as DeleteIcon
+    Translate as TranslateIcon
 } from '@mui/icons-material';
+import { triggerCelebration } from '../utils/confetti';
 import { lessons } from '../data/lessons';
 
 export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSaveAnswers, onClearAnswers }) {
@@ -60,16 +60,7 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
         }
     };
 
-    const handleClear = () => {
-        if (window.confirm('Are you sure you want to clear all answers?')) {
-            setAnswers({});
-            setShowFeedback(false);
-            setCompletedCount(0);
-            if (onClearAnswers) {
-                onClearAnswers();
-            }
-        }
-    };
+    // Clear logic moved to Dashboard
 
     const speak = (text) => {
         window.speechSynthesis.cancel();
@@ -92,6 +83,7 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
         setCompletedCount(correct);
 
         if (correct === words.length) {
+            triggerCelebration();
             setTimeout(() => onComplete(), 2000);
         }
     };
@@ -140,16 +132,7 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
             </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-                {Object.keys(answers).length > 0 && (
-                    <Button
-                        startIcon={<DeleteIcon />}
-                        color="error"
-                        onClick={handleClear}
-                        sx={{ textTransform: 'none' }}
-                    >
-                        Clear Answers
-                    </Button>
-                )}
+                {/* Clear logic moved to Dashboard */}
             </Box>
 
             <Card elevation={3}>

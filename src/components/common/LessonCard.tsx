@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, CardContent, CardActionArea, Typography, Box, Chip, Stack } from '@mui/material';
-import { CheckCircle, Lock, PlayArrow } from '@mui/icons-material';
+import { Card, CardContent, CardActionArea, Typography, Box, Chip, Stack, IconButton } from '@mui/material';
+import { CheckCircle, Lock, PlayArrow, DeleteOutline } from '@mui/icons-material';
 
 export interface LessonCardProps {
     day: number;
@@ -11,6 +11,8 @@ export interface LessonCardProps {
     isSkipped: boolean;
     isCurrent: boolean;
     isLocked: boolean;
+    hasData: boolean;
+    onClear: (e: React.MouseEvent) => void;
     onClick: () => void;
 }
 
@@ -23,6 +25,8 @@ export const LessonCard: React.FC<LessonCardProps> = ({
     isSkipped,
     isCurrent,
     isLocked,
+    hasData,
+    onClear,
     onClick,
 }) => {
     return (
@@ -59,6 +63,19 @@ export const LessonCard: React.FC<LessonCardProps> = ({
                         {/* Day Badge */}
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
                             <Chip label={`Day ${day}`} size="small" sx={{ fontWeight: 600 }} />
+                            {hasData && (
+                                <IconButton
+                                    size="small"
+                                    onClick={onClear}
+                                    sx={{
+                                        color: 'error.main',
+                                        '&:hover': { bgcolor: 'rgba(211, 47, 47, 0.08)' }
+                                    }}
+                                    title="Clear progress"
+                                >
+                                    <DeleteOutline fontSize="small" />
+                                </IconButton>
+                            )}
                             {isCompleted && <CheckCircle color="success" fontSize="small" />}
                             {isSkipped && <Typography variant="caption" sx={{ color: 'warning.main', fontWeight: 'bold' }}>SKIP</Typography>}
                             {isLocked && <Lock fontSize="small" />}

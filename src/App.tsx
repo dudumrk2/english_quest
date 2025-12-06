@@ -93,7 +93,9 @@ function AppContent() {
                 currentLessonId={state.currentLessonId}
                 completedLessons={state.completedLessons}
                 skippedLessons={state.skippedLessons}
+                lessonAnswers={state.lessonAnswers}
                 onStartLesson={handleStartLesson}
+                onClearLesson={clearLessonAnswers}
             />
         );
     };
