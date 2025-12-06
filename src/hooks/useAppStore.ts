@@ -15,6 +15,7 @@ interface AppStore {
     getWeeklyProgress: (weekNum: number) => WeeklyProgress;
     saveLessonAnswers: (lessonId: number, answers: any) => void;
     clearLessonAnswers: (lessonId: number) => void;
+    resetAllProgress: () => void;
 }
 
 export function useAppStore(userEmail?: string): AppStore {
@@ -110,6 +111,20 @@ export function useAppStore(userEmail?: string): AppStore {
         });
     };
 
+    const resetAllProgress = () => {
+        const initialState: AppState = {
+            completedLessons: [],
+            skippedLessons: [],
+            currentLessonId: 1,
+            points: 0,
+            streak: 0,
+            lastLogin: null,
+            lessonAnswers: {}
+        };
+        setState(initialState);
+        localStorage.setItem(storageKey, JSON.stringify(initialState));
+    };
+
     const getCurrentLesson = (): Lesson => {
         return lessons.find(l => l.id === state.currentLessonId) || lessons[0];
     };
@@ -130,6 +145,7 @@ export function useAppStore(userEmail?: string): AppStore {
         getCurrentLesson,
         getWeeklyProgress,
         saveLessonAnswers,
-        clearLessonAnswers
+        clearLessonAnswers,
+        resetAllProgress
     };
 }

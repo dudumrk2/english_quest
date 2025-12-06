@@ -40,27 +40,22 @@ function AppContent() {
         if (activeLesson) {
             completeLesson(activeLesson.id, 100, skipped);
 
-            if (activeLesson.day === 6) { // Review is usually last day now? Or 5?
-                // If I add day 6, update this logic.
-                // The original logic was activeLesson.day === 5 -> summary.
-                // Now summaries might happen after day 6? Or IS the summary day 6?
-                // User said "add at the end of each week A LESSON".
-                // So now week has 6 lessons.
-                // If it is day 6 (Vocabulary), then Summary.
-                // BUT, Week 1 currently has 5 days.
-                // If I add Vocabulary as Day 6 (or whatever is last), I need to handle it.
-                // Let's assume day 6 is the end now.
+            // If the lesson is a weekly vocabulary review or it's day 6, show summary
+            if (activeLesson.type === 'vocabulary' || activeLesson.day === 6) {
                 setView('summary');
-            } else if (activeLesson.day === 5 && activeLesson.week < 100) {
-                // Wait, if I add day 6, day 5 is no longer the end.
-                // So I should only show summary after the last lesson.
-                // Let's just say "Summary" button logic is in WeeklySummary component, here we just switch views.
-                // For now, I will modify the condition: IF day 6 -> summary. IF day 5 -> dashboard? 
-                // Actually, if I add Day 6 to ALL weeks, they all end on Day 6.
-                setView('dashboard');
             } else {
                 setView('dashboard');
             }
+        }
+    };
+
+    const { logout } = useAuth();
+    const { resetAllProgress } = useAppStore(user?.email);
+
+    const handleLogout = () => {
+        if (window.confirm("Are you sure you want to logout? This will clear all your progress and saved data.")) {
+            resetAllProgress(); // From global store
+            logout();
         }
     };
 
@@ -101,7 +96,7 @@ function AppContent() {
     };
 
     return (
-        <Layout points={state.points} streak={state.streak}>
+        <Layout points={state.points} streak={state.streak} onLogout={handleLogout}>
             {renderContent()}
         </Layout>
     );

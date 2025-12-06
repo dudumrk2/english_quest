@@ -8,17 +8,17 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "Welcome to the Club",
         "content": {
-            "text": "Nadav wants to join a new club at school. There is a list of many activities. He can choose the band, the science club, or the theater group. It is a hard choice. He asks the guide for help. The guide says, 'We welcome new members!' Nadav decides to join the team. He is interested in English and history, but math is his main subject. He likes writing stories and can imagine a variety of fun things. He hopes to amaze his friends in the world. He needs to fill in a form first. It is a usual day.",
+            "text": "Nadav sees a list of every school club and activity. He wants to join a team. He has a hard choice. Should he pick the band, theater, or science? He is interested in math and history, but English writing is his main interest. He can imagine creating a new world. The guide says, 'Welcome! We have a variety of groups.' It is not a usual day. Nadav wants to amaze everyone. He decides to fill in the form for the writing club.",
             "questions": [
                 {
                     "id": "q1",
                     "text": "What does Nadav want to join?",
-                    "answer": "the team"
+                    "answer": "a team"
                 },
                 {
                     "id": "q2",
-                    "text": "What is his main subject?",
-                    "answer": "math"
+                    "text": "What is his main interest?",
+                    "answer": "writing"
                 }
             ],
             "vocabulary": [
@@ -88,9 +88,9 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "A Journey to the Mountains",
         "content": {
-            "text": "Nadav goes on a journey to the mountains. He drives across the nation. He crosses a bridge over a river. The view is amazing. He sees a small village. He is careful because the road is dangerous and has oil. It is possible to see foreign tourists. It is an unusual travel experience. He stops to eat a meal. He has a bowl of soup with salt and pepper. It is warm and tasty. He takes a photo of the wide valley. He loves nature and geography.",
+            "text": "Nadav goes on a journey to a foreign nation. He loves geography and wants to travel. He drives across a wide bridge over a river. He sees a big mountain. It is amazing. He stops in a small village. He is careful because the road is dangerous and might have oil. It is possible to see unusual animals. Later, he eats a warm meal. He has a bowl of soup with salt and pepper.",
             "questions": [
-                { "id": "q1", "text": "Where does Nadav go?", "answer": "to the mountains" },
+                { "id": "q1", "text": "Where does Nadav go?", "answer": "to a foreign nation" },
                 { "id": "q2", "text": "What is on the road?", "answer": "oil" }
             ],
             "vocabulary": [
@@ -233,77 +233,92 @@ export const lessons: Lesson[] = [
                 {
                     "id": "e1",
                     "question": "Nadav _____ (love) playing video games.",
-                    "answer": "loves"
+                    "answer": "loves",
+                    "options": ["love", "loves", "loving"]
                 },
                 {
                     "id": "e2",
                     "question": "They _____ (eat) lunch at 1:00 PM.",
-                    "answer": "eat"
+                    "answer": "eat",
+                    "options": ["eat", "eats", "eating"]
                 },
                 {
                     "id": "e3",
                     "question": "The teacher _____ (teach) math.",
-                    "answer": "teaches"
+                    "answer": "teaches",
+                    "options": ["teach", "teaches", "teaching"]
                 },
                 {
                     "id": "e4",
                     "question": "We _____ (go) to the park every Friday.",
-                    "answer": "go"
+                    "answer": "go",
+                    "options": ["go", "goes", "going"]
                 },
                 {
                     "id": "e5",
                     "question": "He _____ (watch) TV in the evening.",
-                    "answer": "watches"
+                    "answer": "watches",
+                    "options": ["watch", "watches", "watching"]
                 },
                 {
                     "id": "e6",
                     "question": "My sister _____ (play) the piano.",
-                    "answer": "plays"
+                    "answer": "plays",
+                    "options": ["play", "plays", "playing"]
                 },
                 {
                     "id": "e7",
                     "question": "I _____ (read) a book before bed.",
-                    "answer": "read"
+                    "answer": "read",
+                    "options": ["read", "reads", "reading"]
                 },
                 {
                     "id": "e8",
                     "question": "The sun _____ (rise) in the east.",
-                    "answer": "rises"
+                    "answer": "rises",
+                    "options": ["rise", "rises", "rising"]
                 },
                 {
                     "id": "e9",
                     "question": "You _____ (study) hard.",
-                    "answer": "study"
+                    "answer": "study",
+                    "options": ["study", "studies", "studying"]
                 },
                 {
                     "id": "e10",
                     "question": "She _____ (drink) water.",
-                    "answer": "drinks"
+                    "answer": "drinks",
+                    "options": ["drink", "drinks", "drinking"]
                 },
                 {
                     "id": "e11",
                     "question": "It _____ (rain) a lot in winter.",
-                    "answer": "rains"
+                    "answer": "rains",
+                    "options": ["rain", "rains", "raining"]
                 },
                 {
                     "id": "e12",
                     "question": "We _____ (live) in a big city.",
-                    "answer": "live"
+                    "answer": "live",
+                    "options": ["live", "lives", "living"]
                 },
                 {
                     "id": "e13",
                     "question": "The bus _____ (stop) here.",
-                    "answer": "stops"
+                    "answer": "stops",
+                    "options": ["stop", "stops", "stopping"]
                 },
                 {
                     "id": "e14",
                     "question": "Cats _____ (sleep) a lot.",
-                    "answer": "sleep"
+                    "answer": "sleep",
+                    "options": ["sleep", "sleeps", "sleeping"]
                 },
                 {
                     "id": "e15",
                     "question": "He _____ (brush) his teeth.",
-                    "answer": "brushes"
+                    "answer": "brushes",
+                    "options": ["brush", "brushes", "brushing"]
                 }
             ]
         }

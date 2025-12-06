@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { lessons } from '../data/lessons';
 import { DashboardProps, Lesson } from '../types';
 import { Box, Typography, Grid, Stack } from '@mui/material';
@@ -29,6 +29,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
     onStartLesson,
     onClearLesson,
 }) => {
+    // Scroll to current lesson on mount
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            const element = document.getElementById(`lesson-${currentLessonId}`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 100);
+        return () => clearTimeout(timer);
+    }, [currentLessonId]);
+
     const weeks = Array.from(new Set(lessons.map((lesson) => lesson.week))).sort(
         (a, b) => a - b
     );
@@ -66,13 +77,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
                                         const isCompleted = completedLessons.includes(lesson.id);
                                         const isSkipped = skippedLessons?.includes(lesson.id) ?? false;
                                         const isCurrent = lesson.id === currentLessonId;
-                                        // const isLocked = false; // Unlocked for demo
                                         const TaskIcon = taskIcons[lesson.type] || ReadingIcon;
 
                                         const hasData = lessonAnswers[lesson.id] && Object.keys(lessonAnswers[lesson.id]).length > 0;
 
                                         return (
-                                            <Grid xs={12} sm={6} md={4} lg={2.4} key={lesson.id}>
+                                            // @ts-ignore
+                                            <Grid xs={12} sm={6} md={4} lg={2.4} key={lesson.id} id={`lesson-${lesson.id}`}>
                                                 <LessonCard
                                                     day={lesson.day}
                                                     title={lesson.title}

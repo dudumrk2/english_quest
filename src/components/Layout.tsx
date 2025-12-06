@@ -18,8 +18,8 @@ import {
 } from '@mui/icons-material';
 import { StatChip } from './common/StatChip';
 
-export const Layout: React.FC<LayoutProps> = ({ children, points, streak }) => {
-    const { user, logout } = useAuth();
+export const Layout: React.FC<LayoutProps> = ({ children, points, streak, onLogout }) => {
+    const { user } = useAuth();
 
     return (
         <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 4 }}>
@@ -78,7 +78,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, points, streak }) => {
                             }}
                         />
                         <IconButton
-                            onClick={logout}
+                            onClick={onLogout}
                             size="small"
                             sx={{
                                 color: 'text.secondary',

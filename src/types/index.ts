@@ -88,6 +88,7 @@ export interface LayoutProps {
     children: React.ReactNode;
     points: number;
     streak: number;
+    onLogout: () => void;
 }
 
 export interface DashboardProps {

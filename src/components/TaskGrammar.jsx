@@ -20,7 +20,8 @@ import {
 } from '@mui/icons-material';
 import { triggerCelebration } from '../utils/confetti';
 
-export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAnswers, onClearAnswers }) {
+
+export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }) {
     const [answers, setAnswers] = useState(initialAnswers);
     const [showFeedback, setShowFeedback] = useState(false);
 
@@ -34,8 +35,6 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
             onSaveAnswers(newAnswers);
         }
     };
-
-    // Clear logic moved to Dashboard
 
 
     useEffect(() => {
