@@ -21,7 +21,7 @@ import {
 import { triggerCelebration } from '../utils/confetti';
 import { lessons } from '../data/lessons';
 
-export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSaveAnswers, onClearAnswers }) {
+export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }) {
     const [words, setWords] = useState([]);
     const [answers, setAnswers] = useState(initialAnswers);
     const [showFeedback, setShowFeedback] = useState(false);

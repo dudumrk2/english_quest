@@ -79,7 +79,7 @@ const renderTextWithTooltips = (text, vocabulary) => {
     });
 };
 
-export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAnswers, onClearAnswers }) {
+export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }) {
     const [answers, setAnswers] = useState(initialAnswers.answers || {});
     const [showFeedback, setShowFeedback] = useState(false);
     const [summary, setSummary] = useState(initialAnswers.summary || '');

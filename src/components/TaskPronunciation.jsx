@@ -85,7 +85,7 @@ const renderTextWithTooltips = (text, vocabulary) => {
     });
 };
 
-export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onSaveAnswers, onClearAnswers }) {
+export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }) {
     const [attempts, setAttempts] = useState(0);
     const [isRecording, setIsRecording] = useState(false);
     const [feedback, setFeedback] = useState(null);
