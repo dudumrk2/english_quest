@@ -8,7 +8,7 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "Welcome to the Club",
         "content": {
-            "text": "Nadav sees a list of every school club and activity. He wants to join a team. He has a hard choice. Should he pick the band, theater, or science? He is interested in math and history, but English writing is his main interest. He can imagine creating a new world. The guide says, 'Welcome! We have a variety of groups.' It is not a usual day. Nadav wants to amaze everyone. He decides to fill in the form for the writing club.",
+            "text": "Nadav walks into the busy hallway after his first class. He sees a long list of every school club and activity on the main wall. He really wants to join a team and make new friends this year. However, he has a hard choice to make. He looks at the options closely. Should he pick the loud band, the drama theater, or the cool science group? He is interested in math and history, but creative English writing is his main interest. He can imagine creating a new world in his stories.\n\nThe club guide, Mrs. Miller, smiles at him and says, 'Welcome! We have a variety of groups for everyone.' It is not a usual day for Nadav; he feels excited. He wants to amaze everyone with his writing skills. Finally, he decides to fill in the form for the writing club.",
             "questions": [
                 {
                     "id": "q1",
@@ -19,6 +19,21 @@ export const lessons: Lesson[] = [
                     "id": "q2",
                     "text": "What is his main interest?",
                     "answer": "writing"
+                },
+                {
+                    "id": "q3",
+                    "text": "Where is the list of clubs?",
+                    "answer": "on the main wall"
+                },
+                {
+                    "id": "q4",
+                    "text": "Who is the club guide?",
+                    "answer": "Mrs. Miller"
+                },
+                {
+                    "id": "q5",
+                    "text": "What does Nadav fill in?",
+                    "answer": "the form"
                 }
             ],
             "vocabulary": [
@@ -45,7 +60,12 @@ export const lessons: Lesson[] = [
                 { "word": "usual", "translation": "רגיל" },
                 { "word": "amaze", "translation": "להדהים" },
                 { "word": "fill in", "translation": "למלא" },
-                { "word": "form", "translation": "טופס" }
+                { "word": "form", "translation": "טופס" },
+                { "word": "hallway", "translation": "מסדרון" },
+                { "word": "busy", "translation": "עמוס" },
+                { "word": "smile", "translation": "לחייך" },
+                { "word": "excited", "translation": "נרגש" },
+                { "word": "skills", "translation": "כישורים" }
             ]
         }
     },
@@ -88,10 +108,16 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "A Journey to the Mountains",
         "content": {
-            "text": "Nadav goes on a journey to a foreign nation. He loves geography and wants to travel. He drives across a wide bridge over a river. He sees a big mountain. It is amazing. He stops in a small village. He is careful because the road is dangerous and might have oil. It is possible to see unusual animals. Later, he eats a warm meal. He has a bowl of soup with salt and pepper.",
+            "text": "Nadav packs his bags and goes on a long journey to a foreign nation. He loves geography and wants to travel to see the world. During his trip, he drives across a wide bridge that goes over a rushing river. Suddenly, he sees a big, snowy mountain in the distance. It is amazing.\n\nAfter driving for hours, he stops in a small village to rest. He knows he must be careful because the road is dangerous and might have slippery oil on it. The locals say it is possible to see unusual animals in the forest nearby. Later that evening, he sits down and eats a warm meal. He enjoys a hot bowl of vegetable soup and adds a little salt and pepper. He feels happy to be on an adventure.",
             "questions": [
                 { "id": "q1", "text": "Where does Nadav go?", "answer": "to a foreign nation" },
-                { "id": "q2", "text": "What is on the road?", "answer": "oil" }
+                { "id": "q2", "text": "What is on the road?", "answer": "oil" },
+                {
+                    "id": "q3", "text": "What does he drive across?",
+                    "answer": "a wide bridge"
+                },
+                { "id": "q4", "text": "What does he eat?", "answer": "a warm meal" },
+                { "id": "q5", "text": "What does he add to the soup?", "answer": "salt and pepper" }
             ],
             "vocabulary": [
                 { "word": "journey", "translation": "מסע" },
@@ -116,7 +142,14 @@ export const lessons: Lesson[] = [
                 { "word": "pepper", "translation": "פלפל" },
                 { "word": "warm", "translation": "חמים" },
                 { "word": "wide", "translation": "רחב" },
-                { "word": "geography", "translation": "גיאוגרפיה" }
+                { "word": "geography", "translation": "גיאוגרפיה" },
+                { "word": "pack", "translation": "לארוז" },
+                { "word": "snowy", "translation": "מושלג" },
+                { "word": "distance", "translation": "מרחק" },
+                { "word": "slippery", "translation": "חלקלק" },
+                { "word": "locals", "translation": "מקומיים" },
+                { "word": "vegetable", "translation": "ירק" },
+                { "word": "adventure", "translation": "הרפתקה" }
             ]
         }
     },
@@ -172,7 +205,7 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "Nadav's New Club",
         "content": {
-            "text": "Nadav loves his new school because there is a variety of things to do. After math class, he goes to the office to see the list of clubs. He is interested in the science club, but he also likes the gaming team. It is a difficult choice!\n\nHe decides to join the gaming team. The guide, Mr. Cohen, welcomes him. \"Nice to meet you,\" says Mr. Cohen. \"We depend on good players.\" Nadav is happy. He realizes that this will be an amazing journey.\n\nLater, Nadav goes to the cafeteria for a meal. He eats a bowl of pasta with salt and pepper. He talks to his friends about the danger of the boss in their favorite video game. They imagine a world where they are the heroes. It is a lovely day.",
+            "text": "Nadav loves his new school because there is a huge variety of things to do. After his math class finishes, he runs to the office to see the list of clubs again. He is interested in the science club, but he also really likes the gaming team. It is a difficult choice for him!\n\nFinally, he decides to join the gaming team. The club guide, Mr. Cohen, welcomes him at the door. \"Nice to meet you,\" says Mr. Cohen with a smile. \"We depend on good players like you.\" Nadav is very happy. He realizes that this will be an amazing journey and a great way to make friends.\n\nLater that afternoon, Nadav goes to the cafeteria for a meal. He eats a big bowl of pasta with salt and pepper. He sits and talks to his new friends about the danger of the final boss in their favorite video game. They imagine a world where they are the heroes saving the day. It is a lovely day.",
             "questions": [
                 {
                     "id": "q1",
@@ -183,6 +216,21 @@ export const lessons: Lesson[] = [
                     "id": "q2",
                     "text": "What club does Nadav join?",
                     "answer": "the gaming team"
+                },
+                {
+                    "id": "q3",
+                    "text": "Who is the club guide?",
+                    "answer": "Mr. Cohen"
+                },
+                {
+                    "id": "q4",
+                    "text": "What does Nadav eat?",
+                    "answer": "a bowl of pasta"
+                },
+                {
+                    "id": "q5",
+                    "text": "What do they talk about?",
+                    "answer": "the danger in a video game"
                 }
             ],
             "vocabulary": [
@@ -217,6 +265,34 @@ export const lessons: Lesson[] = [
                 {
                     "word": "danger",
                     "translation": "סכנה"
+                },
+                {
+                    "word": "huge",
+                    "translation": "עצום"
+                },
+                {
+                    "word": "cafeteria",
+                    "translation": "קפיטריה"
+                },
+                {
+                    "word": "pasta",
+                    "translation": "פסטה"
+                },
+                {
+                    "word": "boss",
+                    "translation": "בוס/מנהיג"
+                },
+                {
+                    "word": "hero",
+                    "translation": "גיבור"
+                },
+                {
+                    "word": "depend on",
+                    "translation": "תלוי ב"
+                },
+                {
+                    "word": "lovely",
+                    "translation": "מקסימה"
                 }
             ]
         }
@@ -330,17 +406,32 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "A Family Trip",
         "content": {
-            "text": "On Saturday, Nadav goes on a trip with his family. They drive across a bridge and see a high mountain. The view is unusual and beautiful. \"Look at that river!\" says his sister, Shachar.\n\nThey stop at a village to buy some food. They buy lemons and oil for a salad. The people in the village are warm and friendly. Nadav takes a photo of a wide field. He loves geography and nature.\n\nSuddenly, they see a sign: \"Danger! Falling Rocks.\" They need to be careful. Nadav's dad drives slowly. They continue their drive and reach a theater in the forest. A band is playing music. It is a typical weekend for them, full of surprises.",
+            "text": "On Saturday morning, Nadav goes on a trip with his family. They drive across a long bridge and look out the window to see a high mountain. The view is unusual and beautiful, with green trees everywhere. \"Look at that blue river!\" shouts his little sister, Shachar, pointing out the window.\n\nAfter a few hours, they stop at a small village to buy some food for lunch. They go to a market and buy fresh lemons and olive oil to make a tasty salad. The people in the village are very warm and friendly. Nadav takes a photo of a wide field near the market. He loves geography and nature.\n\nSuddenly, they see a big yellow sign on the road: \"Danger! Falling Rocks.\" They need to be careful as they drive past the cliffs. Nadav's dad drives slowly and safely. Finally, they continue their drive and reach an old open-air theater in the middle of the forest. A local band is playing happy music. It is a typical weekend for them, full of fun surprises.",
             "questions": [
                 {
                     "id": "q1",
                     "text": "What do they see after the bridge?",
-                    "answer": "a mountain"
+                    "answer": "a high mountain"
                 },
                 {
                     "id": "q2",
                     "text": "What sign do they see?",
                     "answer": "Danger! Falling Rocks"
+                },
+                {
+                    "id": "q3",
+                    "text": "Who points at the river?",
+                    "answer": "Shachar"
+                },
+                {
+                    "id": "q4",
+                    "text": "What do they buy in the village?",
+                    "answer": "lemons and oil"
+                },
+                {
+                    "id": "q5",
+                    "text": "Where is the band playing?",
+                    "answer": "in the theater"
                 }
             ],
             "vocabulary": [
@@ -375,6 +466,50 @@ export const lessons: Lesson[] = [
                 {
                     "word": "typical",
                     "translation": "טיפוסי"
+                },
+                {
+                    "word": "view",
+                    "translation": "נוף"
+                },
+                {
+                    "word": "shout",
+                    "translation": "לצעוק"
+                },
+                {
+                    "word": "point",
+                    "translation": "להצביע"
+                },
+                {
+                    "word": "market",
+                    "translation": "שוק"
+                },
+                {
+                    "word": "fresh",
+                    "translation": "טרי"
+                },
+                {
+                    "word": "tasty",
+                    "translation": "טעים"
+                },
+                {
+                    "word": "friendly",
+                    "translation": "ידידותי"
+                },
+                {
+                    "word": "sign",
+                    "translation": "שלט"
+                },
+                {
+                    "word": "cliffs",
+                    "translation": "צוקים"
+                },
+                {
+                    "word": "safely",
+                    "translation": "בבטחה"
+                },
+                {
+                    "word": "surprise",
+                    "translation": "הפתעה"
                 }
             ]
         }
@@ -429,7 +564,7 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "The Basketball YouTuber",
         "content": {
-            "text": "Nadav loves watching YouTube, especially a channel called \"HoopsLife\". The YouTuber, a former player, teaches basketball skills. Yesterday, he uploaded a video about the history of basketball, explaining how James Naismith invented it in 1891 with two peach baskets.\n\nThe YouTuber showed how to do a perfect jump shot and explained why teamwork is the main key to winning any game. He said, \"You must follow the rules, but also be creative.\"\n\nNadav practiced the moves in his yard. He imagines being on a famous team one day. He knows it's a long journey, but he is ready to work hard. He wants to amaze his friends with his new skills.",
+            "text": "Nadav loves watching YouTube after school, especially a channel called \"HoopsLife\". The YouTuber is a former professional player who teaches basketball skills to kids. Yesterday, he uploaded a fascinating video about the history of basketball. He explained how a man named James Naismith invented the game in 1891 using only two old peach baskets and a soccer ball.\n\nThe YouTuber showed the viewers how to do a perfect jump shot. He explained that while being fast is good, teamwork is the main key to winning any game. He looked at the camera and said, \"You must follow the rules, but also be creative on the court.\"\n\nNadav ran outside and practiced the moves in his yard for hours. He imagines being on a famous team one day, playing in a big stadium. He knows it is a long journey, but he is ready to work hard. He wants to amaze his friends at school with his new skills.",
             "questions": [
                 {
                     "id": "q1",
@@ -440,6 +575,21 @@ export const lessons: Lesson[] = [
                     "id": "q2",
                     "text": "What is the main key to winning?",
                     "answer": "teamwork"
+                },
+                {
+                    "id": "q3",
+                    "text": "Who invented basketball?",
+                    "answer": "James Naismith"
+                },
+                {
+                    "id": "q4",
+                    "text": "What did Naismith use for hoops?",
+                    "answer": "peach baskets"
+                },
+                {
+                    "id": "q5",
+                    "text": "Who does Nadav want to amaze?",
+                    "answer": "his friends"
                 }
             ],
             "vocabulary": [
@@ -474,6 +624,38 @@ export const lessons: Lesson[] = [
                 {
                     "word": "amaze",
                     "translation": "להדהים"
+                },
+                {
+                    "word": "professional",
+                    "translation": "מקצועי"
+                },
+                {
+                    "word": "fascinating",
+                    "translation": "מרתק"
+                },
+                {
+                    "word": "explain",
+                    "translation": "להסביר"
+                },
+                {
+                    "word": "jump shot",
+                    "translation": "זריקת קפיצה"
+                },
+                {
+                    "word": "court",
+                    "translation": "מגרש"
+                },
+                {
+                    "word": "rules",
+                    "translation": "חוקים"
+                },
+                {
+                    "word": "yard",
+                    "translation": "חצר"
+                },
+                {
+                    "word": "stadium",
+                    "translation": "אצטדיון"
                 }
             ]
         }
@@ -572,7 +754,7 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "Spider-Man's Story",
         "content": {
-            "text": "Spider-Man is a very popular superhero. Peter Parker was a normal student who loved science. One day, a spider bit him. He got amazing powers. He could climb walls and shoot webs.\n\nPeter decided to use his powers to help people. He made a cool suit and called himself Spider-Man. He fights bad guys and saves the city. But he also has normal problems. He has homework and exams.\n\nPeter's job is not easy. He has to form a plan. Usually, he follows the bad guys and confronts them directly. He receives a lot of praise. He must also feed his cat, write his history essay, and not fall in love too fast! He would prefer to just be a normal student. He even has to fill out a form for his physics homework. It's a lot of work.",
+            "text": "Spider-Man is a very popular superhero known all over the world. But before that, Peter Parker was just a normal student who loved science and reading books. One day, a special spider bit him in a lab. He got amazing powers. He could suddenly climb walls and shoot webs from his hands.\n\nPeter decided to use his new powers to help people. He made a cool red and blue suit and called himself Spider-Man. He fights bad guys and saves the city from danger. But even superheroes have normal problems. He still has math homework and difficult exams.\n\nPeter's job is not easy. He has to form a plan to stop villains. Usually, he follows the bad guys quietly and confronts them directly. Sometimes he receives a lot of praise, but other times people are angry. He must also remember to feed his cat, write his history essay, and not fall in love too fast! He would prefer to just be a normal student sometimes. He even has to fill out a form for his physics homework tonight. It is a lot of work for one boy.",
             "questions": [
                 {
                     "id": "q1",
@@ -583,6 +765,21 @@ export const lessons: Lesson[] = [
                     "id": "q2",
                     "text": "What does Peter have to fill out for physics?",
                     "answer": "a form"
+                },
+                {
+                    "id": "q3",
+                    "text": "What bit Peter?",
+                    "answer": "a spider"
+                },
+                {
+                    "id": "q4",
+                    "text": "What color is his suit?",
+                    "answer": "red and blue"
+                },
+                {
+                    "id": "q5",
+                    "text": "Who does he fight?",
+                    "answer": "bad guys"
                 }
             ],
             "vocabulary": [
@@ -617,6 +814,38 @@ export const lessons: Lesson[] = [
                 {
                     "word": "prefer",
                     "translation": "להעדיף"
+                },
+                {
+                    "word": "superhero",
+                    "translation": "גיבור על"
+                },
+                {
+                    "word": "spider",
+                    "translation": "עכביש"
+                },
+                {
+                    "word": "webs",
+                    "translation": "קורים"
+                },
+                {
+                    "word": "villains",
+                    "translation": "נבלים"
+                },
+                {
+                    "word": "confront",
+                    "translation": "להתעמת"
+                },
+                {
+                    "word": "directly",
+                    "translation": "ישירות"
+                },
+                {
+                    "word": "physics",
+                    "translation": "פיזיקה"
+                },
+                {
+                    "word": "essay",
+                    "translation": "חיבור"
                 }
             ]
         }
@@ -671,7 +900,7 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "Understanding AI",
         "content": {
-            "text": "Artificial Intelligence, or AI, is changing our world. Nadav uses AI to help him study. He asks the computer questions, and it answers fast. AI is like a smart robot brain inside the computer.\n\nSome people think AI will do everything in the future. It might drive our cars or cook our food. Nadav thinks this is exciting. He wants to learn how to code so he can build his own AI program.\n\nBut we must be careful. AI needs humans to teach it. It learns from us. If we are good, the AI will be good. It is an important partnership between humans and machines. We need to guide it correctly.",
+            "text": "Artificial Intelligence, or AI, is changing our world very fast. Nadav uses AI tools to help him study for his tests. He asks the computer questions, and it answers fast with good information. AI is like a very smart robot brain inside the computer that never gets tired.\n\nSome people think AI will do everything for us in the future. It might drive our cars, clean our houses, or even cook our food. Nadav thinks this is exciting. He wants to learn how to code so he can build his own AI program to help students learn math.\n\nBut we must be careful with this new power. AI needs humans to teach it right from wrong. It learns from us, so we are its teachers. If we are good, the AI will be good. It is an important partnership between humans and machines. We need to guide it correctly so it helps everyone.",
             "questions": [
                 {
                     "id": "q1",
@@ -682,6 +911,21 @@ export const lessons: Lesson[] = [
                     "id": "q2",
                     "text": "Who needs to teach AI?",
                     "answer": "humans"
+                },
+                {
+                    "id": "q3",
+                    "text": "What is AI like inside the computer?",
+                    "answer": "a smart robot brain"
+                },
+                {
+                    "id": "q4",
+                    "text": "What does Nadav want to build?",
+                    "answer": "his own AI program"
+                },
+                {
+                    "id": "q5",
+                    "text": "What kind of relationship is it?",
+                    "answer": "a partnership"
                 }
             ],
             "vocabulary": [
@@ -716,6 +960,26 @@ export const lessons: Lesson[] = [
                 {
                     "word": "humans",
                     "translation": "בני אדם"
+                },
+                {
+                    "word": "tired",
+                    "translation": "עייף"
+                },
+                {
+                    "word": "exciting",
+                    "translation": "מרתק/מלהיב"
+                },
+                {
+                    "word": "code",
+                    "translation": "קוד / לקודד"
+                },
+                {
+                    "word": "power",
+                    "translation": "כוח"
+                },
+                {
+                    "word": "machines",
+                    "translation": "מכונות"
                 }
             ]
         }
@@ -814,7 +1078,7 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "Electric Cars",
         "content": {
-            "text": "Electric cars are becoming very popular. They do not use gas like old cars. They use big batteries. This is better for the planet because it is cleaner and quieter.\n\nTesla is a famous company that makes electric cars. Some of them can even drive themselves! Nadav's dad wants to buy an electric car. He says it is quiet and smooth. You plug it into the wall to charge it, like a phone.\n\nIn the future, maybe all cars will be electric. This will help stop pollution. Nadav hopes to drive a cool electric sports car when he gets his license. It is certain that technology will improve.",
+            "text": "Electric cars are becoming very popular all over the world. They do not use gas like old cars. Instead, they use big, powerful batteries. This is much better for the planet because it is cleaner and quieter for everyone.\n\nTesla is a famous company that makes many electric cars. Some of them can even drive themselves! Nadav's dad wants to buy a new electric car soon. He says it is quiet and feels very smooth on the road. You do not go to a gas station. You simply plug it into the wall to charge it, just like a mobile phone.\n\nIn the future, maybe all cars will be electric. This change will help stop pollution in our cities. Nadav hopes to drive a cool electric sports car when he finally gets his license. It is certain that technology will improve and cars will become even better.",
             "questions": [
                 {
                     "id": "q1",
@@ -825,6 +1089,21 @@ export const lessons: Lesson[] = [
                     "id": "q2",
                     "text": "What does Nadav want to drive in the future?",
                     "answer": "electric sports car"
+                },
+                {
+                    "id": "q3",
+                    "text": "What is good for the planet?",
+                    "answer": "electric cars"
+                },
+                {
+                    "id": "q4",
+                    "text": "How do you charge the car?",
+                    "answer": "plug it into the wall"
+                },
+                {
+                    "id": "q5",
+                    "text": "What will electric cars help stop?",
+                    "answer": "pollution"
                 }
             ],
             "vocabulary": [
@@ -859,6 +1138,38 @@ export const lessons: Lesson[] = [
                 {
                     "word": "improve",
                     "translation": "להשתפר"
+                },
+                {
+                    "word": "gas",
+                    "translation": "דלק"
+                },
+                {
+                    "word": "powerful",
+                    "translation": "עוצמתי"
+                },
+                {
+                    "word": "quieter",
+                    "translation": "שקט יותר"
+                },
+                {
+                    "word": "company",
+                    "translation": "חברה"
+                },
+                {
+                    "word": "smooth",
+                    "translation": "חלק"
+                },
+                {
+                    "word": "simply",
+                    "translation": "פשוט"
+                },
+                {
+                    "word": "plug",
+                    "translation": "לחבר לחשמל"
+                },
+                {
+                    "word": "certain",
+                    "translation": "בטוח"
                 }
             ]
         }
@@ -913,7 +1224,7 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "Amazing Drones",
         "content": {
-            "text": "Drones are small flying machines. You control them with a remote or a phone. Some drones have cameras. They can take photos from high in the sky. Nadav thinks drones are awesome.\n\nThere are even drone races! Pilots wear special goggles to see what the drone sees. It feels like they are flying inside the drone. The drones fly very fast through hoops and tunnels.\n\nFarmers also use drones to check their fields. Police use them to find lost people. Drones are not just toys; they are very useful tools for many jobs. It is possible to see the whole nation from above.",
+            "text": "Drones are small flying machines that are becoming very popular. You control them with a handheld remote or even a phone. Some drones have high-quality cameras attached to them. They can take beautiful photos from high in the sky. Nadav thinks drones are awesome and wants one for his birthday.\n\nThere are even exciting drone races! Professional pilots wear special goggles to see exactly what the drone sees. It feels like they are flying inside the drone itself. The drones fly very fast through small hoops and dark tunnels.\n\nFarmers also use drones to check their fields and crops. Police use them to find lost people in forests. Drones are not just fun toys; they are very useful tools for many jobs. It is possible to see the whole nation from above with these amazing machines.",
             "questions": [
                 {
                     "id": "q1",
@@ -924,6 +1235,21 @@ export const lessons: Lesson[] = [
                     "id": "q2",
                     "text": "Who uses drones to check fields?",
                     "answer": "farmers"
+                },
+                {
+                    "id": "q3",
+                    "text": "How do you control a drone?",
+                    "answer": "with a remote"
+                },
+                {
+                    "id": "q4",
+                    "text": "Where do racing drones fly?",
+                    "answer": "through hoops and tunnels"
+                },
+                {
+                    "id": "q5",
+                    "text": "What does Nadav think about drones?",
+                    "answer": "they are awesome"
                 }
             ],
             "vocabulary": [
@@ -958,6 +1284,46 @@ export const lessons: Lesson[] = [
                 {
                     "word": "nation",
                     "translation": "אומה"
+                },
+                {
+                    "word": "handheld",
+                    "translation": "כף יד"
+                },
+                {
+                    "word": "camera",
+                    "translation": "מצלמה"
+                },
+                {
+                    "word": "attached",
+                    "translation": "מחובר"
+                },
+                {
+                    "word": "awesome",
+                    "translation": "מדהים"
+                },
+                {
+                    "word": "pilot",
+                    "translation": "טייס"
+                },
+                {
+                    "word": "hoops",
+                    "translation": "חישוקים"
+                },
+                {
+                    "word": "crops",
+                    "translation": "יבולים"
+                },
+                {
+                    "word": "police",
+                    "translation": "משטרה"
+                },
+                {
+                    "word": "toy",
+                    "translation": "צעצוע"
+                },
+                {
+                    "word": "possible",
+                    "translation": "אפשרי"
                 }
             ]
         }
@@ -1056,17 +1422,32 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "The Smart Home",
         "content": {
-            "text": "Imagine a house where the lights turn on when you walk in. The fridge orders milk when you run out. This is called a \"Smart Home\" or the \"Internet of Things\".\n\nIn a smart home, devices talk to each other. You can tell your house, \"I am cold,\" and the heater turns on. Nadav wants a smart room. He wants his blinds to open automatically in the morning.\n\nThis technology makes life easier. But you need good internet. If the internet stops, your house might stop working! It is funny to think about a smart toaster needing wifi to brown your bread.",
+            "text": "Imagine a house where the lights turn on automatically when you walk in. The smart fridge orders milk when you run out. This is called a \"Smart Home\" or the \"Internet of Things\". It sounds like magic, but it is real.\n\nIn a smart home, many devices talk to each other to help you. You can tell your house, \"I am cold,\" and the heater turns on to warm you up. Nadav wants a smart room. He wants his window blinds to open automatically in the morning to wake him up with sunlight.\n\nThis technology makes life easier and more comfortable. But you need good internet for everything to work. If the internet stops, your house might stop working too! It is funny to think about a smart toaster needing wifi just to brown your bread for breakfast.",
             "questions": [
                 {
                     "id": "q1",
                     "text": "What orders milk when you run out?",
-                    "answer": "the fridge"
+                    "answer": "the smart fridge"
                 },
                 {
                     "id": "q2",
                     "text": "What does a smart toaster need?",
                     "answer": "wifi"
+                },
+                {
+                    "id": "q3",
+                    "text": "What talks to each other in a smart home?",
+                    "answer": "devices"
+                },
+                {
+                    "id": "q4",
+                    "text": "What does Nadav want to open automatically?",
+                    "answer": "his window blinds"
+                },
+                {
+                    "id": "q5",
+                    "text": "What does the technology make easier?",
+                    "answer": "life"
                 }
             ],
             "vocabulary": [
@@ -1101,6 +1482,34 @@ export const lessons: Lesson[] = [
                 {
                     "word": "internet",
                     "translation": "אינטרנט"
+                },
+                {
+                    "word": "order",
+                    "translation": "להזמין"
+                },
+                {
+                    "word": "run out",
+                    "translation": "נגמר"
+                },
+                {
+                    "word": "magic",
+                    "translation": "קסם"
+                },
+                {
+                    "word": "blinds",
+                    "translation": "תריסים/וילונות"
+                },
+                {
+                    "word": "sunlight",
+                    "translation": "אור שמש"
+                },
+                {
+                    "word": "comfortable",
+                    "translation": "נוח"
+                },
+                {
+                    "word": "wifi",
+                    "translation": "וייפיי"
                 }
             ]
         }
@@ -1155,7 +1564,7 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "Virtual Reality",
         "content": {
-            "text": "Virtual Reality, or VR, is a technology that takes you to another world. You wear a headset over your eyes. Suddenly, you are not in your room. You are in space, or under the ocean!\n\nNadav tried VR at the mall. He played a game where he had to fight dragons with a sword. It felt so real. He moved his arms and the game copied him.\n\nVR is great for gaming, but also for learning. Doctors use it to practice operations. Students use it to visit historical places without traveling. It is the future of entertainment and education.",
+            "text": "Virtual Reality, or VR, is a new technology that takes you to another world. You wear a special headset over your eyes and ears. Suddenly, you are not in your bedroom anymore. You are floating in space, or swimming under the deep blue ocean!\n\nNadav tried VR at the mall last week. He played a fantasy game where he had to fight big dragons with a shiny sword. It felt so real. He moved his arms and the game copied him exactly. He was sweating from the excitement.\n\nVR is great for gaming, but also for learning. Doctors use it to practice difficult operations before touching a real patient. Students use it to visit historical places without traveling. It is the future of entertainment and education.",
             "questions": [
                 {
                     "id": "q1",
@@ -1166,6 +1575,21 @@ export const lessons: Lesson[] = [
                     "id": "q2",
                     "text": "What did Nadav fight in the game?",
                     "answer": "dragons"
+                },
+                {
+                    "id": "q3",
+                    "text": "What did the game copy?",
+                    "answer": "his moves"
+                },
+                {
+                    "id": "q4",
+                    "text": "Who uses VR to practice operations?",
+                    "answer": "doctors"
+                },
+                {
+                    "id": "q5",
+                    "text": "Where can students visit with VR?",
+                    "answer": "historical places"
                 }
             ],
             "vocabulary": [
@@ -1200,6 +1624,42 @@ export const lessons: Lesson[] = [
                 {
                     "word": "education",
                     "translation": "חינוך"
+                },
+                {
+                    "word": "float",
+                    "translation": "לצוף"
+                },
+                {
+                    "word": "deep",
+                    "translation": "עמוק"
+                },
+                {
+                    "word": "mall",
+                    "translation": "קניון"
+                },
+                {
+                    "word": "fantasy",
+                    "translation": "פנטזיה"
+                },
+                {
+                    "word": "dragon",
+                    "translation": "דרקון"
+                },
+                {
+                    "word": "shiny",
+                    "translation": "מבריק"
+                },
+                {
+                    "word": "sweat",
+                    "translation": "להזיע"
+                },
+                {
+                    "word": "patient",
+                    "translation": "חולה/מטופל"
+                },
+                {
+                    "word": "historical",
+                    "translation": "היסטורי"
                 }
             ]
         }
@@ -1211,7 +1671,7 @@ export const lessons: Lesson[] = [
         "type": "grammar",
         "title": "Superlatives: The Best and Worst",
         "content": {
-            "rule": "To compare three or more things (the #1), add '-est' to short adjectives (fast -> the fastest) or use 'the most' for long adjectives (expensive -> the most expensive).",
+            "rule": "To compare three or more things (the #1), add '-est' to short adjectives (fast -> the fastest) or use 'the most' for long adjectives (expensive -> the most expensive).\nExample: Everest is the highest mountain.",
             "exercises": [
                 {
                     "id": "e1",
@@ -1298,7 +1758,7 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "Clean Energy",
         "content": {
-            "text": "We use a lot of electricity. Usually, we burn coal or oil to make it. This is bad for the Earth. But there is a better way: Renewable Energy. This means energy that does not run out.\n\nSolar power comes from the sun. Wind power comes from the wind. You can see big wind turbines on hills. They spin and make electricity. Solar panels are on roofs to catch sunlight.\n\nNadav thinks this is important. If we use the sun and wind, we keep the air clean. It is free energy from nature. We just need the technology to catch it. It is a foreign concept to some, but vital for us.",
+            "text": "We use a lot of electricity every day for our lights, phones, and computers. Usually, we burn coal or oil to make this power. This is bad for the Earth because it creates pollution. But there is a better way: Renewable Energy. This means energy that does not run out and is clean.\n\nSolar power comes from the sun. Wind power comes from the wind. You can see big white wind turbines on hills. They spin in the wind and make electricity. Solar panels are put on roofs to catch sunlight.\n\nNadav thinks this is important for our future. If we use the sun and wind, we keep the air clean. It is free energy from nature. We just need the technology to catch it. It is a foreign concept to some, but vital for us.",
             "questions": [
                 {
                     "id": "q1",
@@ -1309,6 +1769,21 @@ export const lessons: Lesson[] = [
                     "id": "q2",
                     "text": "What do wind turbines make?",
                     "answer": "electricity"
+                },
+                {
+                    "id": "q3",
+                    "text": "What is usually burned to make power?",
+                    "answer": "coal or oil"
+                },
+                {
+                    "id": "q4",
+                    "text": "Where are solar panels put?",
+                    "answer": "on roofs"
+                },
+                {
+                    "id": "q5",
+                    "text": "What is vital for us?",
+                    "answer": "renewable energy"
                 }
             ],
             "vocabulary": [
@@ -1343,6 +1818,38 @@ export const lessons: Lesson[] = [
                 {
                     "word": "vital",
                     "translation": "חיוני"
+                },
+                {
+                    "word": "burn",
+                    "translation": "לשרוף"
+                },
+                {
+                    "word": "solar",
+                    "translation": "סולארי"
+                },
+                {
+                    "word": "wind",
+                    "translation": "רוח"
+                },
+                {
+                    "word": "hills",
+                    "translation": "גבעות"
+                },
+                {
+                    "word": "spin",
+                    "translation": "להסתובב"
+                },
+                {
+                    "word": "roof",
+                    "translation": "גג"
+                },
+                {
+                    "word": "catch",
+                    "translation": "לתפוס"
+                },
+                {
+                    "word": "concept",
+                    "translation": "מושג/רעיון"
                 }
             ]
         }
@@ -1397,7 +1904,7 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "Learning to Code",
         "content": {
-            "text": "Coding is the language of computers. When you write code, you give instructions to the machine. It is like writing a recipe for a cake, but for a program.\n\nNadav is learning Python. It is a coding language. He writes lines of text, and the computer draws shapes. He feels like a wizard. If he makes a mistake, it is called a 'bug'. He has to find the bug and fix it.\n\nCoders build everything we use: apps, websites, and games. It is a very useful skill. Nadav wants to build his own app for his friends. It is hard, but he will continue.",
+            "text": "Coding is the language of computers. When you write code, you give special instructions to the machine to tell it what to do. It is like writing a recipe for a cake, but instead of food, you are making a program.\n\nNadav is learning Python, which is a popular coding language. He sits at his computer and writes lines of text. Suddenly, the computer draws shapes on the screen. He feels like a wizard casting spells. If he makes a mistake, it is called a 'bug'. He has to look closely to find the bug and fix it.\n\nCoders build everything we use on phones and computers: apps, websites, and video games. It is a very useful skill to have. Nadav wants to build his own app for his friends to use. It is hard work, but he will continue to learn every day.",
             "questions": [
                 {
                     "id": "q1",
@@ -1408,6 +1915,21 @@ export const lessons: Lesson[] = [
                     "id": "q2",
                     "text": "What language is Nadav learning?",
                     "answer": "Python"
+                },
+                {
+                    "id": "q3",
+                    "text": "What is coding like?",
+                    "answer": "writing a recipe"
+                },
+                {
+                    "id": "q4",
+                    "text": "What does Nadav feel like?",
+                    "answer": "a wizard"
+                },
+                {
+                    "id": "q5",
+                    "text": "What do coders build?",
+                    "answer": "apps and websites"
                 }
             ],
             "vocabulary": [
@@ -1442,6 +1964,42 @@ export const lessons: Lesson[] = [
                 {
                     "word": "continue",
                     "translation": "להמשיך"
+                },
+                {
+                    "word": "coding",
+                    "translation": "קידוד"
+                },
+                {
+                    "word": "cake",
+                    "translation": "עוגה"
+                },
+                {
+                    "word": "draw",
+                    "translation": "לצייר"
+                },
+                {
+                    "word": "shape",
+                    "translation": "צורה"
+                },
+                {
+                    "word": "cast",
+                    "translation": "להטיל"
+                },
+                {
+                    "word": "spell",
+                    "translation": "כישוף"
+                },
+                {
+                    "word": "bug",
+                    "translation": "באג/טעות תכנות"
+                },
+                {
+                    "word": "coder",
+                    "translation": "מקודד/מתכנת"
+                },
+                {
+                    "word": "app",
+                    "translation": "אפליקציה"
                 }
             ]
         }
@@ -1540,7 +2098,7 @@ export const lessons: Lesson[] = [
         "type": "reading",
         "title": "Social Media Safety",
         "content": {
-            "text": "Social media is fun, but you must be safe. Apps like TikTok and Instagram let you share photos and videos. It is fun to see what your friends are doing.\n\nBut not everyone online is a friend. You should never give your address or phone number to strangers. Also, people only show the good parts of their lives. Do not feel bad if their life looks perfect. It is not always real.\n\nNadav has a private account. Only his real friends can see his posts. This is the best way to enjoy social media safely. He is careful about anybody who wants to follow him.",
+            "text": "Social media is fun, but you must be safe. Apps like TikTok and Instagram let you share photos and videos with the world. It is fun to see what your friends are doing.\n\nHowever, not everyone online is a friend. You should never give your address or phone number to strangers. Also, people often only show the good parts of their lives online. Do not feel bad if their life looks perfect. It is not always real. People use filters and edit their pictures.\n\nNadav has a private account. This means only his real friends can see his posts. This is the best way to enjoy social media safely. He is very careful about anybody who wants to follow him. He keeps his information safe.",
             "questions": [
                 {
                     "id": "q1",
@@ -1551,6 +2109,21 @@ export const lessons: Lesson[] = [
                     "id": "q2",
                     "text": "What kind of account does Nadav have?",
                     "answer": "private account"
+                },
+                {
+                    "id": "q3",
+                    "text": "What do apps let you share?",
+                    "answer": "photos and videos"
+                },
+                {
+                    "id": "q4",
+                    "text": "Who can see Nadav's posts?",
+                    "answer": "his real friends"
+                },
+                {
+                    "id": "q5",
+                    "text": "What is not always real?",
+                    "answer": "online lives"
                 }
             ],
             "vocabulary": [
@@ -1585,6 +2158,26 @@ export const lessons: Lesson[] = [
                 {
                     "word": "anybody",
                     "translation": "מישהו/כל אחד"
+                },
+                {
+                    "word": "media",
+                    "translation": "מדיה/תקשורת"
+                },
+                {
+                    "word": "address",
+                    "translation": "כתובת"
+                },
+                {
+                    "word": "filters",
+                    "translation": "פילטרים"
+                },
+                {
+                    "word": "edit",
+                    "translation": "לערוך"
+                },
+                {
+                    "word": "post",
+                    "translation": "פוסט/לפרסם"
                 }
             ]
         }
