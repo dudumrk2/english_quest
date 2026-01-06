@@ -13,12 +13,20 @@ import {
     Grid,
     Chip,
     Stack,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
 } from '@mui/material';
 import {
     SportsEsports as GameIcon,
     AutoStories as BookIcon,
     EmojiEvents as TrophyIcon,
     Bolt as BoltIcon,
+    Psychology as BrainIcon,
+    RecordVoiceOver as VoiceIcon,
+    MenuBook as MenuBookIcon,
+    CheckCircle as CheckIcon,
 } from '@mui/icons-material';
 
 export function Login() {
@@ -44,7 +52,7 @@ export function Login() {
                 py: 4,
             }}
         >
-            <Container maxWidth="sm">
+            <Container maxWidth="md">
                 <Stack spacing={4}>
                     {/* Logo/Title */}
                     <Box textAlign="center">
@@ -103,9 +111,9 @@ export function Login() {
                     >
                         <CardContent sx={{ p: 4 }}>
                             <Typography variant="h5" align="center" gutterBottom fontWeight={700}>
-                                Welcome, Commander!
+                                Welcome, Commander! 🎮
                             </Typography>
-                            <Typography variant="body2" align="center" color="text.secondary" sx={{ mb: 4 }}>
+                            <Typography variant="body1" align="center" color="text.secondary" sx={{ mb: 4 }}>
                                 Sign in to start your learning journey
                             </Typography>
 
@@ -138,6 +146,7 @@ export function Login() {
                                 onClick={loginDemo}
                                 sx={{
                                     borderColor: 'rgba(255, 255, 255, 0.2)',
+                                    color: 'white',
                                     '&:hover': {
                                         borderColor: 'primary.main',
                                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -158,10 +167,95 @@ export function Login() {
                                 <br />
                                 Your progress will be saved locally.
                             </Typography>
+
+                            <Divider sx={{ my: 4 }} />
+
+                            {/* What's Inside */}
+                            <Typography variant="h6" fontWeight={600} gutterBottom sx={{ mt: 3 }}>
+                                What's Inside:
+                            </Typography>
+                            <List>
+                                <ListItem>
+                                    <ListItemIcon>
+                                        <BookIcon color="primary" />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Reading Adventures"
+                                        secondary="Explore engaging stories with vocabulary lessons"
+                                    />
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemIcon>
+                                        <MenuBookIcon color="secondary" />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Grammar Challenges"
+                                        secondary="Master grammar through interactive exercises"
+                                    />
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemIcon>
+                                        <BrainIcon color="success" />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="AI Tutor Chat"
+                                        secondary="Practice conversations with your personal AI assistant"
+                                    />
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemIcon>
+                                        <VoiceIcon color="warning" />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Pronunciation Practice"
+                                        secondary="Perfect your speaking with read-aloud exercises"
+                                    />
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemIcon>
+                                        <TrophyIcon sx={{ color: '#fbbf24' }} />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Vocabulary Reviews"
+                                        secondary="Weekly challenges to reinforce what you've learned"
+                                    />
+                                </ListItem>
+                            </List>
+
+                            {/* How It Works */}
+                            <Typography variant="h6" fontWeight={600} gutterBottom sx={{ mt: 3 }}>
+                                How It Works:
+                            </Typography>
+                            <Stack spacing={1.5}>
+                                <Box display="flex" alignItems="flex-start" gap={1.5}>
+                                    <CheckIcon color="success" sx={{ mt: 0.5 }} />
+                                    <Typography variant="body2" color="text.secondary">
+                                        <strong>6 Weeks of Learning:</strong> Progress through structured weekly lessons
+                                    </Typography>
+                                </Box>
+                                <Box display="flex" alignItems="flex-start" gap={1.5}>
+                                    <CheckIcon color="success" sx={{ mt: 0.5 }} />
+                                    <Typography variant="body2" color="text.secondary">
+                                        <strong>5 Lessons Per Week:</strong> Complete different types of tasks each day
+                                    </Typography>
+                                </Box>
+                                <Box display="flex" alignItems="flex-start" gap={1.5}>
+                                    <CheckIcon color="success" sx={{ mt: 0.5 }} />
+                                    <Typography variant="body2" color="text.secondary">
+                                        <strong>Your Progress Saved:</strong> All your answers and progress are saved
+                                    </Typography>
+                                </Box>
+                                <Box display="flex" alignItems="flex-start" gap={1.5}>
+                                    <CheckIcon color="success" sx={{ mt: 0.5 }} />
+                                    <Typography variant="body2" color="text.secondary">
+                                        <strong>Learn at Your Pace:</strong> Come back anytime and pick up where you left off
+                                    </Typography>
+                                </Box>
+                            </Stack>
                         </CardContent>
                     </Card>
 
-                    {/* Features Preview */}
+                    {/* Stats Preview */}
                     <Grid container spacing={2}>
                         <Grid item xs={4}>
                             <Card elevation={0} sx={{ textAlign: 'center', py: 2 }}>

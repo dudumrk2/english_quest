@@ -38,6 +38,11 @@ export const useAuth = create<AuthState>()(
                         },
                         isAuthenticated: true,
                     });
+
+                    // Force a small delay to ensure state persistence completes
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
                 } catch (error) {
                     console.error('Failed to decode credential:', error);
                 }
@@ -53,6 +58,11 @@ export const useAuth = create<AuthState>()(
                     },
                     isAuthenticated: true,
                 });
+
+                // Force a small delay to ensure state persistence completes
+                setTimeout(() => {
+                    window.location.reload();
+                }, 100);
             },
 
             // Logout
@@ -61,6 +71,11 @@ export const useAuth = create<AuthState>()(
                     user: null,
                     isAuthenticated: false,
                 });
+
+                // Force a small delay to ensure state persistence completes
+                setTimeout(() => {
+                    window.location.reload();
+                }, 100);
             },
         }),
         {

@@ -22,7 +22,7 @@ type ViewType = 'dashboard' | 'lesson' | 'summary';
 
 function AppContent() {
     const { user, isAuthenticated } = useAuth();
-    const { state, completeLesson, saveLessonAnswers, clearLessonAnswers } = useAppStore(user?.email);
+    const { state, completeLesson, saveLessonAnswers, clearLessonAnswers, resetAllProgress } = useAppStore(user?.email);
     const [view, setView] = useState<ViewType>('dashboard');
     const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
 
@@ -50,12 +50,12 @@ function AppContent() {
     };
 
     const { logout } = useAuth();
-    const { resetAllProgress } = useAppStore(user?.email);
 
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to logout? This will clear all your progress and saved data.")) {
             resetAllProgress(); // From global store
             logout();
+            alert("All your data has been cleared. You will now return to the welcome page.");
         }
     };
 
@@ -79,7 +79,7 @@ function AppContent() {
                 case 'chatbot': return <TaskChat {...commonProps} />;
                 case 'pronunciation': return <TaskPronunciation {...commonProps} />;
                 case 'vocabulary': return <TaskVocabulary {...commonProps} />;
-                default: return <div>Unknown task type</div>;
+                default: return <div />;
             }
         }
 
