@@ -26,6 +26,7 @@ import {
     Translate as TranslateIcon,
     Create as WriteIcon,
     VolumeUp as VolumeIcon,
+    Stop,
 } from '@mui/icons-material';
 import { triggerCelebration } from '../utils/confetti';
 
@@ -85,152 +86,369 @@ const renderTextWithTooltips = (text, vocabulary) => {
     });
 };
 
+// Helper to calculate accuracy
+const calculateAccuracy = (original, transcript) => {
+    const normalize = (text) => text.toLowerCase().replace(/[.,!?;:]/g, '').split(/\s+/);
+    const originalWords = normalize(original);
+    const transcriptWords = normalize(transcript);
+
+    let matches = 0;
+    transcriptWords.forEach(word => {
+        if (originalWords.includes(word)) matches++;
+    });
+
+    // Simple overlap percentage, capped at 100
+    const accuracy = Math.min(100, Math.round((matches / Math.max(originalWords.length, 1)) * 100));
+    return accuracy;
+};
+
 export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }) {
     const [attempts, setAttempts] = useState(0);
     const [isRecording, setIsRecording] = useState(false);
     const [feedback, setFeedback] = useState(null);
     const [summary, setSummary] = useState(initialAnswers.summary || '');
+    const [writtenSentences, setWrittenSentences] = useState(initialAnswers.sentences || ['', '', '', '', '']);
     const [readingComplete, setReadingComplete] = useState(false);
     const [audioURL, setAudioURL] = useState(null);
-    const recognitionRef = useRef(null);
+
+    // Audio playback state
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [highlightRange, setHighlightRange] = useState(null);
+
     const mediaRecorderRef = useRef(null);
-    const audioChunksRef = useRef([]);
+    const chunksRef = useRef([]);
+    const recognitionRef = useRef(null);
+
+    // Get up to 10 random vocabulary words for the challenge
+    const challengeWords = React.useMemo(() => {
+        const vocab = lesson.content.vocabulary || [];
+        // Take the first 10
+        return vocab.slice(0, 10).map(v => v.word.toLowerCase());
+    }, [lesson.content.vocabulary]);
 
     useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [lesson.id]);
-
-    const handleSummaryChange = (e) => {
-        const value = e.target.value;
-        setSummary(value);
-        if (onSaveAnswers) {
-            onSaveAnswers({ summary: value });
+        // Initialize SpeechRecognition if available
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+            recognitionRef.current = recognition;
         }
-    };
 
-    // Clear logic moved to Dashboard
+        return () => {
+            if (recognitionRef.current) recognitionRef.current.abort();
+            window.speechSynthesis.cancel();
+        };
+    }, []);
 
-    const startRecording = async () => {
-        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-            alert("Speech recognition not supported in this browser. Please use Chrome or Edge.");
-            setFeedback({
-                transcript: "Simulation mode (browser not supported)",
-                accuracy: 100,
-                message: "Browser not supported, skipping check."
-            });
-            setReadingComplete(true);
+    const handlePlayAudio = () => {
+        if (isPlaying) {
+            window.speechSynthesis.cancel();
+            setIsPlaying(false);
+            setHighlightRange(null);
             return;
         }
 
-        // Start audio recording for playback
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(lesson.content.text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+
+        utterance.onboundary = (event) => {
+            if (event.name === 'word') {
+                const text = lesson.content.text;
+                const start = event.charIndex;
+                let end = text.indexOf(' ', start);
+                if (end === -1) end = text.length;
+                setHighlightRange({ start, end });
+            }
+        };
+
+        utterance.onend = () => {
+            setIsPlaying(false);
+            setHighlightRange(null);
+        };
+
+        utterance.onerror = () => {
+            setIsPlaying(false);
+            setHighlightRange(null);
+        };
+
+        window.speechSynthesis.speak(utterance);
+        setIsPlaying(true);
+    };
+
+    const renderContent = () => {
+        const text = lesson.content.text;
+        const vocabulary = lesson.content.vocabulary;
+
+        if (!highlightRange) {
+            return renderTextWithTooltips(text, vocabulary);
+        }
+
+        const { start, end } = highlightRange;
+        const before = text.slice(0, start);
+        const highlighted = text.slice(start, end);
+        const after = text.slice(end);
+
+        return (
+            <>
+                {renderTextWithTooltips(before, vocabulary)}
+                <span style={{
+                    backgroundColor: '#ffeb3b',
+                    fontWeight: 'bold',
+                    borderRadius: '4px',
+                    boxShadow: '0 0 5px #ffeb3b',
+                    transition: 'all 0.1s'
+                }}>
+                    {renderTextWithTooltips(highlighted, vocabulary)}
+                </span>
+                {renderTextWithTooltips(after, vocabulary)}
+            </>
+        );
+    };
+
+    const startRecording = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorderRef.current = new MediaRecorder(stream);
-            audioChunksRef.current = [];
+            chunksRef.current = [];
 
-            mediaRecorderRef.current.ondataavailable = (event) => {
-                audioChunksRef.current.push(event.data);
+            mediaRecorderRef.current.ondataavailable = (e) => {
+                if (e.data.size > 0) {
+                    chunksRef.current.push(e.data);
+                }
             };
 
             mediaRecorderRef.current.onstop = () => {
-                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-                const url = URL.createObjectURL(audioBlob);
+                const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+                const url = URL.createObjectURL(blob);
                 setAudioURL(url);
             };
 
             mediaRecorderRef.current.start();
-        } catch (error) {
-            console.error("Could not access microphone:", error);
+
+            if (recognitionRef.current) {
+                try {
+                    recognitionRef.current.start();
+                } catch (e) {
+                    console.error("Speech recognition already started", e);
+                }
+            }
+
+            setIsRecording(true);
+            setFeedback(null);
+        } catch (err) {
+            console.error("Error accessing microphone:", err);
+            alert("Could not access microphone. Please ensure permission is granted.");
         }
-
-        // Start speech recognition
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognitionRef.current = new SpeechRecognition();
-        recognitionRef.current.lang = 'en-US';
-        recognitionRef.current.continuous = true; // Changed to continuous
-        recognitionRef.current.interimResults = true;
-
-        setIsRecording(true);
-        setFeedback(null);
-        setAudioURL(null);
-
-        let finalTranscript = '';
-
-        recognitionRef.current.onresult = (event) => {
-            let interimTranscript = '';
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                const transcript = event.results[i][0].transcript;
-                if (event.results[i].isFinal) {
-                    finalTranscript += transcript + ' ';
-                } else {
-                    interimTranscript += transcript;
-                }
-            }
-            // Store the accumulated transcript
-            recognitionRef.current.finalTranscript = finalTranscript;
-        };
-
-        recognitionRef.current.onerror = (event) => {
-            console.error("Speech recognition error", event.error);
-            if (event.error !== 'no-speech') {
-                setIsRecording(false);
-                if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-                    mediaRecorderRef.current.stop();
-                }
-            }
-        };
-
-        recognitionRef.current.start();
     };
 
     const stopRecording = () => {
-        if (recognitionRef.current) {
-            const finalText = recognitionRef.current.finalTranscript || '';
-            recognitionRef.current.stop();
-            if (finalText.trim()) {
-                analyzePronunciation(finalText.trim());
-            } else {
-                setFeedback({
-                    transcript: "",
-                    accuracy: 0,
-                    message: "No speech detected. Please try again."
-                });
-            }
-        }
-
-        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        if (mediaRecorderRef.current && isRecording) {
             mediaRecorderRef.current.stop();
-        }
+            setIsRecording(false);
 
-        setIsRecording(false);
+            if (recognitionRef.current) {
+                recognitionRef.current.stop();
+                // Get results slightly deferred or handle 'result' event if we added listener.
+                // Since we didn't add a 'result' listener in startRecording, let's fix that design.
+                // We'll rely on the fact that we should have been listening.
+            }
+
+            // Simulate result processing for now as direct result capture in 'stop' is tricky without event listeners.
+            // Let's attach the listener in startRecording instead.
+        }
     };
 
-    const analyzePronunciation = (transcript) => {
-        const newAttempts = attempts + 1;
-        setAttempts(newAttempts);
+    // Re-implement startRecording to properly handle speech events
+    const startRecordingWithEvents = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorderRef.current = new MediaRecorder(stream);
+            chunksRef.current = [];
 
-        // Simple analysis: word count match or similarity
-        const targetWords = lesson.content.text.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").split(/\s+/);
-        const spokenWords = transcript.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").split(/\s+/);
+            mediaRecorderRef.current.ondataavailable = (e) => {
+                if (e.data.size > 0) chunksRef.current.push(e.data);
+            };
 
-        // Calculate simple overlap
-        const overlap = targetWords.filter(word => spokenWords.includes(word)).length;
-        const accuracy = Math.min(100, Math.round((overlap / targetWords.length) * 100));
+            mediaRecorderRef.current.onstop = () => {
+                const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+                const url = URL.createObjectURL(blob);
+                setAudioURL(url);
+            };
 
-        setFeedback({
-            transcript,
-            accuracy,
-            message: accuracy > 70 ? "Excellent pronunciation!" : "Good try! Focus on clear articulation."
-        });
+            mediaRecorderRef.current.start();
+            setIsRecording(true);
+            setFeedback(null);
 
-        if (newAttempts >= 3 || accuracy > 80) {
-            setReadingComplete(true);
-            if (accuracy > 80) triggerCelebration();
+            if (recognitionRef.current) {
+                let finalTranscript = '';
+                recognitionRef.current.onresult = (event) => {
+                    let interimTranscript = '';
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            finalTranscript += event.results[i][0].transcript;
+                        } else {
+                            interimTranscript += event.results[i][0].transcript;
+                        }
+                    }
+                };
+
+                // On stop/end, process the full transcript
+                recognitionRef.current.onend = () => {
+                    // This might fire when silence occurs or we manually stop.
+                    // We'll calculate accuracy when the USER clicks stop.
+                };
+
+                recognitionRef.current.start();
+            }
+        } catch (err) {
+            console.error("Error starting recording:", err);
+            alert("Could not access microphone.");
         }
+    };
+
+    // Actually, we need a single robust start/stop using refs for the transcript
+    const transcriptRef = useRef('');
+
+    const toggleRecording = async () => {
+        if (isRecording) {
+            // STOP
+            if (mediaRecorderRef.current) {
+                mediaRecorderRef.current.stop();
+                mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+            }
+            if (recognitionRef.current) {
+                recognitionRef.current.stop();
+            }
+            setIsRecording(false);
+            setAttempts(prev => prev + 1);
+
+            // Calculate accuracy
+            // Wait a small moment for final recognition results if needed
+            setTimeout(() => {
+                const accuracy = calculateAccuracy(lesson.content.text, transcriptRef.current);
+                let message = "Good effort!";
+                if (accuracy > 80) message = "Excellent reading!";
+                else if (accuracy > 50) message = "Good job, keep practicing!";
+                else message = "Try to speak clearly and closer to the mic.";
+
+                setFeedback({
+                    accuracy,
+                    transcript: transcriptRef.current || "(No speech detected)",
+                    message
+                });
+
+                if (accuracy > 40) { // LENIENT passing score
+                    setReadingComplete(true);
+                    triggerCelebration();
+                }
+            }, 500);
+
+        } else {
+            if (isPlaying) {
+                window.speechSynthesis.cancel();
+                setIsPlaying(false);
+                setHighlightRange(null);
+            }
+
+            // START
+            transcriptRef.current = '';
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorderRef.current = new MediaRecorder(stream);
+                chunksRef.current = [];
+
+                mediaRecorderRef.current.ondataavailable = (e) => {
+                    if (e.data.size > 0) chunksRef.current.push(e.data);
+                };
+
+                mediaRecorderRef.current.onstop = () => {
+                    const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+                    const url = URL.createObjectURL(blob);
+                    setAudioURL(url);
+                };
+
+                mediaRecorderRef.current.start();
+
+                if (recognitionRef.current) {
+                    recognitionRef.current.onresult = (event) => {
+                        let currentTx = '';
+                        for (let i = 0; i < event.results.length; ++i) {
+                            currentTx += event.results[i][0].transcript;
+                        }
+                        transcriptRef.current = currentTx;
+                    };
+                    recognitionRef.current.start();
+                } else {
+                    // Fallback if no speech recognition (e.g. Firefox sometimes)
+                    // Check browsers... Chrome/Edge have it.
+                    console.warn("Speech Recognition not supported in this browser.");
+                }
+
+                setIsRecording(true);
+                setFeedback(null);
+            } catch (err) {
+                console.error("Error:", err);
+                alert("Microphone access denied or not available.");
+            }
+        }
+    };
+
+    // Handler for summary text
+    const handleSummaryChange = (e) => {
+        const val = e.target.value;
+        setSummary(val);
+        if (onSaveAnswers) {
+            onSaveAnswers({ summary: val, sentences: writtenSentences });
+        }
+    };
+
+    // Calculate which challenge words are used in valid sentences
+    const usedWords = React.useMemo(() => {
+        const used = new Set();
+        writtenSentences.forEach(sentence => {
+            if (!sentence.trim()) return;
+            const words = sentence.trim().split(/\s+/);
+            if (words.length < 5) return; // Only count if sentence is long enough
+
+            const lowerSentence = sentence.toLowerCase();
+            challengeWords.forEach(word => {
+                if (lowerSentence.includes(word)) {
+                    used.add(word);
+                }
+            });
+        });
+        return used;
+    }, [writtenSentences, challengeWords]);
+
+    const handleSentenceChange = (index, value) => {
+        const newSentences = [...writtenSentences];
+        newSentences[index] = value;
+        setWrittenSentences(newSentences);
+        if (onSaveAnswers) {
+            onSaveAnswers({ summary, sentences: newSentences });
+        }
+    };
+
+    const validateSentences = () => {
+        return writtenSentences.every(sentence => {
+            if (!sentence.trim()) return false;
+            const words = sentence.trim().split(/\s+/);
+            if (words.length < 5) return false;
+
+            const hasChallengeWord = challengeWords.some(challengeWord =>
+                sentence.toLowerCase().includes(challengeWord)
+            );
+            return hasChallengeWord;
+        });
     };
 
     const handleComplete = () => {
-        if (readingComplete && summary.trim().length > 0) {
+        if (readingComplete && summary.trim().length > 0 && validateSentences()) {
             onComplete();
         }
     };
@@ -261,17 +479,26 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                 </Stack>
             </Box>
 
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-                {/* Clear logic moved to Dashboard */}
-            </Box>
-
             <Stack spacing={4}>
                 {/* Reading Text Card */}
                 <Card elevation={3} sx={{ position: 'relative', overflow: 'visible' }}>
                     <CardContent sx={{ p: 4 }}>
-                        <Typography variant="overline" color="text.secondary" fontWeight={600}>
-                            Read this text aloud:
-                        </Typography>
+                        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+                            <Typography variant="overline" color="text.secondary" fontWeight={600}>
+                                Read this text aloud:
+                            </Typography>
+                            <Button
+                                variant="outlined"
+                                startIcon={isPlaying ? <Stop /> : <VolumeIcon />}
+                                onClick={handlePlayAudio}
+                                disabled={isRecording}
+                                color={isPlaying ? "error" : "primary"}
+                                size="small"
+                            >
+                                {isPlaying ? "Stop" : "Listen First"}
+                            </Button>
+                        </Stack>
+
                         <Divider sx={{ my: 2 }} />
                         <Typography
                             variant="h5"
@@ -279,7 +506,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                             sx={{
                                 fontFamily: '"Georgia", serif',
                                 lineHeight: 1.8,
-                                color: '#1a202c', // Force dark text
+                                color: '#1a202c',
                                 my: 2,
                                 p: 2,
                                 bgcolor: '#f8fafc',
@@ -288,11 +515,12 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                             }}
                             component="div"
                         >
-                            {renderTextWithTooltips(lesson.content.text, lesson.content.vocabulary)}
+                            {renderContent()}
                         </Typography>
 
                         {/* Tips */}
                         <Stack direction="row" spacing={1} mt={3} flexWrap="wrap" gap={1}>
+
                             {lesson.content.tips.map((tip, idx) => (
                                 <Chip
                                     key={idx}
@@ -308,12 +536,9 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                     </CardContent>
                 </Card>
 
-
-
                 {/* Recording Action Area */}
                 <Box textAlign="center" py={2}>
                     <Stack spacing={2} alignItems="center">
-                        {/* Start/Stop Recording Button */}
                         <Box sx={{ position: 'relative', display: 'inline-flex' }}>
                             {isRecording && (
                                 <Box
@@ -334,8 +559,8 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                                 />
                             )}
                             <IconButton
-                                onClick={isRecording ? stopRecording : startRecording}
-                                disabled={attempts >= 3 && !feedback?.accuracy > 80}
+                                onClick={toggleRecording}
+                                disabled={attempts >= 3 && readingComplete}
                                 sx={{
                                     width: 80,
                                     height: 80,
@@ -396,7 +621,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                                         Analysis
                                     </Typography>
                                     <Chip
-                                        label={`${feedback?.accuracy}% Accuracy`}
+                                        label={`${feedback?.accuracy || 0}% Accuracy`}
                                         color={feedback?.accuracy > 70 ? "success" : "warning"}
                                         icon={feedback?.accuracy > 70 ? <CheckIcon /> : <WaveIcon />}
                                     />
@@ -459,6 +684,73 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                     </CardContent>
                 </Card>
 
+                {/* Writing Challenge Section */}
+                <Card elevation={2}>
+                    <CardContent sx={{ p: 3 }}>
+                        <Stack direction="row" spacing={1} alignItems="center" mb={2}>
+                            <WriteIcon color="primary" />
+                            <Typography variant="h6" fontWeight={600}>
+                                Writing Challenge
+                            </Typography>
+                        </Stack>
+                        <Divider sx={{ mb: 2 }} />
+
+                        <Alert severity="info" sx={{ mb: 3 }}>
+                            Please write 5 sentences. Each sentence must be at least <strong>5 words long</strong> and include <strong>at least one word</strong> from the list below.
+                        </Alert>
+
+                        <Box sx={{ mb: 3, p: 2, bgcolor: 'background.default', borderRadius: 2 }}>
+                            <Typography variant="subtitle2" gutterBottom color="text.secondary">
+                                Vocabulary Bank:
+                            </Typography>
+                            <Stack direction="row" flexWrap="wrap" gap={1}>
+                                {challengeWords.map((word, i) => {
+                                    const isUsed = usedWords.has(word);
+                                    return (
+                                        <Chip
+                                            key={i}
+                                            label={word}
+                                            size="small"
+                                            color={isUsed ? "success" : "secondary"}
+                                            variant={isUsed ? "filled" : "outlined"}
+                                            icon={isUsed ? <CheckIcon /> : undefined}
+                                        />
+                                    );
+                                })}
+                            </Stack>
+                        </Box>
+
+                        <Stack spacing={2}>
+                            {writtenSentences.map((sentence, idx) => {
+                                const wordCount = sentence.trim() ? sentence.trim().split(/\s+/).length : 0;
+                                const hasVocab = challengeWords.some(w => sentence.toLowerCase().includes(w));
+                                const isValid = wordCount >= 5 && hasVocab;
+                                const isDirty = sentence.length > 0;
+
+                                return (
+                                    <TextField
+                                        key={idx}
+                                        fullWidth
+                                        label={`Sentence ${idx + 1}`}
+                                        value={sentence}
+                                        onChange={(e) => handleSentenceChange(idx, e.target.value)}
+                                        placeholder={`Use a word from the bank...`}
+                                        error={isDirty && !isValid}
+                                        helperText={
+                                            isDirty && !isValid
+                                                ? (!hasVocab ? "Must include a vocabulary word" : "Must be at least 5 words")
+                                                : ""
+                                        }
+                                        InputProps={{
+                                            endAdornment: isValid && <CheckIcon color="success" fontSize="small" />
+                                        }}
+                                    />
+                                );
+                            })}
+                        </Stack>
+                    </CardContent>
+                </Card>
+
                 {/* Complete Button */}
                 <Box mt={4}>
                     <Stack direction="row" spacing={2}>
@@ -486,7 +778,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                             variant="contained"
                             size="large"
                             onClick={handleComplete}
-                            disabled={!readingComplete || summary.trim().length === 0}
+                            disabled={!readingComplete || summary.trim().length === 0 || !validateSentences()}
                             sx={{
                                 py: 1.5,
                                 fontSize: '1.1rem',
@@ -502,7 +794,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                                 }
                             }}
                         >
-                            {readingComplete ? "Complete Lesson" : "Finish Reading First"}
+                            {readingComplete && summary && validateSentences() ? "Complete Lesson" : "Finish All Tasks"}
                         </Button>
                     </Stack>
                 </Box>

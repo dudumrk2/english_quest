@@ -12,6 +12,10 @@ import {
     Stack,
     Grid,
     Tooltip,
+    Radio,
+    RadioGroup,
+    FormControlLabel,
+    FormControl,
 } from '@mui/material';
 import {
     CheckCircle as CheckIcon,
@@ -20,6 +24,9 @@ import {
     Translate as TranslateIcon,
     QuestionAnswer as QuestionIcon,
     Create as WriteIcon,
+    VolumeUp,
+    Stop,
+    Edit as EditIcon,
 } from '@mui/icons-material';
 import { triggerCelebration } from '../utils/confetti';
 
@@ -81,6 +88,8 @@ const renderTextWithTooltips = (text, vocabulary) => {
 
 export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }) {
     const [answers, setAnswers] = useState(initialAnswers.answers || {});
+    // New state for fill-in-the-blank
+    const [fillInTheBlankAnswers, setFillInTheBlankAnswers] = useState(initialAnswers.fillInTheBlankAnswers || {});
     const [showFeedback, setShowFeedback] = useState(false);
     const [summary, setSummary] = useState(initialAnswers.summary || '');
 
@@ -88,13 +97,109 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        return () => {
+            window.speechSynthesis.cancel();
+        };
     }, [lesson.id]);
+
+    const [highlightRange, setHighlightRange] = useState(null);
+
+    const [isPlaying, setIsPlaying] = useState(false);
+
+    const handlePlayAudio = () => {
+        if (isPlaying) {
+            window.speechSynthesis.cancel();
+            setIsPlaying(false);
+            setHighlightRange(null);
+            return;
+        }
+
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(lesson.content.text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+
+        utterance.onboundary = (event) => {
+            if (event.name === 'word') {
+                // Find the length of the word starting at charIndex
+                const text = lesson.content.text;
+                const start = event.charIndex;
+                let end = text.indexOf(' ', start);
+                if (end === -1) end = text.length;
+                // Check for punctuation preventing full word selection
+                const word = text.slice(start, end);
+                const cleanWord = word.replace(/[.,!?]/g, '');
+                // Adjust end if we stripped punctuation for length (optional, but raw slice is usually fine for highlighting)
+
+                setHighlightRange({ start, end });
+            }
+        };
+
+        utterance.onend = () => {
+            setIsPlaying(false);
+            setHighlightRange(null);
+        };
+
+        utterance.onerror = () => {
+            setIsPlaying(false);
+            setHighlightRange(null);
+        };
+
+        window.speechSynthesis.speak(utterance);
+        setIsPlaying(true);
+    };
+
+    // Advanced renderer that handles both Tooltips (Vocabulary) AND Highlighting (Read Aloud)
+    const renderContent = () => {
+        const text = lesson.content.text;
+        const vocabulary = lesson.content.vocabulary;
+
+        // If no highlight, just use the standard tooltip renderer
+        if (!highlightRange) {
+            return renderTextWithTooltips(text, vocabulary);
+        }
+
+        // We have a highlighted range. We need to split the text into 3 parts:
+        // 1. Before highlight
+        // 2. Highlighted text
+        // 3. After highlight
+        // AND properly apply tooltips to all parts.
+
+        const { start, end } = highlightRange;
+        const before = text.slice(0, start);
+        const highlighted = text.slice(start, end);
+        const after = text.slice(end);
+
+        return (
+            <>
+                {renderTextWithTooltips(before, vocabulary)}
+                <span style={{
+                    backgroundColor: '#ffeb3b',
+                    fontWeight: 'bold',
+                    borderRadius: '4px',
+                    boxShadow: '0 0 5px #ffeb3b',
+                    transition: 'all 0.1s'
+                }}>
+                    {renderTextWithTooltips(highlighted, vocabulary)}
+                </span>
+                {renderTextWithTooltips(after, vocabulary)}
+            </>
+        );
+    };
 
     const handleAnswerChange = (id, value) => {
         const newAnswers = { ...answers, [id]: value };
         setAnswers(newAnswers);
         if (onSaveAnswers) {
-            onSaveAnswers({ answers: newAnswers, summary });
+            onSaveAnswers({ answers: newAnswers, fillInTheBlankAnswers, summary });
+        }
+    };
+
+    const handleFillInTheBlankChange = (id, value) => {
+        const newAnswers = { ...fillInTheBlankAnswers, [id]: value };
+        setFillInTheBlankAnswers(newAnswers);
+        if (onSaveAnswers) {
+            onSaveAnswers({ answers, fillInTheBlankAnswers: newAnswers, summary });
         }
     };
 
@@ -102,7 +207,7 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
         const value = e.target.value;
         setSummary(value);
         if (onSaveAnswers) {
-            onSaveAnswers({ answers, summary: value });
+            onSaveAnswers({ answers, fillInTheBlankAnswers, summary: value });
         }
     };
 
@@ -127,11 +232,19 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
             setAttempts(newAttempts);
         }
 
-        const allCorrect = lesson.content.questions.every(
+        const questionsCorrect = lesson.content.questions.every(
             (q) => answers[q.id]?.toLowerCase().trim() === q.answer.toLowerCase()
         );
 
-        if (allCorrect && summary.trim().length > 0) {
+        // Check fill-in-the-blank correctness (if section exists)
+        let fillInTheBlanksCorrect = true;
+        if (lesson.content.fillInTheBlanks) {
+            fillInTheBlanksCorrect = lesson.content.fillInTheBlanks.exercises.every(
+                (ex) => fillInTheBlankAnswers[ex.id] === ex.answer
+            );
+        }
+
+        if (questionsCorrect && fillInTheBlanksCorrect && summary.trim().length > 0) {
             triggerCelebration();
             setTimeout(() => onComplete(), 1500);
         }
@@ -171,11 +284,22 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
                 {/* Reading Text */}
                 <Card elevation={2}>
                     <CardContent sx={{ p: 3 }}>
-                        <Stack direction="row" spacing={1} alignItems="center" mb={2}>
-                            <BookIcon color="primary" />
-                            <Typography variant="h6" fontWeight={600}>
-                                Reading Passage
-                            </Typography>
+                        <Stack direction="row" spacing={1} alignItems="center" mb={2} justifyContent="space-between">
+                            <Stack direction="row" spacing={1} alignItems="center">
+                                <BookIcon color="primary" />
+                                <Typography variant="h6" fontWeight={600}>
+                                    Reading Passage
+                                </Typography>
+                            </Stack>
+                            <Button
+                                variant="outlined"
+                                startIcon={isPlaying ? <Stop /> : <VolumeUp />}
+                                onClick={handlePlayAudio}
+                                color={isPlaying ? "error" : "primary"}
+                                size="small"
+                            >
+                                {isPlaying ? "Stop" : "Read Aloud"}
+                            </Button>
                         </Stack>
                         <Divider sx={{ mb: 2 }} />
                         <Typography
@@ -184,16 +308,14 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
                             sx={{
                                 lineHeight: 2,
                                 fontSize: '1.2rem',
-                                whiteSpace: 'pre-line',
+                                whiteSpace: 'pre-wrap', // pre-wrap handles newlines better with mixed spans
                                 color: 'text.primary',
                             }}
                         >
-                            {renderTextWithTooltips(lesson.content.text, lesson.content.vocabulary)}
+                            {renderContent()}
                         </Typography>
                     </CardContent>
                 </Card>
-
-
 
                 {/* Questions Section */}
                 <Card elevation={2}>
@@ -263,6 +385,72 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
                         </Stack>
                     </CardContent>
                 </Card>
+
+                {/* Fill-in-the-blank Section */}
+                {lesson.content.fillInTheBlanks && (
+                    <Card elevation={2}>
+                        <CardContent sx={{ p: 3 }}>
+                            <Stack direction="row" spacing={1} alignItems="center" mb={2}>
+                                <EditIcon color="secondary" />
+                                <Typography variant="h6" fontWeight={600}>
+                                    {lesson.content.fillInTheBlanks.title || "Complete the Sentences"}
+                                </Typography>
+                            </Stack>
+                            <Divider sx={{ mb: 2 }} />
+                            <Stack spacing={3}>
+                                {lesson.content.fillInTheBlanks.exercises.map((ex, idx) => {
+                                    const userAnswer = fillInTheBlankAnswers[ex.id];
+                                    const isCorrect = userAnswer === ex.answer;
+                                    const showResult = showFeedback && userAnswer;
+
+                                    // Replace placeholder with answer-like underline
+                                    const parts = ex.sentence.split('_____');
+
+                                    return (
+                                        <Box key={ex.id}>
+                                            <Typography variant="body1" fontSize="1.1rem" mb={1}>
+                                                {idx + 1}. {parts[0]}
+                                                <span style={{
+                                                    borderBottom: '2px solid #333',
+                                                    padding: '0 8px',
+                                                    fontWeight: 'bold',
+                                                    color: showResult ? (isCorrect ? 'green' : 'red') : 'inherit'
+                                                }}>
+                                                    {userAnswer || "_____"}
+                                                </span>
+                                                {parts[1]}
+                                                {showResult && (
+                                                    isCorrect ? <CheckIcon color="success" sx={{ verticalAlign: 'middle', ml: 1 }} fontSize="small" /> : <CancelIcon color="error" sx={{ verticalAlign: 'middle', ml: 1 }} fontSize="small" />
+                                                )}
+                                            </Typography>
+
+                                            <FormControl component="fieldset" error={showResult && !isCorrect}>
+                                                <RadioGroup
+                                                    row
+                                                    value={userAnswer || ''}
+                                                    onChange={(e) => handleFillInTheBlankChange(ex.id, e.target.value)}
+                                                >
+                                                    {ex.options.map((option) => (
+                                                        <FormControlLabel
+                                                            key={option}
+                                                            value={option}
+                                                            control={<Radio size="small" />}
+                                                            label={option}
+                                                            sx={{
+                                                                color: showResult && option === ex.answer ? 'green' : 'inherit',
+                                                                '& .MuiTypography-root': { fontWeight: showResult && option === ex.answer ? 'bold' : 'normal' }
+                                                            }}
+                                                        />
+                                                    ))}
+                                                </RadioGroup>
+                                            </FormControl>
+                                        </Box>
+                                    );
+                                })}
+                            </Stack>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Hebrew Summary Section */}
                 <Card elevation={2}>

@@ -23,7 +23,6 @@ import {
     AutoStories as BookIcon,
     EmojiEvents as TrophyIcon,
     Bolt as BoltIcon,
-    Psychology as BrainIcon,
     RecordVoiceOver as VoiceIcon,
     MenuBook as MenuBookIcon,
     CheckCircle as CheckIcon,
@@ -193,15 +192,7 @@ export function Login() {
                                         secondary="Master grammar through interactive exercises"
                                     />
                                 </ListItem>
-                                <ListItem>
-                                    <ListItemIcon>
-                                        <BrainIcon color="success" />
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary="AI Tutor Chat"
-                                        secondary="Practice conversations with your personal AI assistant"
-                                    />
-                                </ListItem>
+
                                 <ListItem>
                                     <ListItemIcon>
                                         <VoiceIcon color="warning" />

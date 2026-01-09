@@ -3,19 +3,36 @@ export interface Lesson {
     id: number;
     week: number;
     day: number;
-    type: 'reading' | 'grammar' | 'chatbot' | 'pronunciation' | 'vocabulary';
+    type: 'reading' | 'grammar' | 'pronunciation' | 'vocabulary' | 'vocabulary_matching';
     title: string;
-    content: ReadingContent | GrammarContent | ChatContent | PronunciationContent | VocabularyContent;
+    content: ReadingContent | GrammarContent | PronunciationContent | VocabularyContent | VocabularyMatchingContent;
 }
 
 export interface VocabularyContent {
     description?: string;
 }
 
+export interface VocabularyMatchingContent {
+    pairs: VocabularyItem[];
+}
+
 export interface ReadingContent {
     text: string;
     questions: Question[];
     vocabulary: VocabularyItem[];
+    fillInTheBlanks?: FillInTheBlankSection;
+}
+
+export interface FillInTheBlankSection {
+    title?: string;
+    exercises: FillInTheBlankExercise[];
+}
+
+export interface FillInTheBlankExercise {
+    id: string;
+    sentence: string; // The sentence with a placeholder, e.g., "Nadav _____ to the store."
+    answer: string;   // The correct word, e.g., "walks"
+    options: string[]; // 3 options, e.g., ["walks", "eating", "table"]
 }
 
 export interface Question {
@@ -27,6 +44,8 @@ export interface Question {
 export interface VocabularyItem {
     word: string;
     translation: string;
+    context?: string;
+    contextTranslation?: string;
 }
 
 export interface GrammarContent {
@@ -42,14 +61,10 @@ export interface Exercise {
     options?: string[];
 }
 
-export interface ChatContent {
-    topic: string;
-    initialMessage: string;
-}
-
 export interface PronunciationContent {
     text: string;
     tips: string[];
+    vocabulary?: VocabularyItem[];
 }
 
 // User Types

@@ -2,7 +2,12 @@ import React from 'react';
 import { Mail, Download, Star } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
+import { lessons } from '../data/lessons';
+
 export function WeeklySummary({ week, onContinue }) {
+    const weekLessons = lessons.filter(l => l.week === week).sort((a, b) => a.day - b.day);
+    const totalMissions = weekLessons.length;
+
     React.useEffect(() => {
         confetti({
             particleCount: 100,
@@ -13,17 +18,15 @@ export function WeeklySummary({ week, onContinue }) {
 
     const handleEmail = () => {
         const subject = `English Progress Report - Week ${week}`;
-        const body = `Hi! Here is Nadav's progress for Week ${week}.\n\nCompleted all 5 missions!\nScore: 100%\n\nGreat job!`;
+        const body = `Hi! Here is Nadav's progress for Week ${week}.\n\nCompleted all ${totalMissions} missions!\nScore: 100%\n\nGreat job!`;
         window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     };
 
     const handleExport = () => {
-        const csvContent = "data:text/csv;charset=utf-8,Week,Day,Task,Status\n" +
-            `Week ${week},1,Reading,Completed\n` +
-            `Week ${week},2,Grammar,Completed\n` +
-            `Week ${week},3,Reading,Completed\n` +
-            `Week ${week},4,Pronunciation,Completed\n` +
-            `Week ${week},5,Chat,Completed`;
+        let csvContent = "data:text/csv;charset=utf-8,Week,Day,Task,Status\n";
+        weekLessons.forEach(lesson => {
+            csvContent += `Week ${week},${lesson.day},${lesson.type},Completed\n`;
+        });
 
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
@@ -48,7 +51,7 @@ export function WeeklySummary({ week, onContinue }) {
 
                 <div className="grid grid-cols-2 gap-4 mb-8">
                     <div className="bg-slate-800 p-4 rounded-xl">
-                        <div className="text-3xl font-bold text-white">5/5</div>
+                        <div className="text-3xl font-bold text-white">{totalMissions}/{totalMissions}</div>
                         <div className="text-sm text-slate-400">Missions</div>
                     </div>
                     <div className="bg-slate-800 p-4 rounded-xl">

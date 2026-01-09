@@ -6,13 +6,14 @@ import { Layout } from './components/Layout';
 import { Dashboard } from './components/Dashboard';
 import { TaskReading } from './components/TaskReading';
 import { TaskGrammar } from './components/TaskGrammar';
-import { TaskChat } from './components/TaskChat';
 import { TaskPronunciation } from './components/TaskPronunciation';
 import { TaskVocabulary } from './components/TaskVocabulary';
+import { TaskVocabularyMatching } from './components/TaskVocabularyMatching';
 import { WeeklySummary } from './components/WeeklySummary';
 import { Login } from './components/Login';
 import { useAppStore } from './hooks/useAppStore';
 import { useAuth } from './hooks/useAuth';
+import { lessons } from './data/lessons';
 import { Lesson } from './types';
 
 // Replace with your Google Client ID or leave empty for demo mode only
@@ -40,8 +41,11 @@ function AppContent() {
         if (activeLesson) {
             completeLesson(activeLesson.id, 100, skipped);
 
-            // If the lesson is a weekly vocabulary review or it's day 6, show summary
-            if (activeLesson.type === 'vocabulary' || activeLesson.day === 6) {
+            // Check if this is the last lesson of the week
+            const weekLessons = lessons.filter(l => l.week === activeLesson.week);
+            const lastLesson = weekLessons.reduce((prev, current) => (prev.day > current.day) ? prev : current);
+
+            if (activeLesson.id === lastLesson.id) {
                 setView('summary');
             } else {
                 setView('dashboard');
@@ -76,9 +80,9 @@ function AppContent() {
             switch (activeLesson.type) {
                 case 'reading': return <TaskReading {...commonProps} />;
                 case 'grammar': return <TaskGrammar {...commonProps} />;
-                case 'chatbot': return <TaskChat {...commonProps} />;
                 case 'pronunciation': return <TaskPronunciation {...commonProps} />;
                 case 'vocabulary': return <TaskVocabulary {...commonProps} />;
+                case 'vocabulary_matching': return <TaskVocabularyMatching {...commonProps} />;
                 default: return <div />;
             }
         }

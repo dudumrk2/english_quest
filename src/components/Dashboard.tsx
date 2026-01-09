@@ -5,9 +5,9 @@ import { Box, Typography, Grid, Stack } from '@mui/material';
 import {
     MenuBook as ReadingIcon,
     School as GrammarIcon,
-    Chat as ChatIcon,
     RecordVoiceOver as PronunciationIcon,
     Translate as TranslateIcon,
+    Extension as ExtensionIcon,
 } from '@mui/icons-material';
 import { LessonCard } from './common/LessonCard';
 import { WeekContainer } from './common/WeekContainer';
@@ -16,9 +16,9 @@ import { GradientText } from './common/GradientText';
 const taskIcons: Record<string, React.ElementType> = {
     reading: ReadingIcon,
     grammar: GrammarIcon,
-    chatbot: ChatIcon,
     pronunciation: PronunciationIcon,
     vocabulary: TranslateIcon,
+    vocabulary_matching: ExtensionIcon,
 };
 
 export const Dashboard: React.FC<DashboardProps> = ({
@@ -66,7 +66,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
             < Stack spacing={4} >
                 {
                     weeks.map((week) => {
-                        const weekLessons = lessons.filter((l) => l.week === week);
+                        const weekLessons = lessons
+                            .filter((l) => l.week === week)
+                            .sort((a, b) => a.day - b.day);
                         const isWeekLocked = false; // Unlocked for demo
                         const progress = getWeekProgress(week);
 

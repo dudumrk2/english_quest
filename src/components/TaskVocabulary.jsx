@@ -26,6 +26,7 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
     const [answers, setAnswers] = useState(initialAnswers);
     const [showFeedback, setShowFeedback] = useState(false);
     const [completedCount, setCompletedCount] = useState(0);
+    const [attempts, setAttempts] = useState({});
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -47,8 +48,6 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
             }
         });
 
-        // Shuffle words for better practice? Maybe keep them in order for now.
-        setWords(weekWords);
         setWords(weekWords);
     }, [lesson.week]);
 
@@ -72,14 +71,21 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
     const handleCheck = () => {
         setShowFeedback(true);
         let correct = 0;
+        const newAttempts = { ...attempts };
 
         words.forEach(w => {
             const userAnswer = answers[w.word]?.trim() || '';
-            if (checkAnswer(userAnswer, w.translation)) {
+            const isCorrect = checkAnswer(userAnswer, w.translation);
+
+            if (isCorrect) {
                 correct++;
+            } else {
+                // Increment attempts for incorrect answers
+                newAttempts[w.word] = (newAttempts[w.word] || 0) + 1;
             }
         });
 
+        setAttempts(newAttempts);
         setCompletedCount(correct);
 
         if (correct === words.length) {
@@ -97,12 +103,6 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
         // Handle multiple correct answers split by "/"
         const correctOptions = correct.split('/').map(normalize);
         return correctOptions.some(opt => opt === userNorm || userNorm.includes(opt));
-    };
-
-    const getStatusColor = (word) => {
-        if (!showFeedback) return 'primary.main';
-        const isCorrect = checkAnswer(answers[word.word], word.translation);
-        return isCorrect ? 'success.main' : 'error.main';
     };
 
     return (
@@ -141,6 +141,7 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
                         {words.map((item, index) => {
                             const isCorrect = checkAnswer(answers[item.word], item.translation);
                             const isError = showFeedback && !isCorrect;
+                            const attemptCount = attempts[item.word] || 0;
 
                             return (
                                 <Grid item xs={12} sm={6} key={index}>
@@ -148,10 +149,11 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
                                         sx={{
                                             p: 2,
                                             borderRadius: 2,
-                                            border: '1px solid',
-                                            borderColor: 'divider',
-                                            bgcolor: isError ? '#fff5f5' : isCorrect && showFeedback ? '#f0fdf4' : 'transparent',
-                                            position: 'relative'
+                                            border: '2px solid',
+                                            borderColor: isError ? 'error.main' : isCorrect && showFeedback ? 'success.main' : 'divider',
+                                            // Removed bgcolor change to avoid contrast issues
+                                            position: 'relative',
+                                            transition: 'border-color 0.3s'
                                         }}
                                     >
                                         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
@@ -180,9 +182,14 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
                                             }}
                                         />
 
-                                        {isError && (
+                                        {isError && attemptCount >= 3 && (
                                             <Typography variant="caption" color="error" sx={{ mt: 1, display: 'block', fontWeight: 'bold' }} dir="rtl">
                                                 נכון: {item.translation}
+                                            </Typography>
+                                        )}
+                                        {isError && attemptCount < 3 && (
+                                            <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block', fontStyle: 'italic' }}>
+                                                {item.context ? `hint: ${item.context}` : "Try again..."}
                                             </Typography>
                                         )}
                                     </Box>
