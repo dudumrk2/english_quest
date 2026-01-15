@@ -132,9 +132,12 @@ export function TaskVocabularyMatching({ lesson, onComplete, initialAnswers = {}
         wordUtterance.lang = 'en-US';
         utterances.push(wordUtterance);
 
+        // Helper to sanitize Hebrew text for speech
+        const sanitizeForSpeech = (text) => text ? text.replace(/\//g, ' או ') : '';
+
         // 2. Hebrew Word Translation
         if (translation) {
-            const transWordUtterance = new SpeechSynthesisUtterance(translation);
+            const transWordUtterance = new SpeechSynthesisUtterance(sanitizeForSpeech(translation));
             transWordUtterance.lang = 'he-IL';
             if (hebrewVoice) transWordUtterance.voice = hebrewVoice;
             utterances.push(transWordUtterance);
@@ -149,7 +152,7 @@ export function TaskVocabularyMatching({ lesson, onComplete, initialAnswers = {}
 
         // 4. Hebrew Context Translation (if exists)
         if (contextTranslation) {
-            const transUtterance = new SpeechSynthesisUtterance(contextTranslation);
+            const transUtterance = new SpeechSynthesisUtterance(sanitizeForSpeech(contextTranslation));
             transUtterance.lang = 'he-IL';
             if (hebrewVoice) transUtterance.voice = hebrewVoice;
             utterances.push(transUtterance);

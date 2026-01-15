@@ -36,15 +36,22 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
         const seenWords = new Set();
 
         lessons.forEach(l => {
-            if (l.week === lesson.week && l.content.vocabulary) {
-                l.content.vocabulary.forEach(v => {
-                    // Avoid duplicates based on the English word (case-insensitive)
-                    const normalizedWord = v.word.toLowerCase().trim();
-                    if (!seenWords.has(normalizedWord)) {
-                        seenWords.add(normalizedWord);
-                        weekWords.push(v);
-                    }
-                });
+            if (l.week !== lesson.week) return;
+
+            const addWord = (item) => {
+                const normalizedWord = item.word.toLowerCase().trim();
+                if (!seenWords.has(normalizedWord)) {
+                    seenWords.add(normalizedWord);
+                    weekWords.push(item);
+                }
+            };
+
+            if (l.content.vocabulary) {
+                l.content.vocabulary.forEach(addWord);
+            }
+
+            if (l.content.pairs) {
+                l.content.pairs.forEach(addWord);
             }
         });
 

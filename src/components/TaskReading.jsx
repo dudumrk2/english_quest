@@ -27,6 +27,7 @@ import {
     VolumeUp,
     Stop,
     Edit as EditIcon,
+    FactCheck as FactCheckIcon,
 } from '@mui/icons-material';
 import { triggerCelebration } from '../utils/confetti';
 
@@ -90,6 +91,10 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
     const [answers, setAnswers] = useState(initialAnswers.answers || {});
     // New state for fill-in-the-blank
     const [fillInTheBlankAnswers, setFillInTheBlankAnswers] = useState(initialAnswers.fillInTheBlankAnswers || {});
+    // New state for match definitions
+    const [matchDefinitionsAnswers, setMatchDefinitionsAnswers] = useState(initialAnswers.matchDefinitionsAnswers || {});
+    const [selectedWordId, setSelectedWordId] = useState(null);
+    const [shuffledDefinitions, setShuffledDefinitions] = useState([]);
     const [showFeedback, setShowFeedback] = useState(false);
     const [summary, setSummary] = useState(initialAnswers.summary || '');
 
@@ -97,6 +102,13 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
 
     useEffect(() => {
         window.scrollTo(0, 0);
+
+        // Shuffle definitions when lesson loads
+        if (lesson.content.matchDefinitions) {
+            const defs = [...lesson.content.matchDefinitions.pairs];
+            setShuffledDefinitions(defs.sort(() => Math.random() - 0.5));
+        }
+
         return () => {
             window.speechSynthesis.cancel();
         };
@@ -191,7 +203,27 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
         const newAnswers = { ...answers, [id]: value };
         setAnswers(newAnswers);
         if (onSaveAnswers) {
-            onSaveAnswers({ answers: newAnswers, fillInTheBlankAnswers, summary });
+            onSaveAnswers({ answers: newAnswers, fillInTheBlankAnswers, matchDefinitionsAnswers, summary });
+        }
+    };
+
+    const handleMatchSelect = (type, idOrText) => {
+        if (showFeedback) return; // Disable interaction after submit
+
+        if (type === 'word') {
+            // If clicking the same word, deselect. Otherwise select.
+            setSelectedWordId(prev => prev === idOrText ? null : idOrText);
+        } else if (type === 'definition') {
+            if (selectedWordId) {
+                // If a word is selected, try to match it with this definition
+                const newAnswers = { ...matchDefinitionsAnswers, [selectedWordId]: idOrText };
+                setMatchDefinitionsAnswers(newAnswers);
+                setSelectedWordId(null); // Clear selection after match
+
+                if (onSaveAnswers) {
+                    onSaveAnswers({ answers, fillInTheBlankAnswers, matchDefinitionsAnswers: newAnswers, summary });
+                }
+            }
         }
     };
 
@@ -199,7 +231,7 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
         const newAnswers = { ...fillInTheBlankAnswers, [id]: value };
         setFillInTheBlankAnswers(newAnswers);
         if (onSaveAnswers) {
-            onSaveAnswers({ answers, fillInTheBlankAnswers: newAnswers, summary });
+            onSaveAnswers({ answers, fillInTheBlankAnswers: newAnswers, matchDefinitionsAnswers, summary });
         }
     };
 
@@ -207,7 +239,7 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
         const value = e.target.value;
         setSummary(value);
         if (onSaveAnswers) {
-            onSaveAnswers({ answers, fillInTheBlankAnswers, summary: value });
+            onSaveAnswers({ answers, fillInTheBlankAnswers, matchDefinitionsAnswers, summary: value });
         }
     };
 
@@ -244,7 +276,15 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
             );
         }
 
-        if (questionsCorrect && fillInTheBlanksCorrect && summary.trim().length > 0) {
+        // Check match definitions correctness
+        let matchDefinitionsCorrect = true;
+        if (lesson.content.matchDefinitions) {
+            matchDefinitionsCorrect = lesson.content.matchDefinitions.pairs.every(
+                (pair) => matchDefinitionsAnswers[pair.id] === pair.definition
+            );
+        }
+
+        if (questionsCorrect && fillInTheBlanksCorrect && matchDefinitionsCorrect && summary.trim().length > 0) {
             triggerCelebration();
             setTimeout(() => onComplete(), 1500);
         }
@@ -452,6 +492,123 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
                     </Card>
                 )}
 
+                {/* Match Definitions Section */}
+                {lesson.content.matchDefinitions && (
+                    <Card elevation={2}>
+                        <CardContent sx={{ p: 3 }}>
+                            <Stack direction="row" spacing={1} alignItems="center" mb={2}>
+                                <FactCheckIcon color="info" />
+                                <Typography variant="h6" fontWeight={600}>
+                                    {lesson.content.matchDefinitions.title || "Match Definitions"}
+                                </Typography>
+                            </Stack>
+                            <Divider sx={{ mb: 2 }} />
+                            <Grid container spacing={4}>
+                                {/* Words Column */}
+                                <Grid item xs={12} md={6}>
+                                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom color="text.secondary">
+                                        Words
+                                    </Typography>
+                                    <Stack spacing={2}>
+                                        {lesson.content.matchDefinitions.pairs.map((pair) => {
+                                            const isMatched = !!matchDefinitionsAnswers[pair.id];
+                                            const isSelected = selectedWordId === pair.id;
+                                            const isCorrect = isMatched && matchDefinitionsAnswers[pair.id] === pair.definition;
+
+                                            let color = 'default';
+                                            let variant = 'outlined';
+
+                                            if (showFeedback && isMatched) {
+                                                color = isCorrect ? 'success' : 'error';
+                                                variant = 'filled';
+                                            } else if (isMatched) {
+                                                color = 'primary';
+                                                variant = 'filled';
+                                            } else if (isSelected) {
+                                                color = 'primary';
+                                                variant = 'outlined';
+                                            }
+
+                                            return (
+                                                <Button
+                                                    key={pair.id}
+                                                    variant={variant}
+                                                    color={color}
+                                                    onClick={() => handleMatchSelect('word', pair.id)}
+                                                    disabled={showFeedback && isMatched}
+                                                    sx={{
+                                                        justifyContent: 'flex-start',
+                                                        py: 1.5,
+                                                        borderWidth: isSelected ? 2 : 1,
+                                                        fontWeight: isSelected ? 'bold' : 'normal'
+                                                    }}
+                                                >
+                                                    {pair.word}
+                                                    {showFeedback && isMatched && (
+                                                        isCorrect ? <CheckIcon sx={{ ml: 'auto' }} fontSize="small" /> : <CancelIcon sx={{ ml: 'auto' }} fontSize="small" />
+                                                    )}
+                                                </Button>
+                                            );
+                                        })}
+                                    </Stack>
+                                </Grid>
+
+                                {/* Definitions Column */}
+                                <Grid item xs={12} md={6}>
+                                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom color="text.secondary">
+                                        Definitions
+                                    </Typography>
+                                    <Stack spacing={2}>
+                                        {shuffledDefinitions.map((pair) => {
+                                            // Check if this definition is used in any answer
+                                            // Find which word ID maps to this definition
+                                            const connectedWordId = Object.keys(matchDefinitionsAnswers).find(
+                                                key => matchDefinitionsAnswers[key] === pair.definition
+                                            );
+                                            const isUsed = !!connectedWordId;
+
+                                            // Determine correctness if feedback is shown
+                                            // It is correct if the connected word's actual definition matches this definition
+                                            const correctWordPair = lesson.content.matchDefinitions.pairs.find(p => p.id === connectedWordId);
+                                            const isCorrect = correctWordPair && correctWordPair.definition === pair.definition;
+
+                                            let color = 'default';
+                                            let variant = 'outlined';
+
+                                            if (showFeedback && isUsed) {
+                                                color = isCorrect ? 'success' : 'error';
+                                                variant = 'filled';
+                                            } else if (isUsed) {
+                                                color = 'primary';
+                                                variant = 'filled'; // Indicates it's been "taken"
+                                            }
+
+                                            return (
+                                                <Button
+                                                    key={pair.id} // shuffle uses pair objects, id is unique
+                                                    variant={variant}
+                                                    color={color}
+                                                    onClick={() => handleMatchSelect('definition', pair.definition)}
+                                                    disabled={isUsed && !showFeedback} // Disable if already matched (unless review mode? no, keep locked)
+                                                    sx={{
+                                                        justifyContent: 'flex-start',
+                                                        textAlign: 'left',
+                                                        py: 1.5,
+                                                        height: '100%',
+                                                        textTransform: 'none'
+                                                    }}
+                                                >
+                                                    {pair.definition}
+                                                </Button>
+                                            );
+                                        })}
+                                    </Stack>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                )}
+
                 {/* Hebrew Summary Section */}
                 <Card elevation={2}>
                     <CardContent sx={{ p: 3 }}>
@@ -529,6 +686,6 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
                     </Button>
                 </Stack>
             </Stack>
-        </Box>
+        </Box >
     );
 }

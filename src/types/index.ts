@@ -21,6 +21,18 @@ export interface ReadingContent {
     questions: Question[];
     vocabulary: VocabularyItem[];
     fillInTheBlanks?: FillInTheBlankSection;
+    matchDefinitions?: MatchDefinitionsSection;
+}
+
+export interface MatchDefinitionsSection {
+    title?: string;
+    pairs: MatchPair[];
+}
+
+export interface MatchPair {
+    id: string;
+    word: string;
+    definition: string;
 }
 
 export interface FillInTheBlankSection {
