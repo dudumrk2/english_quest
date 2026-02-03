@@ -216,7 +216,15 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
         } else if (type === 'definition') {
             if (selectedWordId) {
                 // If a word is selected, try to match it with this definition
-                const newAnswers = { ...matchDefinitionsAnswers, [selectedWordId]: idOrText };
+                const newAnswers = { ...matchDefinitionsAnswers };
+
+                // Check if this definition is already used by another word and remove it
+                const existingOwner = Object.keys(newAnswers).find(key => newAnswers[key] === idOrText);
+                if (existingOwner) {
+                    delete newAnswers[existingOwner];
+                }
+
+                newAnswers[selectedWordId] = idOrText;
                 setMatchDefinitionsAnswers(newAnswers);
                 setSelectedWordId(null); // Clear selection after match
 
@@ -589,7 +597,7 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
                                                     variant={variant}
                                                     color={color}
                                                     onClick={() => handleMatchSelect('definition', pair.definition)}
-                                                    disabled={isUsed && !showFeedback} // Disable if already matched (unless review mode? no, keep locked)
+                                                    disabled={showFeedback} // Only disable during feedback
                                                     sx={{
                                                         justifyContent: 'flex-start',
                                                         textAlign: 'left',

@@ -73,17 +73,37 @@ export function useAppStore(userEmail?: string): AppStore {
 
     const completeLesson = (lessonId: number, score: number = 100, skipped: boolean = false): void => {
         setState(prev => {
-            if (prev.completedLessons.includes(lessonId) || prev.skippedLessons?.includes(lessonId)) return prev;
+            // 1. If already completed, do nothing (prevent double points)
+            if (prev.completedLessons.includes(lessonId)) return prev;
 
-            const newCompleted = skipped ? prev.completedLessons : [...prev.completedLessons, lessonId];
-            const newSkipped = skipped ? [...(prev.skippedLessons || []), lessonId] : (prev.skippedLessons || []);
-            const nextLessonId = lessonId < 30 ? lessonId + 1 : lessonId;
+            // 2. If trying to skip, but already skipped, do nothing
+            if (skipped && prev.skippedLessons?.includes(lessonId)) return prev;
+
+            // 3. Prepare new lists
+            let newCompleted = prev.completedLessons;
+            let newSkipped = prev.skippedLessons || [];
+
+            if (skipped) {
+                // Add to skipped list
+                newSkipped = [...newSkipped, lessonId];
+            } else {
+                // Add to completed list
+                newCompleted = [...newCompleted, lessonId];
+                // Remove from skipped list if it was there (upgrading status)
+                newSkipped = newSkipped.filter(id => id !== lessonId);
+            }
+
+            // 4. Calculate next lesson ID
+            // Only advance if this completion pushes the frontier forward.
+            // If we go back to fix an old lesson, don't reset progress to an earlier point.
+            const nextLinearId = lessonId < 30 ? lessonId + 1 : lessonId;
+            const newCurrentId = Math.max(prev.currentLessonId, nextLinearId);
 
             return {
                 ...prev,
                 completedLessons: newCompleted,
                 skippedLessons: newSkipped,
-                currentLessonId: nextLessonId,
+                currentLessonId: newCurrentId,
                 points: skipped ? prev.points : prev.points + score,
                 streak: skipped ? prev.streak : prev.streak + 1
             };
