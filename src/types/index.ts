@@ -132,7 +132,72 @@ export interface TaskProps {
     onComplete: (skipped?: boolean) => void;
 }
 
+export interface TaskReadingProps {
+    lesson: Lesson & { content: ReadingContent };
+    onComplete: (skipped?: boolean) => void;
+    initialAnswers?: ReadingAnswers;
+    onSaveAnswers?: (answers: ReadingAnswers) => void;
+}
+
+export interface ReadingAnswers {
+    answers?: Record<string, string>;
+    fillInTheBlankAnswers?: Record<string, string>;
+    matchDefinitionsAnswers?: Record<string, string>;
+    summary?: string;
+}
+
+export interface TaskGrammarProps {
+    lesson: Lesson & { content: GrammarContent };
+    onComplete: (skipped?: boolean) => void;
+    initialAnswers?: GrammarAnswers;
+    onSaveAnswers?: (answers: GrammarAnswers) => void;
+}
+
+export interface GrammarAnswers {
+    answers?: Record<string, string>;
+}
+
+export interface TaskPronunciationProps {
+    lesson: Lesson & { content: PronunciationContent };
+    onComplete: (skipped?: boolean) => void;
+    initialAnswers?: PronunciationAnswers;
+    onSaveAnswers?: (answers: PronunciationAnswers) => void;
+}
+
+export interface PronunciationAnswers {
+    summary?: string;
+    sentences?: string[];
+}
+
+export interface TaskVocabularyProps {
+    lesson: Lesson;
+    onComplete: (skipped?: boolean) => void;
+    initialAnswers?: VocabularyAnswers;
+    onSaveAnswers?: (answers: VocabularyAnswers) => void;
+}
+
+export interface VocabularyAnswers {
+    answers?: Record<string, string>;
+}
+
+export interface TaskVocabularyMatchingProps {
+    lesson: Lesson & { content: VocabularyMatchingContent };
+    onComplete: (skipped?: boolean) => void;
+    initialAnswers?: VocabularyMatchingAnswers;
+    onSaveAnswers?: (answers: VocabularyMatchingAnswers) => void;
+}
+
+export interface VocabularyMatchingAnswers {
+    matches?: Record<string, string>;
+}
+
+export interface TaskChatProps {
+    lesson: Lesson;
+    onComplete: (skipped?: boolean) => void;
+}
+
 export interface WeeklySummaryProps {
     week: number;
     onContinue: () => void;
 }
+

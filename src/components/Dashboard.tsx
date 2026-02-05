@@ -84,8 +84,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                                         const hasData = lessonAnswers[lesson.id] && Object.keys(lessonAnswers[lesson.id]).length > 0;
 
                                         return (
-                                            // @ts-ignore
-                                            <Grid xs={12} sm={6} md={4} lg={2.4} key={lesson.id} id={`lesson-${lesson.id}`}>
+                                            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }} key={lesson.id} id={`lesson-${lesson.id}`}>
                                                 <LessonCard
                                                     day={lesson.day}
                                                     title={lesson.title}

@@ -1,0 +1,120 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]: D
+        - generic [ref=e8]:
+          - heading "Demo User" [level=6] [ref=e9]
+          - text: Level 1 Cadet
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - img [ref=e12]
+          - generic [ref=e14]: 0 XP
+        - generic [ref=e15]:
+          - img [ref=e16]
+          - generic [ref=e18]: 0 Day Streak
+        - button [ref=e19] [cursor=pointer]:
+          - img [ref=e20]
+  - generic [ref=e23]:
+    - generic [ref=e25]:
+      - img [ref=e26]
+      - generic [ref=e29]:
+        - heading "Game Design Chat" [level=4] [ref=e30]
+        - heading "Reading Comprehension" [level=6] [ref=e31]
+    - generic [ref=e32]:
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - generic [ref=e36]:
+            - img [ref=e37]
+            - heading "Reading Passage" [level=6] [ref=e40]
+          - button "Read Aloud" [ref=e41] [cursor=pointer]:
+            - img [ref=e43]
+            - text: Read Aloud
+        - separator [ref=e45]
+        - generic [ref=e46]:
+          - text: Sara and Ben talk about games. 'I made a new
+          - generic [ref=e47]: form
+          - text: of parkour map,' says Sara. 'That sounds cool. Can I
+          - generic [ref=e48]: share
+          - text: it?' asks Ben. Sara says, 'Yes, it is your
+          - generic [ref=e49]: choice
+          - text: .' Ben looks at the
+          - generic [ref=e50]: writing
+          - text: on the screen. 'Did you write this code?' he asks. 'Yes, I like to
+          - generic [ref=e51]: solve
+          - text: hard problems,' Sara answers. They decide to
+          - generic [ref=e52]: form
+          - text: a
+          - generic [ref=e53]: band
+          - text: of developers. 'We can
+          - generic [ref=e54]: paint
+          - text: the lobby together,' Ben suggests. They make a list of tasks. It is fun to create your own things.
+      - generic [ref=e56]:
+        - generic [ref=e57]:
+          - img [ref=e58]
+          - heading "Comprehension Questions" [level=6] [ref=e60]
+        - separator [ref=e61]
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - paragraph [ref=e64]: 1. What did Sara make?
+            - generic [ref=e66]:
+              - textbox "Type your answer..." [ref=e67]
+              - group
+          - generic [ref=e68]:
+            - paragraph [ref=e69]: 2. What does Ben want to do?
+            - generic [ref=e71]:
+              - textbox "Type your answer..." [ref=e72]
+              - group
+          - generic [ref=e73]:
+            - paragraph [ref=e74]: 3. Who wrote the code?
+            - generic [ref=e76]:
+              - textbox "Type your answer..." [ref=e77]
+              - group
+          - generic [ref=e78]:
+            - paragraph [ref=e79]: 4. What do they decide to form?
+            - generic [ref=e81]:
+              - textbox "Type your answer..." [ref=e82]
+              - group
+          - generic [ref=e83]:
+            - paragraph [ref=e84]: 5. Is it fun to create?
+            - generic [ref=e86]:
+              - textbox "Type your answer..." [ref=e87]
+              - group
+      - generic [ref=e89]:
+        - generic [ref=e90]:
+          - img [ref=e91]
+          - heading "Match Definitions" [level=6] [ref=e93]
+        - separator [ref=e94]
+        - generic [ref=e95]:
+          - generic [ref=e96]:
+            - heading "Words" [level=6] [ref=e97]
+            - generic [ref=e98]:
+              - button "form" [ref=e99] [cursor=pointer]
+              - button "share" [ref=e100] [cursor=pointer]
+              - button "solve" [ref=e101] [cursor=pointer]
+              - button "band" [ref=e102] [cursor=pointer]
+              - button "paint" [ref=e103] [cursor=pointer]
+          - generic [ref=e104]:
+            - heading "Definitions" [level=6] [ref=e105]
+            - generic [ref=e106]:
+              - button "To create or organize" [ref=e107] [cursor=pointer]
+              - button "To find the answer" [ref=e108] [cursor=pointer]
+              - button "To give a part to others" [ref=e109] [cursor=pointer]
+              - button "A group of people" [ref=e110] [cursor=pointer]
+              - button "To put color on something" [ref=e111] [cursor=pointer]
+      - generic [ref=e113]:
+        - generic [ref=e114]:
+          - img [ref=e115]
+          - heading "Summary in Hebrew - סיכום בעברית" [level=6] [ref=e117]
+        - separator [ref=e118]
+        - paragraph [ref=e119]: סכם את הקטע שקראת בעברית (לפחות 2-3 משפטים)
+        - generic [ref=e121]:
+          - textbox "כתוב את הסיכום שלך כאן..." [ref=e122]
+          - group
+      - generic [ref=e123]:
+        - button "Skip Lesson" [ref=e124] [cursor=pointer]
+        - button "Check Answers & Complete Lesson" [ref=e125] [cursor=pointer]
+```

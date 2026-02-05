@@ -12,9 +12,7 @@ import {
     LinearProgress,
     Chip,
     Fade,
-    Grid,
     TextField,
-    Tooltip,
 } from '@mui/material';
 import {
     RecordVoiceOver as PronunciationIcon,
@@ -23,68 +21,22 @@ import {
     Lightbulb as TipIcon,
     CheckCircle as CheckIcon,
     GraphicEq as WaveIcon,
-    Translate as TranslateIcon,
     Create as WriteIcon,
     VolumeUp as VolumeIcon,
     Stop,
 } from '@mui/icons-material';
 import { triggerCelebration } from '../utils/confetti';
+import { renderTextWithHighlight } from '../utils/textRenderer';
+import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
+import {
+    PASSING_ACCURACY_THRESHOLD,
+    MAX_PRONUNCIATION_ATTEMPTS,
+    MIN_SENTENCE_WORD_COUNT,
+    CHALLENGE_WORDS_COUNT,
+    REQUIRED_SENTENCES_COUNT,
+} from '../data/constants';
 
-// Helper to render text with vocabulary tooltips
-const renderTextWithTooltips = (text, vocabulary) => {
-    if (!text || !vocabulary) return text;
-
-    // Sort by length desc to match longest first
-    const sortedVocab = [...vocabulary].sort((a, b) => b.word.length - a.word.length);
-
-    const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-    // Create pattern: \b(word1|word2|...)\b
-    const pattern = new RegExp(`\\b(${sortedVocab.map(v => escapeRegExp(v.word)).join('|')})\\b`, 'gi');
-
-    const parts = text.split(pattern);
-
-    return parts.map((part, index) => {
-        const vocabMatch = sortedVocab.find(v => v.word.toLowerCase() === part.toLowerCase());
-
-        if (vocabMatch) {
-            return (
-                <Tooltip
-                    key={index}
-                    title={<Typography variant="h6" sx={{ p: 1 }}>{vocabMatch.translation}</Typography>}
-                    arrow
-                    placement="top"
-                    enterTouchDelay={0}
-                >
-                    <span
-                        style={{
-                            fontWeight: 'bold',
-                            color: '#1976d2',
-                            cursor: 'help',
-                            borderBottom: '2px dotted #1976d2',
-                            transition: 'all 0.2s',
-                            display: 'inline-block',
-                            margin: '0 2px',
-                        }}
-                        onMouseEnter={(e) => {
-                            e.target.style.backgroundColor = '#1976d2';
-                            e.target.style.color = 'white';
-                            e.target.style.borderRadius = '4px';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.target.style.backgroundColor = 'transparent';
-                            e.target.style.color = '#1976d2';
-                            e.target.style.borderRadius = '0px';
-                        }}
-                    >
-                        {part}
-                    </span>
-                </Tooltip>
-            );
-        }
-        return part;
-    });
-};
+// Uses shared utilities from utils/textRenderer.tsx and hooks/useSpeechSynthesis.ts
 
 // Helper to calculate accuracy
 const calculateAccuracy = (original, transcript) => {
@@ -111,19 +63,19 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
     const [readingComplete, setReadingComplete] = useState(false);
     const [audioURL, setAudioURL] = useState(null);
 
-    // Audio playback state
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [highlightRange, setHighlightRange] = useState(null);
+    // Use shared speech synthesis hook for audio playback
+    const { isPlaying, highlightRange, toggle: toggleAudio } = useSpeechSynthesis();
 
+    // Refs for speech recording (used by toggleRecording)
     const mediaRecorderRef = useRef(null);
     const chunksRef = useRef([]);
     const recognitionRef = useRef(null);
+    const transcriptRef = useRef('');
 
-    // Get up to 10 random vocabulary words for the challenge
+    // Get vocabulary words for the challenge (using constant)
     const challengeWords = React.useMemo(() => {
         const vocab = lesson.content.vocabulary || [];
-        // Take the first 10
-        return vocab.slice(0, 10).map(v => v.word.toLowerCase());
+        return vocab.slice(0, CHALLENGE_WORDS_COUNT).map(v => v.word.toLowerCase());
     }, [lesson.content.vocabulary]);
 
     useEffect(() => {
@@ -139,180 +91,25 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
 
         return () => {
             if (recognitionRef.current) recognitionRef.current.abort();
-            window.speechSynthesis.cancel();
         };
     }, []);
 
     const handlePlayAudio = () => {
-        if (isPlaying) {
-            window.speechSynthesis.cancel();
-            setIsPlaying(false);
-            setHighlightRange(null);
-            return;
-        }
-
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(lesson.content.text);
-        utterance.lang = 'en-US';
-        utterance.rate = 0.9;
-
-        utterance.onboundary = (event) => {
-            if (event.name === 'word') {
-                const text = lesson.content.text;
-                const start = event.charIndex;
-                let end = text.indexOf(' ', start);
-                if (end === -1) end = text.length;
-                setHighlightRange({ start, end });
-            }
-        };
-
-        utterance.onend = () => {
-            setIsPlaying(false);
-            setHighlightRange(null);
-        };
-
-        utterance.onerror = () => {
-            setIsPlaying(false);
-            setHighlightRange(null);
-        };
-
-        window.speechSynthesis.speak(utterance);
-        setIsPlaying(true);
+        toggleAudio(lesson.content.text);
     };
 
+    // Render text with vocabulary tooltips and word highlighting
     const renderContent = () => {
-        const text = lesson.content.text;
-        const vocabulary = lesson.content.vocabulary;
-
-        if (!highlightRange) {
-            return renderTextWithTooltips(text, vocabulary);
-        }
-
-        const { start, end } = highlightRange;
-        const before = text.slice(0, start);
-        const highlighted = text.slice(start, end);
-        const after = text.slice(end);
-
-        return (
-            <>
-                {renderTextWithTooltips(before, vocabulary)}
-                <span style={{
-                    backgroundColor: '#ffeb3b',
-                    fontWeight: 'bold',
-                    borderRadius: '4px',
-                    boxShadow: '0 0 5px #ffeb3b',
-                    transition: 'all 0.1s'
-                }}>
-                    {renderTextWithTooltips(highlighted, vocabulary)}
-                </span>
-                {renderTextWithTooltips(after, vocabulary)}
-            </>
+        return renderTextWithHighlight(
+            lesson.content.text,
+            lesson.content.vocabulary,
+            highlightRange
         );
     };
 
-    const startRecording = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorderRef.current = new MediaRecorder(stream);
-            chunksRef.current = [];
+    // NOTE: startRecording, stopRecording, and startRecordingWithEvents were removed
+    // as dead code - they were superseded by toggleRecording below
 
-            mediaRecorderRef.current.ondataavailable = (e) => {
-                if (e.data.size > 0) {
-                    chunksRef.current.push(e.data);
-                }
-            };
-
-            mediaRecorderRef.current.onstop = () => {
-                const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-                const url = URL.createObjectURL(blob);
-                setAudioURL(url);
-            };
-
-            mediaRecorderRef.current.start();
-
-            if (recognitionRef.current) {
-                try {
-                    recognitionRef.current.start();
-                } catch (e) {
-                    console.error("Speech recognition already started", e);
-                }
-            }
-
-            setIsRecording(true);
-            setFeedback(null);
-        } catch (err) {
-            console.error("Error accessing microphone:", err);
-            alert("Could not access microphone. Please ensure permission is granted.");
-        }
-    };
-
-    const stopRecording = () => {
-        if (mediaRecorderRef.current && isRecording) {
-            mediaRecorderRef.current.stop();
-            setIsRecording(false);
-
-            if (recognitionRef.current) {
-                recognitionRef.current.stop();
-                // Get results slightly deferred or handle 'result' event if we added listener.
-                // Since we didn't add a 'result' listener in startRecording, let's fix that design.
-                // We'll rely on the fact that we should have been listening.
-            }
-
-            // Simulate result processing for now as direct result capture in 'stop' is tricky without event listeners.
-            // Let's attach the listener in startRecording instead.
-        }
-    };
-
-    // Re-implement startRecording to properly handle speech events
-    const startRecordingWithEvents = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorderRef.current = new MediaRecorder(stream);
-            chunksRef.current = [];
-
-            mediaRecorderRef.current.ondataavailable = (e) => {
-                if (e.data.size > 0) chunksRef.current.push(e.data);
-            };
-
-            mediaRecorderRef.current.onstop = () => {
-                const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-                const url = URL.createObjectURL(blob);
-                setAudioURL(url);
-            };
-
-            mediaRecorderRef.current.start();
-            setIsRecording(true);
-            setFeedback(null);
-
-            if (recognitionRef.current) {
-                let finalTranscript = '';
-                recognitionRef.current.onresult = (event) => {
-                    let interimTranscript = '';
-                    for (let i = event.resultIndex; i < event.results.length; ++i) {
-                        if (event.results[i].isFinal) {
-                            finalTranscript += event.results[i][0].transcript;
-                        } else {
-                            interimTranscript += event.results[i][0].transcript;
-                        }
-                    }
-                };
-
-                // On stop/end, process the full transcript
-                recognitionRef.current.onend = () => {
-                    // This might fire when silence occurs or we manually stop.
-                    // We'll calculate accuracy when the USER clicks stop.
-                };
-
-                recognitionRef.current.start();
-            }
-        } catch (err) {
-            console.error("Error starting recording:", err);
-            alert("Could not access microphone.");
-        }
-    };
-
-    // Actually, we need a single robust start/stop using refs for the transcript
-    const transcriptRef = useRef('');
 
     const toggleRecording = async () => {
         if (isRecording) {

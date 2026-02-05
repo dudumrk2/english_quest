@@ -1,5 +1,4 @@
-import React from 'react';
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { useAuth } from '../hooks/useAuth';
 import {
     Box,
@@ -28,11 +27,13 @@ import {
     CheckCircle as CheckIcon,
 } from '@mui/icons-material';
 
-export function Login() {
+export function Login(): React.ReactElement {
     const { loginWithGoogle, loginDemo } = useAuth();
 
-    const handleGoogleSuccess = (credentialResponse) => {
-        loginWithGoogle(credentialResponse.credential);
+    const handleGoogleSuccess = (credentialResponse: CredentialResponse): void => {
+        if (credentialResponse.credential) {
+            loginWithGoogle(credentialResponse.credential);
+        }
     };
 
     const handleGoogleError = () => {

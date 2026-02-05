@@ -4,14 +4,12 @@ import {
     Typography,
     TextField,
     Button,
-    Chip,
     Card,
     CardContent,
     Divider,
     Alert,
     Stack,
     Grid,
-    Tooltip,
     Radio,
     RadioGroup,
     FormControlLabel,
@@ -21,7 +19,6 @@ import {
     CheckCircle as CheckIcon,
     Cancel as CancelIcon,
     MenuBook as BookIcon,
-    Translate as TranslateIcon,
     QuestionAnswer as QuestionIcon,
     Create as WriteIcon,
     VolumeUp,
@@ -30,75 +27,30 @@ import {
     FactCheck as FactCheckIcon,
 } from '@mui/icons-material';
 import { triggerCelebration } from '../utils/confetti';
+import { renderTextWithHighlight } from '../utils/textRenderer';
+import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
+import { MAX_ATTEMPTS_BEFORE_ANSWER } from '../data/constants';
+import type { TaskReadingProps, ReadingAnswers, MatchPair } from '../types';
 
-// Helper to render text with vocabulary tooltips
-const renderTextWithTooltips = (text, vocabulary) => {
-    if (!text || !vocabulary) return text;
+// Uses shared utilities from utils/textRenderer.tsx and hooks/useSpeechSynthesis.ts
 
-    // Sort by length desc to match longest first
-    const sortedVocab = [...vocabulary].sort((a, b) => b.word.length - a.word.length);
-
-    const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-    // Create pattern: \b(word1|word2|...)\b
-    const pattern = new RegExp(`\\b(${sortedVocab.map(v => escapeRegExp(v.word)).join('|')})\\b`, 'gi');
-
-    const parts = text.split(pattern);
-
-    return parts.map((part, index) => {
-        const vocabMatch = sortedVocab.find(v => v.word.toLowerCase() === part.toLowerCase());
-
-        if (vocabMatch) {
-            return (
-                <Tooltip
-                    key={index}
-                    title={<Typography variant="h6" sx={{ p: 1 }}>{vocabMatch.translation}</Typography>}
-                    arrow
-                    placement="top"
-                    enterTouchDelay={0}
-                >
-                    <span
-                        style={{
-                            fontWeight: 'bold',
-                            color: '#1976d2',
-                            cursor: 'help',
-                            borderBottom: '2px dotted #1976d2',
-                            transition: 'all 0.2s',
-                            display: 'inline-block',
-                            margin: '0 2px',
-                        }}
-                        onMouseEnter={(e) => {
-                            e.target.style.backgroundColor = '#1976d2';
-                            e.target.style.color = 'white';
-                            e.target.style.borderRadius = '4px';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.target.style.backgroundColor = 'transparent';
-                            e.target.style.color = '#1976d2';
-                            e.target.style.borderRadius = '0px';
-                        }}
-                    >
-                        {part}
-                    </span>
-                </Tooltip>
-            );
-        }
-        return part;
-    });
-};
-
-export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }) {
-    const [answers, setAnswers] = useState(initialAnswers.answers || {});
+export function TaskReading({
+    lesson,
+    onComplete,
+    initialAnswers = {},
+    onSaveAnswers
+}: TaskReadingProps): React.ReactElement {
+    const [answers, setAnswers] = useState<Record<string, string>>(initialAnswers.answers || {});
     // New state for fill-in-the-blank
-    const [fillInTheBlankAnswers, setFillInTheBlankAnswers] = useState(initialAnswers.fillInTheBlankAnswers || {});
+    const [fillInTheBlankAnswers, setFillInTheBlankAnswers] = useState<Record<string, string>>(initialAnswers.fillInTheBlankAnswers || {});
     // New state for match definitions
-    const [matchDefinitionsAnswers, setMatchDefinitionsAnswers] = useState(initialAnswers.matchDefinitionsAnswers || {});
-    const [selectedWordId, setSelectedWordId] = useState(null);
-    const [shuffledDefinitions, setShuffledDefinitions] = useState([]);
+    const [matchDefinitionsAnswers, setMatchDefinitionsAnswers] = useState<Record<string, string>>(initialAnswers.matchDefinitionsAnswers || {});
+    const [selectedWordId, setSelectedWordId] = useState<string | null>(null);
+    const [shuffledDefinitions, setShuffledDefinitions] = useState<MatchPair[]>([]);
     const [showFeedback, setShowFeedback] = useState(false);
     const [summary, setSummary] = useState(initialAnswers.summary || '');
 
-    const [attempts, setAttempts] = useState({});
+    const [attempts, setAttempts] = useState<Record<string, number>>({});
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -114,92 +66,24 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
         };
     }, [lesson.id]);
 
-    const [highlightRange, setHighlightRange] = useState(null);
-
-    const [isPlaying, setIsPlaying] = useState(false);
+    // Use shared speech synthesis hook
+    const { isPlaying, highlightRange, toggle: toggleAudio, stop: stopAudio } = useSpeechSynthesis();
 
     const handlePlayAudio = () => {
-        if (isPlaying) {
-            window.speechSynthesis.cancel();
-            setIsPlaying(false);
-            setHighlightRange(null);
-            return;
-        }
-
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(lesson.content.text);
-        utterance.lang = 'en-US';
-        utterance.rate = 0.9;
-
-        utterance.onboundary = (event) => {
-            if (event.name === 'word') {
-                // Find the length of the word starting at charIndex
-                const text = lesson.content.text;
-                const start = event.charIndex;
-                let end = text.indexOf(' ', start);
-                if (end === -1) end = text.length;
-                // Check for punctuation preventing full word selection
-                const word = text.slice(start, end);
-                const cleanWord = word.replace(/[.,!?]/g, '');
-                // Adjust end if we stripped punctuation for length (optional, but raw slice is usually fine for highlighting)
-
-                setHighlightRange({ start, end });
-            }
-        };
-
-        utterance.onend = () => {
-            setIsPlaying(false);
-            setHighlightRange(null);
-        };
-
-        utterance.onerror = () => {
-            setIsPlaying(false);
-            setHighlightRange(null);
-        };
-
-        window.speechSynthesis.speak(utterance);
-        setIsPlaying(true);
+        toggleAudio(lesson.content.text);
     };
 
-    // Advanced renderer that handles both Tooltips (Vocabulary) AND Highlighting (Read Aloud)
+    // Render text with vocabulary tooltips and word highlighting
     const renderContent = () => {
-        const text = lesson.content.text;
-        const vocabulary = lesson.content.vocabulary;
-
-        // If no highlight, just use the standard tooltip renderer
-        if (!highlightRange) {
-            return renderTextWithTooltips(text, vocabulary);
-        }
-
-        // We have a highlighted range. We need to split the text into 3 parts:
-        // 1. Before highlight
-        // 2. Highlighted text
-        // 3. After highlight
-        // AND properly apply tooltips to all parts.
-
-        const { start, end } = highlightRange;
-        const before = text.slice(0, start);
-        const highlighted = text.slice(start, end);
-        const after = text.slice(end);
-
-        return (
-            <>
-                {renderTextWithTooltips(before, vocabulary)}
-                <span style={{
-                    backgroundColor: '#ffeb3b',
-                    fontWeight: 'bold',
-                    borderRadius: '4px',
-                    boxShadow: '0 0 5px #ffeb3b',
-                    transition: 'all 0.1s'
-                }}>
-                    {renderTextWithTooltips(highlighted, vocabulary)}
-                </span>
-                {renderTextWithTooltips(after, vocabulary)}
-            </>
+        return renderTextWithHighlight(
+            lesson.content.text,
+            lesson.content.vocabulary,
+            highlightRange
         );
     };
 
-    const handleAnswerChange = (id, value) => {
+
+    const handleAnswerChange = (id: string, value: string): void => {
         const newAnswers = { ...answers, [id]: value };
         setAnswers(newAnswers);
         if (onSaveAnswers) {
@@ -207,19 +91,19 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
         }
     };
 
-    const handleMatchSelect = (type, idOrText) => {
-        if (showFeedback) return; // Disable interaction after submit
-
+    const handleMatchSelect = (type: 'word' | 'definition', idOrText: string): void => {
         if (type === 'word') {
             // If clicking the same word, deselect. Otherwise select.
             setSelectedWordId(prev => prev === idOrText ? null : idOrText);
         } else if (type === 'definition') {
+            // Check if this definition is already used by a word
+            const existingOwner = Object.keys(matchDefinitionsAnswers).find(key => matchDefinitionsAnswers[key] === idOrText);
+
             if (selectedWordId) {
                 // If a word is selected, try to match it with this definition
                 const newAnswers = { ...matchDefinitionsAnswers };
 
-                // Check if this definition is already used by another word and remove it
-                const existingOwner = Object.keys(newAnswers).find(key => newAnswers[key] === idOrText);
+                // Remove existing owner if any
                 if (existingOwner) {
                     delete newAnswers[existingOwner];
                 }
@@ -231,11 +115,19 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
                 if (onSaveAnswers) {
                     onSaveAnswers({ answers, fillInTheBlankAnswers, matchDefinitionsAnswers: newAnswers, summary });
                 }
+            } else if (existingOwner) {
+                // No word selected but this definition is matched - clicking removes the match
+                const newAnswers = { ...matchDefinitionsAnswers };
+                delete newAnswers[existingOwner];
+                setMatchDefinitionsAnswers(newAnswers);
+                if (onSaveAnswers) {
+                    onSaveAnswers({ answers, fillInTheBlankAnswers, matchDefinitionsAnswers: newAnswers, summary });
+                }
             }
         }
     };
 
-    const handleFillInTheBlankChange = (id, value) => {
+    const handleFillInTheBlankChange = (id: string, value: string): void => {
         const newAnswers = { ...fillInTheBlankAnswers, [id]: value };
         setFillInTheBlankAnswers(newAnswers);
         if (onSaveAnswers) {
@@ -243,7 +135,7 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
         }
     };
 
-    const handleSummaryChange = (e) => {
+    const handleSummaryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
         const value = e.target.value;
         setSummary(value);
         if (onSaveAnswers) {
@@ -513,7 +405,7 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
                             <Divider sx={{ mb: 2 }} />
                             <Grid container spacing={4}>
                                 {/* Words Column */}
-                                <Grid item xs={12} md={6}>
+                                <Grid size={{ xs: 12, md: 6 }}>
                                     <Typography variant="subtitle1" fontWeight="bold" gutterBottom color="text.secondary">
                                         Words
                                     </Typography>
@@ -523,37 +415,45 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
                                             const isSelected = selectedWordId === pair.id;
                                             const isCorrect = isMatched && matchDefinitionsAnswers[pair.id] === pair.definition;
 
-                                            let color = 'default';
-                                            let variant = 'outlined';
+                                            // Determine border color based on state
+                                            let borderColor = 'rgba(255,255,255,0.3)';
+                                            let borderWidth = 1;
 
                                             if (showFeedback && isMatched) {
-                                                color = isCorrect ? 'success' : 'error';
-                                                variant = 'filled';
+                                                borderColor = isCorrect ? '#4caf50' : '#f44336'; // green or red
+                                                borderWidth = 3;
                                             } else if (isMatched) {
-                                                color = 'primary';
-                                                variant = 'filled';
+                                                borderColor = '#2196f3'; // primary blue
+                                                borderWidth = 2;
                                             } else if (isSelected) {
-                                                color = 'primary';
-                                                variant = 'outlined';
+                                                borderColor = '#2196f3';
+                                                borderWidth = 2;
                                             }
 
                                             return (
                                                 <Button
                                                     key={pair.id}
-                                                    variant={variant}
-                                                    color={color}
+                                                    variant="outlined"
                                                     onClick={() => handleMatchSelect('word', pair.id)}
-                                                    disabled={showFeedback && isMatched}
                                                     sx={{
                                                         justifyContent: 'flex-start',
                                                         py: 1.5,
-                                                        borderWidth: isSelected ? 2 : 1,
-                                                        fontWeight: isSelected ? 'bold' : 'normal'
+                                                        borderColor: borderColor,
+                                                        borderWidth: borderWidth,
+                                                        fontWeight: isSelected ? 'bold' : 'normal',
+                                                        color: 'white',
+                                                        '&:hover': {
+                                                            borderColor: borderColor,
+                                                            borderWidth: borderWidth,
+                                                            backgroundColor: 'rgba(255,255,255,0.05)',
+                                                        },
                                                     }}
                                                 >
                                                     {pair.word}
                                                     {showFeedback && isMatched && (
-                                                        isCorrect ? <CheckIcon sx={{ ml: 'auto' }} fontSize="small" /> : <CancelIcon sx={{ ml: 'auto' }} fontSize="small" />
+                                                        isCorrect
+                                                            ? <CheckIcon sx={{ ml: 'auto', color: '#4caf50' }} fontSize="small" />
+                                                            : <CancelIcon sx={{ ml: 'auto', color: '#f44336' }} fontSize="small" />
                                                     )}
                                                 </Button>
                                             );
@@ -562,48 +462,53 @@ export function TaskReading({ lesson, onComplete, initialAnswers = {}, onSaveAns
                                 </Grid>
 
                                 {/* Definitions Column */}
-                                <Grid item xs={12} md={6}>
+                                <Grid size={{ xs: 12, md: 6 }}>
                                     <Typography variant="subtitle1" fontWeight="bold" gutterBottom color="text.secondary">
                                         Definitions
                                     </Typography>
                                     <Stack spacing={2}>
                                         {shuffledDefinitions.map((pair) => {
                                             // Check if this definition is used in any answer
-                                            // Find which word ID maps to this definition
                                             const connectedWordId = Object.keys(matchDefinitionsAnswers).find(
                                                 key => matchDefinitionsAnswers[key] === pair.definition
                                             );
                                             const isUsed = !!connectedWordId;
 
-                                            // Determine correctness if feedback is shown
-                                            // It is correct if the connected word's actual definition matches this definition
-                                            const correctWordPair = lesson.content.matchDefinitions.pairs.find(p => p.id === connectedWordId);
+                                            // Determine correctness - check if correct word matches this definition
+                                            const correctWordPair = lesson.content.matchDefinitions?.pairs.find(p => p.id === connectedWordId);
                                             const isCorrect = correctWordPair && correctWordPair.definition === pair.definition;
 
-                                            let color = 'default';
-                                            let variant = 'outlined';
+                                            // Determine border color based on state
+                                            let borderColor = 'rgba(255,255,255,0.3)';
+                                            let borderWidth = 1;
 
                                             if (showFeedback && isUsed) {
-                                                color = isCorrect ? 'success' : 'error';
-                                                variant = 'filled';
+                                                borderColor = isCorrect ? '#4caf50' : '#f44336'; // green or red
+                                                borderWidth = 3;
                                             } else if (isUsed) {
-                                                color = 'primary';
-                                                variant = 'filled'; // Indicates it's been "taken"
+                                                borderColor = '#2196f3'; // primary blue
+                                                borderWidth = 2;
                                             }
 
                                             return (
                                                 <Button
-                                                    key={pair.id} // shuffle uses pair objects, id is unique
-                                                    variant={variant}
-                                                    color={color}
+                                                    key={pair.id}
+                                                    variant="outlined"
                                                     onClick={() => handleMatchSelect('definition', pair.definition)}
-                                                    disabled={showFeedback} // Only disable during feedback
                                                     sx={{
                                                         justifyContent: 'flex-start',
                                                         textAlign: 'left',
                                                         py: 1.5,
                                                         height: '100%',
-                                                        textTransform: 'none'
+                                                        textTransform: 'none',
+                                                        borderColor: borderColor,
+                                                        borderWidth: borderWidth,
+                                                        color: 'white',
+                                                        '&:hover': {
+                                                            borderColor: borderColor,
+                                                            borderWidth: borderWidth,
+                                                            backgroundColor: 'rgba(255,255,255,0.05)',
+                                                        },
                                                     }}
                                                 >
                                                     {pair.definition}
