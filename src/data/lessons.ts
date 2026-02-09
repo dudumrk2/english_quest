@@ -1580,5 +1580,352 @@ export const lessons: Lesson[] = [
         type: 'vocabulary',
         title: 'Weekly Review',
         content: { description: "Review all the words you learned this week." }
+    },
+
+    // =========================================================================
+    // WEEK 11: TRAVEL & VACATIONS
+    // =========================================================================
+    {
+        id: 1101,
+        week: 11,
+        day: 1,
+        type: 'vocabulary_matching',
+        title: 'Travel Vocabulary',
+        content: {
+            pairs: [
+                { word: "vacation", translation: "חופשה", context: "We go on vacation every summer.", contextTranslation: "אנחנו יוצאים לחופשה כל קיץ." },
+                { word: "adventure", translation: "הרפתקה", context: "This trip is a big adventure.", contextTranslation: "הטיול הזה הוא הרפתקה גדולה." },
+                { word: "arrival", translation: "הגעה", context: "The arrival time is 3 PM.", contextTranslation: "זמן ההגעה הוא בשלוש אחר הצהריים." },
+                { word: "ticket", translation: "כרטיס", context: "I need to buy a ticket.", contextTranslation: "אני צריך לקנות כרטיס." },
+                { word: "plane", translation: "מטוס", context: "The plane flies to London.", contextTranslation: "המטוס טס ללונדון." },
+                { word: "country", translation: "מדינה / ארץ", context: "Israel is a small country.", contextTranslation: "ישראל היא מדינה קטנה." },
+                { word: "experience", translation: "חוויה / ניסיון", context: "It was a great experience.", contextTranslation: "זו הייתה חוויה נהדרת." },
+                { word: "line", translation: "תור / קו", context: "Wait in line for the bus.", contextTranslation: "חכה בתור לאוטובוס." },
+                { word: "mail", translation: "דואר", context: "I got a letter in the mail.", contextTranslation: "קיבלתי מכתב בדואר." },
+                { word: "type", translation: "סוג", context: "What type of food do you like?", contextTranslation: "איזה סוג אוכל אתה אוהב?" },
+                { word: "purpose", translation: "מטרה / תכלית", context: "What is the purpose of your trip?", contextTranslation: "מה מטרת הנסיעה שלך?" },
+                { word: "sort", translation: "סוג / למיין", context: "What sort of music do you like?", contextTranslation: "איזה סוג מוזיקה אתה אוהב?" },
+                { word: "offer", translation: "להציע / הצעה", context: "They offer free breakfast.", contextTranslation: "הם מציעים ארוחת בוקר חינם." },
+                { word: "save", translation: "לחסוך / להציל", context: "Save money for the trip.", contextTranslation: "חסוך כסף לטיול." },
+                { word: "seem", translation: "להיראות / נדמה", context: "You seem tired today.", contextTranslation: "אתה נראה עייף היום." },
+                { word: "suggest", translation: "להציע", context: "I suggest we go to the beach.", contextTranslation: "אני מציע שנלך לחוף." },
+                { word: "recent", translation: "אחרון / לאחרונה", context: "The recent trip was fun.", contextTranslation: "הטיול האחרון היה כיף." },
+                { word: "wonderful", translation: "נפלא", context: "The view is wonderful.", contextTranslation: "הנוף נפלא." },
+                { word: "cool", translation: "מגניב / קריר", context: "That is a cool idea.", contextTranslation: "זה רעיון מגניב." },
+                { word: "anywhere", translation: "בכל מקום", context: "You can go anywhere you want.", contextTranslation: "אתה יכול ללכת לכל מקום שאתה רוצה." },
+                { word: "anytime", translation: "בכל זמן", context: "Call me anytime.", contextTranslation: "תתקשר אליי בכל זמן." },
+                { word: "anyplace", translation: "בכל מקום", context: "Let's meet anyplace you like.", contextTranslation: "בוא ניפגש בכל מקום שאתה רוצה." },
+                { word: "especially", translation: "במיוחד", context: "I like fruits, especially apples.", contextTranslation: "אני אוהב פירות, במיוחד תפוחים." },
+                { word: "throughout", translation: "לאורך כל", context: "It rained throughout the day.", contextTranslation: "ירד גשם לאורך כל היום." },
+                { word: "the middle", translation: "האמצע", context: "We sat in the middle of the room.", contextTranslation: "ישבנו באמצע החדר." },
+                { word: "near", translation: "ליד / קרוב", context: "The hotel is near the beach.", contextTranslation: "המלון ליד החוף." },
+                { word: "normally", translation: "בדרך כלל", context: "I normally wake up at 7.", contextTranslation: "בדרך כלל אני קם בשבע." },
+                { word: "take a trip", translation: "לצאת לטיול", context: "Let's take a trip to Europe.", contextTranslation: "בוא נצא לטיול לאירופה." },
+                { word: "take a tour", translation: "לעשות סיור", context: "We will take a tour of the city.", contextTranslation: "נעשה סיור בעיר." },
+                { word: "have a good time", translation: "לבלות זמן טוב", context: "Have a good time on your vacation!", contextTranslation: "שיהיה לך זמן טוב בחופשה!" }
+            ]
+        }
+    },
+    {
+        id: 1102,
+        week: 11,
+        day: 2,
+        type: 'reading',
+        title: 'Planning the Trip',
+        content: {
+            text: "The summer vacation is coming soon. Mom wants to take a trip to a new country. 'What sort of vacation do you want?' she asks. Dad says, 'I suggest we go somewhere cool and wonderful.' The kids are excited about the adventure. Mom checks the mail for special offers from travel companies. 'This hotel seems nice,' she says. 'It is near the beach.' They need to save money for the ticket and the plane ride. The experience will be amazing. 'We will have a good time,' Mom promises. They talk about the purpose of the trip - to relax and have fun throughout the whole week.",
+            vocabulary: [
+                { word: "vacation", translation: "חופשה" },
+                { word: "country", translation: "מדינה / ארץ" },
+                { word: "suggest", translation: "להציע" },
+                { word: "adventure", translation: "הרפתקה" },
+                { word: "offer", translation: "להציע / הצעה" },
+                { word: "near", translation: "ליד / קרוב" },
+                { word: "save", translation: "לחסוך / להציל" }
+            ],
+            questions: [
+                { id: "q1", text: "When is the vacation coming?", answer: "The summer vacation is coming soon." },
+                { id: "q2", text: "What does Mom want to do?", answer: "She wants to take a trip to a new country." },
+                { id: "q3", text: "What does Dad suggest?", answer: "He suggests they go somewhere cool and wonderful." },
+                { id: "q4", text: "What is near the beach?", answer: "The hotel is near the beach." },
+                { id: "q5", text: "What is the purpose of the trip?", answer: "To relax and have fun." }
+            ],
+            fillInTheBlanks: {
+                title: "Travel Planning",
+                exercises: [
+                    { id: "f1", sentence: "We will _____ to Italy next month.", answer: "take a trip", options: ["take a trip", "have a good time", "take a tour"] },
+                    { id: "f2", sentence: "This place _____ very nice.", answer: "seems", options: ["seems", "saves", "offers"] },
+                    { id: "f3", sentence: "I like all fruits, _____ oranges.", answer: "especially", options: ["especially", "normally", "anywhere"] },
+                    { id: "f4", sentence: "The shop is ___ my house.", answer: "near", options: ["near", "the middle", "throughout"] },
+                    { id: "f5", sentence: "What _____ of hotel do you want?", answer: "type", options: ["type", "sort", "line"] }
+                ]
+            }
+        }
+    },
+    {
+        id: 1103,
+        week: 11,
+        day: 3,
+        type: 'reading',
+        title: 'At the Airport',
+        content: {
+            text: "The day of the trip arrived. The family goes to the airport early. There is a long line to check in. 'What is the arrival time in London?' asks the boy. 'We arrive at 4 PM,' Dad answers. They show their tickets to the worker. The plane is very big and cool. 'This is my first experience on a plane!' says the little sister. She can go anywhere she wants to look. Throughout the flight, they watch movies. In the middle of the journey, they get food. 'I normally don't eat on planes,' says Mom, 'but this looks wonderful.' The recent hours went fast. 'Let's take a tour of the city when we land,' suggests Dad. They will have a good time in London!",
+            vocabulary: [
+                { word: "line", translation: "תור / קו" },
+                { word: "arrival", translation: "הגעה" },
+                { word: "ticket", translation: "כרטיס" },
+                { word: "plane", translation: "מטוס" },
+                { word: "experience", translation: "חוויה / ניסיון" },
+                { word: "throughout", translation: "לאורך כל" },
+                { word: "the middle", translation: "האמצע" }
+            ],
+            questions: [
+                { id: "q1", text: "Where does the family go?", answer: "They go to the airport." },
+                { id: "q2", text: "What time do they arrive in London?", answer: "They arrive at 4 PM." },
+                { id: "q3", text: "What do they do throughout the flight?", answer: "They watch movies." },
+                { id: "q4", text: "What does Dad suggest?", answer: "He suggests taking a tour of the city." },
+                { id: "q5", text: "Is this the sister's first experience on a plane?", answer: "Yes, it is her first experience." }
+            ],
+            matchDefinitions: {
+                title: "Match Definitions",
+                pairs: [
+                    { id: "m1", word: "ticket", definition: "A paper that lets you travel" },
+                    { id: "m2", word: "arrival", definition: "When you get to a place" },
+                    { id: "m3", word: "experience", definition: "Something you do or see" },
+                    { id: "m4", word: "adventure", definition: "An exciting journey" },
+                    { id: "m5", word: "suggest", definition: "To give an idea" }
+                ]
+            }
+        }
+    },
+    {
+        id: 1104,
+        week: 11,
+        day: 4,
+        type: 'pronunciation',
+        title: 'Vacation Sounds',
+        content: {
+            text: "We are going on a wonderful vacation. It will be a great adventure. I suggest we save money for the plane ticket. The hotel is near the beach. You can call me anytime during the trip. Let's have a good time!",
+            vocabulary: [
+                { word: "vacation", translation: "חופשה" },
+                { word: "adventure", translation: "הרפתקה" },
+                { word: "suggest", translation: "להציע" },
+                { word: "save", translation: "לחסוך / להציל" },
+                { word: "near", translation: "ליד / קרוב" },
+                { word: "anytime", translation: "בכל זמן" }
+            ],
+            tips: [
+                "In 'Vacation', stress the second syllable: va-CAY-shun.",
+                "The 'dj' in 'Adventure' sounds like 'j'."
+            ]
+        }
+    },
+    {
+        id: 1105,
+        week: 11,
+        day: 5,
+        type: 'pronunciation',
+        title: 'Pronunciation Challenge: Traveling',
+        content: {
+            text: "I normally take a trip once a year. This recent journey was especially wonderful. We went anywhere we wanted throughout the country. The experience is something I will never forget. We stood in the middle of a beautiful city. It seemed like a dream!",
+            vocabulary: [
+                { word: "normally", translation: "בדרך כלל" },
+                { word: "recent", translation: "אחרון / לאחרונה" },
+                { word: "especially", translation: "במיוחד" },
+                { word: "wonderful", translation: "נפלא" },
+                { word: "throughout", translation: "לאורך כל" },
+                { word: "experience", translation: "חוויה / ניסיון" }
+            ],
+            tips: [
+                "Notice the 'th' sound in 'Throughout'. Make sure your tongue touches your teeth.",
+                "In 'Experience', stress the second syllable: ex-PEE-ri-ence."
+            ]
+        }
+    },
+    {
+        id: 1106,
+        week: 11,
+        day: 6,
+        type: 'vocabulary',
+        title: 'Weekly Review',
+        content: { description: "Review all the words you learned this week." }
+    },
+
+    // =========================================================================
+    // WEEK 12: COMMUNITY & DAILY LIFE
+    // =========================================================================
+    {
+        id: 1201,
+        week: 12,
+        day: 1,
+        type: 'vocabulary_matching',
+        title: 'Community Vocabulary',
+        content: {
+            pairs: [
+                { word: "church", translation: "כנסייה", context: "They go to church on Sunday.", contextTranslation: "הם הולכים לכנסייה ביום ראשון." },
+                { word: "mosque", translation: "מסגד", context: "The mosque is very old.", contextTranslation: "המסגד מאוד עתיק." },
+                { word: "synagogue", translation: "בית כנסת", context: "We pray in the synagogue.", contextTranslation: "אנחנו מתפללים בבית הכנסת." },
+                { word: "cinema", translation: "קולנוע", context: "Let's go to the cinema.", contextTranslation: "בוא נלך לקולנוע." },
+                { word: "action", translation: "פעולה", context: "The action movie was exciting.", contextTranslation: "סרט הפעולה היה מרגש." },
+                { word: "advantage", translation: "יתרון", context: "Living here has many advantages.", contextTranslation: "לגור כאן יש הרבה יתרונות." },
+                { word: "flower", translation: "פרח", context: "She loves red flowers.", contextTranslation: "היא אוהבת פרחים אדומים." },
+                { word: "midnight", translation: "חצות", context: "I went to bed at midnight.", contextTranslation: "הלכתי לישון בחצות." },
+                { word: "opinion", translation: "דעה", context: "What is your opinion?", contextTranslation: "מה הדעה שלך?" },
+                { word: "credit card", translation: "כרטיס אשראי", context: "Can I pay by credit card?", contextTranslation: "אפשר לשלם בכרטיס אשראי?" },
+                { word: "insist", translation: "להתעקש", context: "I insist on paying.", contextTranslation: "אני מתעקש לשלם." },
+                { word: "think", translation: "לחשוב", context: "I think you are right.", contextTranslation: "אני חושב שאתה צודק." },
+                { word: "central", translation: "מרכזי", context: "The store is in a central location.", contextTranslation: "החנות במיקום מרכזי." },
+                { word: "Christian", translation: "נוצרי", context: "Christmas is a Christian holiday.", contextTranslation: "חג המולד הוא חג נוצרי." },
+                { word: "Jewish", translation: "יהודי", context: "Hanukkah is a Jewish holiday.", contextTranslation: "חנוכה הוא חג יהודי." },
+                { word: "Muslim", translation: "מוסלמי", context: "Ramadan is a Muslim holiday.", contextTranslation: "רמדאן הוא חג מוסלמי." },
+                { word: "ordinary", translation: "רגיל", context: "It was an ordinary day.", contextTranslation: "זה היה יום רגיל." },
+                { word: "although", translation: "למרות ש", context: "Although it rained, we went out.", contextTranslation: "למרות שירד גשם, יצאנו." },
+                { word: "anyhow", translation: "בכל אופן", context: "It was cold, but we went anyhow.", contextTranslation: "היה קר, אבל הלכנו בכל אופן." },
+                { word: "anymore", translation: "יותר לא", context: "I don't live there anymore.", contextTranslation: "אני לא גר שם יותר." },
+                { word: "anyone", translation: "מישהו / כל אחד", context: "Does anyone want tea?", contextTranslation: "מישהו רוצה תה?" },
+                { word: "anyway", translation: "בכל מקרה", context: "Thanks anyway.", contextTranslation: "תודה בכל מקרה." },
+                { word: "at the moment", translation: "ברגע זה", context: "I am busy at the moment.", contextTranslation: "אני עסוק ברגע זה." },
+                { word: "even", translation: "אפילו", context: "Even my mom agrees.", contextTranslation: "אפילו אמא שלי מסכימה." },
+                { word: "I mean", translation: "אני מתכוון", context: "I mean, it is not easy.", contextTranslation: "אני מתכוון, זה לא קל." },
+                { word: "in fact", translation: "למעשה", context: "In fact, I was there.", contextTranslation: "למעשה, הייתי שם." },
+                { word: "it depends", translation: "זה תלוי", context: "It depends on the weather.", contextTranslation: "זה תלוי במזג האוויר." },
+                { word: "something else", translation: "משהו אחר", context: "I want something else.", contextTranslation: "אני רוצה משהו אחר." },
+                { word: "have a problem", translation: "יש בעיה", context: "Do you have a problem?", contextTranslation: "יש לך בעיה?" },
+                { word: "have a talk", translation: "לשוחח", context: "Let's have a talk.", contextTranslation: "בוא נשוחח." },
+                { word: "have (something) on", translation: "ללבוש משהו", context: "I have a coat on.", contextTranslation: "אני לובש מעיל." },
+                { word: "let go of", translation: "לשחרר", context: "Let go of my hand.", contextTranslation: "שחרר את היד שלי." },
+                { word: "let (something) in", translation: "להכניס", context: "Let the cat in.", contextTranslation: "תכניס את החתול." },
+                { word: "let (something) out", translation: "להוציא", context: "Let the dog out.", contextTranslation: "תוציא את הכלב." },
+                { word: "take a test", translation: "לעשות מבחן", context: "We will take a test tomorrow.", contextTranslation: "נעשה מבחן מחר." },
+                { word: "take place", translation: "להתקיים", context: "The party will take place on Friday.", contextTranslation: "המסיבה תתקיים ביום שישי." },
+                { word: "think about", translation: "לחשוב על", context: "I think about you.", contextTranslation: "אני חושב עליך." },
+                { word: "think of", translation: "לחשוב על / להעלות בדעת", context: "I can't think of the answer.", contextTranslation: "אני לא מצליח לחשוב על התשובה." },
+                { word: "think so", translation: "חושב שכן", context: "I think so.", contextTranslation: "אני חושב שכן." }
+            ]
+        }
+    },
+    {
+        id: 1202,
+        week: 12,
+        day: 2,
+        type: 'reading',
+        title: 'The Neighborhood',
+        content: {
+            text: "Our neighborhood is special. In the center, there is a beautiful central square with many flowers. Near the square, you can see a church, a mosque, and a synagogue. People of different religions live together - Christians, Muslims, and Jews. Although they are different, they are all friendly. 'What is your opinion about our neighborhood?' I asked my friend. 'I think it is wonderful,' she said. 'In fact, I don't want to live anywhere else anymore.' Even on ordinary days, the neighborhood feels alive. At the moment, they are building a new cinema. It will show action movies. 'That is a big advantage of living here,' my friend added.",
+            vocabulary: [
+                { word: "central", translation: "מרכזי" },
+                { word: "flower", translation: "פרח" },
+                { word: "church", translation: "כנסייה" },
+                { word: "mosque", translation: "מסגד" },
+                { word: "synagogue", translation: "בית כנסת" },
+                { word: "opinion", translation: "דעה" },
+                { word: "ordinary", translation: "רגיל" }
+            ],
+            questions: [
+                { id: "q1", text: "What is in the center of the neighborhood?", answer: "A beautiful central square with flowers." },
+                { id: "q2", text: "What buildings are near the square?", answer: "A church, a mosque, and a synagogue." },
+                { id: "q3", text: "What is being built at the moment?", answer: "A new cinema is being built." },
+                { id: "q4", text: "What does the friend think about the neighborhood?", answer: "She thinks it is wonderful." },
+                { id: "q5", text: "What is a big advantage of living there?", answer: "The new cinema." }
+            ],
+            fillInTheBlanks: {
+                title: "Community Life",
+                exercises: [
+                    { id: "f1", sentence: "_____ it rained, we had fun.", answer: "Although", options: ["Although", "Anyway", "Even"] },
+                    { id: "f2", sentence: "I am busy _____ right now.", answer: "at the moment", options: ["at the moment", "anymore", "anyhow"] },
+                    { id: "f3", sentence: "I _____ you are correct.", answer: "think", options: ["think", "insist", "mean"] },
+                    { id: "f4", sentence: "Does _____ have a pen?", answer: "anyone", options: ["anyone", "something else", "even"] },
+                    { id: "f5", sentence: "Can I pay by _____?", answer: "credit card", options: ["credit card", "flower", "action"] }
+                ]
+            }
+        }
+    },
+    {
+        id: 1203,
+        week: 12,
+        day: 3,
+        type: 'reading',
+        title: 'A Busy Day',
+        content: {
+            text: "Today is not an ordinary day. Mom wants to have a talk with me. 'Do you have a problem?' she asks. 'I mean, you seem quiet.' 'It depends,' I say. 'I want to do something else today.' Mom insists we go to the cinema anyway. 'The action movie looks exciting,' she says. We pay with a credit card. Although I was not sure at first, I had a great time. In fact, the movie was amazing. Even after midnight, I was still thinking about it. 'Thanks anyway, Mom,' I said. 'Anyhow, I am glad we went.'",
+            vocabulary: [
+                { word: "have a talk", translation: "לשוחח" },
+                { word: "have a problem", translation: "יש בעיה" },
+                { word: "I mean", translation: "אני מתכוון" },
+                { word: "it depends", translation: "זה תלוי" },
+                { word: "insist", translation: "להתעקש" },
+                { word: "anyway", translation: "בכל מקרה" },
+                { word: "midnight", translation: "חצות" }
+            ],
+            questions: [
+                { id: "q1", text: "What does Mom want to do?", answer: "She wants to have a talk." },
+                { id: "q2", text: "Where do they go?", answer: "They go to the cinema." },
+                { id: "q3", text: "How do they pay?", answer: "They pay with a credit card." },
+                { id: "q4", text: "What was the movie like?", answer: "The movie was amazing." },
+                { id: "q5", text: "What was the person thinking about after midnight?", answer: "They were still thinking about the movie." }
+            ],
+            matchDefinitions: {
+                title: "Match Definitions",
+                pairs: [
+                    { id: "m1", word: "insist", definition: "To say strongly that something must happen" },
+                    { id: "m2", word: "opinion", definition: "What you think about something" },
+                    { id: "m3", word: "advantage", definition: "A good thing about something" },
+                    { id: "m4", word: "ordinary", definition: "Normal, not special" },
+                    { id: "m5", word: "midnight", definition: "12 o'clock at night" }
+                ]
+            }
+        }
+    },
+    {
+        id: 1204,
+        week: 12,
+        day: 4,
+        type: 'pronunciation',
+        title: 'Community Sounds',
+        content: {
+            text: "Our central square has beautiful flowers. Near it, there is a church and a mosque. Although they follow different religions, Christians and Muslims live together peacefully. What is your opinion about this neighborhood? I think it is wonderful.",
+            vocabulary: [
+                { word: "central", translation: "מרכזי" },
+                { word: "flower", translation: "פרח" },
+                { word: "church", translation: "כנסייה" },
+                { word: "mosque", translation: "מסגד" },
+                { word: "although", translation: "למרות ש" },
+                { word: "opinion", translation: "דעה" }
+            ],
+            tips: [
+                "The 'ch' in 'Church' is a hard 'ch' sound.",
+                "In 'Mosque', the 'que' is silent - say 'Mosk'."
+            ]
+        }
+    },
+    {
+        id: 1205,
+        week: 12,
+        day: 5,
+        type: 'pronunciation',
+        title: 'Pronunciation Challenge: Everyday Talk',
+        content: {
+            text: "I don't go there anymore. Anyone can join us anyway. In fact, I insist you come. Even my sister agrees. At the moment, we are planning something else. It depends on the weather, but we will have fun anyhow.",
+            vocabulary: [
+                { word: "anymore", translation: "יותר לא" },
+                { word: "anyone", translation: "מישהו / כל אחד" },
+                { word: "anyway", translation: "בכל מקרה" },
+                { word: "in fact", translation: "למעשה" },
+                { word: "at the moment", translation: "ברגע זה" },
+                { word: "it depends", translation: "זה תלוי" }
+            ],
+            tips: [
+                "Say 'Anyone' as two words: 'any-one'.",
+                "In 'Depends', stress the second syllable: de-PENDS."
+            ]
+        }
+    },
+    {
+        id: 1206,
+        week: 12,
+        day: 6,
+        type: 'vocabulary',
+        title: 'Weekly Review',
+        content: { description: "Review all the words you learned this week." }
     }
 ];
