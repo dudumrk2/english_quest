@@ -99,8 +99,19 @@ function AppContent() {
         );
     };
 
+    const handleBackToDashboard = () => {
+        setView('dashboard');
+        setActiveLesson(null);
+    };
+
     return (
-        <Layout points={state.points} streak={state.streak} onLogout={handleLogout}>
+        <Layout
+            points={state.points}
+            streak={state.streak}
+            onLogout={handleLogout}
+            activeLesson={activeLesson}
+            onBack={handleBackToDashboard}
+        >
             {renderContent()}
         </Layout>
     );

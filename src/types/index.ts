@@ -116,6 +116,8 @@ export interface LayoutProps {
     points: number;
     streak: number;
     onLogout: () => void;
+    activeLesson?: Lesson | null;
+    onBack?: () => void;
 }
 
 export interface DashboardProps {

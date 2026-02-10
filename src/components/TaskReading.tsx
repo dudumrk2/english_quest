@@ -47,6 +47,7 @@ export function TaskReading({
     const [matchDefinitionsAnswers, setMatchDefinitionsAnswers] = useState<Record<string, string>>(initialAnswers.matchDefinitionsAnswers || {});
     const [selectedWordId, setSelectedWordId] = useState<string | null>(null);
     const [shuffledDefinitions, setShuffledDefinitions] = useState<MatchPair[]>([]);
+    const [shuffledOptions, setShuffledOptions] = useState<Record<string, string[]>>({});
     const [showFeedback, setShowFeedback] = useState(false);
     const [summary, setSummary] = useState(initialAnswers.summary || '');
 
@@ -59,6 +60,15 @@ export function TaskReading({
         if (lesson.content.matchDefinitions) {
             const defs = [...lesson.content.matchDefinitions.pairs];
             setShuffledDefinitions(defs.sort(() => Math.random() - 0.5));
+        }
+
+        // Shuffle fill-in-the-blank options
+        if (lesson.content.fillInTheBlanks) {
+            const newShuffledOptions: Record<string, string[]> = {};
+            lesson.content.fillInTheBlanks.exercises.forEach(ex => {
+                newShuffledOptions[ex.id] = [...ex.options].sort(() => Math.random() - 0.5);
+            });
+            setShuffledOptions(newShuffledOptions);
         }
 
         return () => {
@@ -162,6 +172,24 @@ export function TaskReading({
 
         if (attemptsChanged) {
             setAttempts(newAttempts);
+        }
+
+        // Track attempts for fill-in-the-blank
+        if (lesson.content.fillInTheBlanks) {
+            let fitbAttemptsChanged = false;
+            const currentAttempts = { ...newAttempts }; // Use updated attempts from questions
+
+            lesson.content.fillInTheBlanks.exercises.forEach(ex => {
+                const isCorrect = fillInTheBlankAnswers[ex.id] === ex.answer;
+                if (!isCorrect) {
+                    currentAttempts[ex.id] = (currentAttempts[ex.id] || 0) + 1;
+                    fitbAttemptsChanged = true;
+                }
+            });
+
+            if (fitbAttemptsChanged) {
+                setAttempts(currentAttempts);
+            }
         }
 
         const questionsCorrect = lesson.content.questions.every(
@@ -370,15 +398,15 @@ export function TaskReading({
                                                     value={userAnswer || ''}
                                                     onChange={(e) => handleFillInTheBlankChange(ex.id, e.target.value)}
                                                 >
-                                                    {ex.options.map((option) => (
+                                                    {(shuffledOptions[ex.id] || ex.options).map((option) => (
                                                         <FormControlLabel
                                                             key={option}
                                                             value={option}
                                                             control={<Radio size="small" />}
                                                             label={option}
                                                             sx={{
-                                                                color: showResult && option === ex.answer ? 'green' : 'inherit',
-                                                                '& .MuiTypography-root': { fontWeight: showResult && option === ex.answer ? 'bold' : 'normal' }
+                                                                color: showResult && option === ex.answer && ((attempts[ex.id] || 0) >= 3 || userAnswer === ex.answer) ? 'green' : 'inherit',
+                                                                '& .MuiTypography-root': { fontWeight: showResult && option === ex.answer && ((attempts[ex.id] || 0) >= 3 || userAnswer === ex.answer) ? 'bold' : 'normal' }
                                                             }}
                                                         />
                                                     ))}

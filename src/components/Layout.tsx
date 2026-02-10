@@ -18,7 +18,7 @@ import {
 } from '@mui/icons-material';
 import { StatChip } from './common/StatChip';
 
-export const Layout: React.FC<LayoutProps> = ({ children, points, streak, onLogout }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, points, streak, onLogout, activeLesson, onBack }) => {
     const { user } = useAuth();
 
     return (
@@ -57,7 +57,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, points, streak, onLogo
                                 {user?.name || 'Nadav'}
                             </Typography>
                             <Typography variant="caption" color="text.secondary">
-                                Level 1 Cadet
+                                {activeLesson ? `Week ${activeLesson.week} • Day ${activeLesson.day}` : 'English Quest'}
                             </Typography>
                         </Box>
                     </Stack>
@@ -77,6 +77,27 @@ export const Layout: React.FC<LayoutProps> = ({ children, points, streak, onLogo
                                 },
                             }}
                         />
+                        {activeLesson && onBack && (
+                            <IconButton
+                                onClick={onBack}
+                                size="small"
+                                sx={{
+                                    color: 'text.secondary',
+                                    '&:hover': {
+                                        color: 'text.primary',
+                                        bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                    },
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: 1,
+                                    ml: 1,
+                                }}
+                                title="Back to Dashboard"
+                            >
+                                <Typography variant="caption" sx={{ px: 1, display: 'flex', alignItems: 'center' }}>
+                                    Back
+                                </Typography>
+                            </IconButton>
+                        )}
                         <IconButton
                             onClick={onLogout}
                             size="small"
