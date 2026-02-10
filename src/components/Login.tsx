@@ -82,6 +82,7 @@ export function Login(): React.ReactElement {
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
                                 fontWeight: 800,
+                                fontSize: { xs: '2.5rem', md: '3.75rem' }
                             }}
                         >
                             Nadav's English Quest
@@ -109,7 +110,7 @@ export function Login(): React.ReactElement {
                             border: '1px solid rgba(255, 255, 255, 0.1)',
                         }}
                     >
-                        <CardContent sx={{ p: 4 }}>
+                        <CardContent sx={{ p: { xs: 3, md: 4 } }}>
                             <Typography variant="h5" align="center" gutterBottom fontWeight={700}>
                                 Welcome, Commander! 🎮
                             </Typography>
@@ -249,7 +250,7 @@ export function Login(): React.ReactElement {
 
                     {/* Stats Preview */}
                     <Grid container spacing={2}>
-                        <Grid item xs={4}>
+                        <Grid size={{ xs: 12, sm: 4 }}>
                             <Card elevation={0} sx={{ textAlign: 'center', py: 2 }}>
                                 <BookIcon color="primary" sx={{ fontSize: 32, mb: 1 }} />
                                 <Typography variant="h4" fontWeight={700}>
@@ -260,7 +261,7 @@ export function Login(): React.ReactElement {
                                 </Typography>
                             </Card>
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid size={{ xs: 12, sm: 4 }}>
                             <Card elevation={0} sx={{ textAlign: 'center', py: 2 }}>
                                 <TrophyIcon color="secondary" sx={{ fontSize: 32, mb: 1 }} />
                                 <Typography variant="h4" fontWeight={700}>
@@ -271,7 +272,7 @@ export function Login(): React.ReactElement {
                                 </Typography>
                             </Card>
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid size={{ xs: 12, sm: 4 }}>
                             <Card elevation={0} sx={{ textAlign: 'center', py: 2 }}>
                                 <BoltIcon color="success" sx={{ fontSize: 32, mb: 1 }} />
                                 <Typography variant="h4" fontWeight={700}>

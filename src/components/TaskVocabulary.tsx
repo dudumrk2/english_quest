@@ -113,11 +113,11 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
     };
 
     return (
-        <Box sx={{ maxWidth: 900, mx: 'auto', p: { xs: 2, md: 3 } }}>
+        <Box sx={{ maxWidth: 900, mx: 'auto', p: { xs: 1, md: 3 } }}>
             {/* Header */}
             <Box
                 sx={{
-                    p: 3,
+                    p: { xs: 2, md: 3 },
                     mb: 4,
                     background: 'linear-gradient(135deg, #1cb5e0 0%, #000851 100%)',
                     color: 'white',
@@ -126,12 +126,12 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
                 }}
             >
                 <Stack direction="row" spacing={2} alignItems="center">
-                    <TranslateIcon sx={{ fontSize: 40 }} />
+                    <TranslateIcon sx={{ fontSize: { xs: 32, md: 40 } }} />
                     <Box>
-                        <Typography variant="h4" fontWeight={700}>
+                        <Typography variant="h4" fontWeight={700} sx={{ fontSize: { xs: '1.5rem', md: '2.125rem' } }}>
                             Weekly Vocabulary Review
                         </Typography>
-                        <Typography variant="subtitle1" sx={{ opacity: 0.9 }}>
+                        <Typography variant="subtitle1" sx={{ opacity: 0.9, fontSize: { xs: '0.9rem', md: '1rem' } }}>
                             Week {lesson.week} • {words.length} Words to Review
                         </Typography>
                     </Box>
@@ -143,7 +143,7 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
             </Box>
 
             <Card elevation={3}>
-                <CardContent sx={{ p: 4 }}>
+                <CardContent sx={{ p: { xs: 2, md: 4 } }}>
                     <Grid container spacing={4}>
                         {words.map((item, index) => {
                             const isCorrect = checkAnswer(answers[item.word], item.translation);

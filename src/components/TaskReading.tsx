@@ -29,10 +29,7 @@ import {
 import { triggerCelebration } from '../utils/confetti';
 import { renderTextWithHighlight } from '../utils/textRenderer';
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
-import { MAX_ATTEMPTS_BEFORE_ANSWER } from '../data/constants';
-import type { TaskReadingProps, ReadingAnswers, MatchPair } from '../types';
-
-// Uses shared utilities from utils/textRenderer.tsx and hooks/useSpeechSynthesis.ts
+import type { TaskReadingProps, MatchPair } from '../types';
 
 export function TaskReading({
     lesson,
@@ -77,7 +74,7 @@ export function TaskReading({
     }, [lesson.id]);
 
     // Use shared speech synthesis hook
-    const { isPlaying, highlightRange, toggle: toggleAudio, stop: stopAudio } = useSpeechSynthesis();
+    const { isPlaying, highlightRange, toggle: toggleAudio } = useSpeechSynthesis();
 
     const handlePlayAudio = () => {
         toggleAudio(lesson.content.text);
@@ -219,11 +216,11 @@ export function TaskReading({
     };
 
     return (
-        <Box sx={{ maxWidth: 1200, mx: 'auto', p: { xs: 2, md: 3 } }}>
+        <Box sx={{ maxWidth: 1200, mx: 'auto', p: { xs: 1, md: 3 } }}>
             {/* Header */}
             <Box
                 sx={{
-                    p: 3,
+                    p: { xs: 2, md: 3 },
                     mb: 4,
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                     color: 'white',
@@ -232,12 +229,12 @@ export function TaskReading({
                 }}
             >
                 <Stack direction="row" spacing={2} alignItems="center">
-                    <BookIcon sx={{ fontSize: 40 }} />
+                    <BookIcon sx={{ fontSize: { xs: 32, md: 40 } }} />
                     <Box>
-                        <Typography variant="h4" fontWeight={700}>
+                        <Typography variant="h4" fontWeight={700} sx={{ fontSize: { xs: '1.5rem', md: '2.125rem' } }}>
                             {lesson.title}
                         </Typography>
-                        <Typography variant="subtitle1" sx={{ opacity: 0.9 }}>
+                        <Typography variant="subtitle1" sx={{ opacity: 0.9, fontSize: { xs: '0.9rem', md: '1rem' } }}>
                             Reading Comprehension
                         </Typography>
                     </Box>
@@ -251,7 +248,7 @@ export function TaskReading({
             <Stack spacing={3}>
                 {/* Reading Text */}
                 <Card elevation={2}>
-                    <CardContent sx={{ p: 3 }}>
+                    <CardContent sx={{ p: { xs: 2, md: 3 } }}>
                         <Stack direction="row" spacing={1} alignItems="center" mb={2} justifyContent="space-between">
                             <Stack direction="row" spacing={1} alignItems="center">
                                 <BookIcon color="primary" />
@@ -275,7 +272,7 @@ export function TaskReading({
                             component="div"
                             sx={{
                                 lineHeight: 2,
-                                fontSize: '1.2rem',
+                                fontSize: { xs: '1.1rem', md: '1.2rem' },
                                 whiteSpace: 'pre-wrap', // pre-wrap handles newlines better with mixed spans
                                 color: 'text.primary',
                             }}
@@ -287,7 +284,7 @@ export function TaskReading({
 
                 {/* Questions Section */}
                 <Card elevation={2}>
-                    <CardContent sx={{ p: 3 }}>
+                    <CardContent sx={{ p: { xs: 2, md: 3 } }}>
                         <Stack direction="row" spacing={1} alignItems="center" mb={2}>
                             <QuestionIcon color="success" />
                             <Typography variant="h6" fontWeight={600}>
@@ -357,7 +354,7 @@ export function TaskReading({
                 {/* Fill-in-the-blank Section */}
                 {lesson.content.fillInTheBlanks && (
                     <Card elevation={2}>
-                        <CardContent sx={{ p: 3 }}>
+                        <CardContent sx={{ p: { xs: 2, md: 3 } }}>
                             <Stack direction="row" spacing={1} alignItems="center" mb={2}>
                                 <EditIcon color="secondary" />
                                 <Typography variant="h6" fontWeight={600}>
@@ -392,7 +389,7 @@ export function TaskReading({
                                                 )}
                                             </Typography>
 
-                                            <FormControl component="fieldset" error={showResult && !isCorrect}>
+                                            <FormControl component="fieldset" error={!!(showResult && !isCorrect)}>
                                                 <RadioGroup
                                                     row
                                                     value={userAnswer || ''}
@@ -422,8 +419,8 @@ export function TaskReading({
 
                 {/* Match Definitions Section */}
                 {lesson.content.matchDefinitions && (
-                    <Card elevation={2}>
-                        <CardContent sx={{ p: 3 }}>
+                    <Card elevation={2} sx={{ overflow: { xs: 'hidden', md: 'visible' } }}>
+                        <CardContent sx={{ p: { xs: 2, md: 3 } }}>
                             <Stack direction="row" spacing={1} alignItems="center" mb={2}>
                                 <FactCheckIcon color="info" />
                                 <Typography variant="h6" fontWeight={600}>
@@ -431,33 +428,137 @@ export function TaskReading({
                                 </Typography>
                             </Stack>
                             <Divider sx={{ mb: 2 }} />
-                            <Grid container spacing={4}>
-                                {/* Words Column */}
-                                <Grid size={{ xs: 12, md: 6 }}>
-                                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom color="text.secondary">
-                                        Words
-                                    </Typography>
-                                    <Stack spacing={2}>
+
+                            {/* Desktop: side-by-side Grid layout */}
+                            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                                <Grid container spacing={4}>
+                                    {/* Words Column - Desktop */}
+                                    <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
+                                        <Typography variant="subtitle1" fontWeight="bold" gutterBottom color="text.secondary">
+                                            Words
+                                        </Typography>
+                                        <Stack spacing={1.5}>
+                                            {lesson.content.matchDefinitions.pairs.map((pair) => {
+                                                const isMatched = !!matchDefinitionsAnswers[pair.id];
+                                                const isSelected = selectedWordId === pair.id;
+                                                const isCorrect = isMatched && matchDefinitionsAnswers[pair.id] === pair.definition;
+                                                let borderColor = 'rgba(255,255,255,0.3)';
+                                                let borderWidth = 1;
+                                                if (showFeedback && isMatched) {
+                                                    borderColor = isCorrect ? '#4caf50' : '#f44336';
+                                                    borderWidth = 3;
+                                                } else if (isMatched) {
+                                                    borderColor = '#2196f3';
+                                                    borderWidth = 2;
+                                                } else if (isSelected) {
+                                                    borderColor = '#2196f3';
+                                                    borderWidth = 2;
+                                                }
+                                                return (
+                                                    <Button
+                                                        key={pair.id}
+                                                        variant="outlined"
+                                                        onClick={() => handleMatchSelect('word', pair.id)}
+                                                        sx={{
+                                                            justifyContent: 'flex-start',
+                                                            py: 1.5, px: 2,
+                                                            borderColor, borderWidth,
+                                                            fontWeight: isSelected ? 'bold' : 'normal',
+                                                            color: 'white',
+                                                            width: '100%',
+                                                            '&:hover': { borderColor, borderWidth, backgroundColor: 'rgba(255,255,255,0.05)' },
+                                                        }}
+                                                    >
+                                                        {pair.word}
+                                                        {showFeedback && isMatched && (
+                                                            isCorrect
+                                                                ? <CheckIcon sx={{ ml: 'auto', color: '#4caf50' }} fontSize="small" />
+                                                                : <CancelIcon sx={{ ml: 'auto', color: '#f44336' }} fontSize="small" />
+                                                        )}
+                                                    </Button>
+                                                );
+                                            })}
+                                        </Stack>
+                                    </Grid>
+
+                                    {/* Definitions Column - Desktop */}
+                                    <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
+                                        <Typography variant="subtitle1" fontWeight="bold" gutterBottom color="text.secondary">
+                                            Definitions
+                                        </Typography>
+                                        <Stack spacing={1.5}>
+                                            {shuffledDefinitions.map((pair) => {
+                                                const connectedWordId = Object.keys(matchDefinitionsAnswers).find(
+                                                    key => matchDefinitionsAnswers[key] === pair.definition
+                                                );
+                                                const isUsed = !!connectedWordId;
+                                                const correctWordPair = lesson.content.matchDefinitions?.pairs.find(p => p.id === connectedWordId);
+                                                const isCorrect = correctWordPair && correctWordPair.definition === pair.definition;
+                                                let borderColor = 'rgba(255,255,255,0.3)';
+                                                let borderWidth = 1;
+                                                if (showFeedback && isUsed) {
+                                                    borderColor = isCorrect ? '#4caf50' : '#f44336';
+                                                    borderWidth = 3;
+                                                } else if (isUsed) {
+                                                    borderColor = '#2196f3';
+                                                    borderWidth = 2;
+                                                }
+                                                return (
+                                                    <Button
+                                                        key={pair.id}
+                                                        variant="outlined"
+                                                        onClick={() => handleMatchSelect('definition', pair.definition)}
+                                                        sx={{
+                                                            justifyContent: 'flex-start', textAlign: 'left',
+                                                            py: 1.5, px: 2, textTransform: 'none',
+                                                            borderColor, borderWidth, color: 'white',
+                                                            width: '100%',
+                                                            '&:hover': { borderColor, borderWidth, backgroundColor: 'rgba(255,255,255,0.05)' },
+                                                        }}
+                                                    >
+                                                        {pair.definition}
+                                                    </Button>
+                                                );
+                                            })}
+                                        </Stack>
+                                    </Grid>
+                                </Grid>
+                            </Box>
+
+                            {/* Mobile: stacked with horizontal scroll for each */}
+                            <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                                {/* Words - Mobile horizontal scroll */}
+                                <Typography variant="subtitle1" fontWeight="bold" gutterBottom color="text.secondary">
+                                    Words
+                                </Typography>
+                                <Box
+                                    sx={{
+                                        overflowX: 'auto',
+                                        WebkitOverflowScrolling: 'touch',
+                                        pb: 1.5,
+                                        mb: 3,
+                                        '&::-webkit-scrollbar': { height: '6px' },
+                                        '&::-webkit-scrollbar-track': { background: 'rgba(255,255,255,0.05)', borderRadius: '4px' },
+                                        '&::-webkit-scrollbar-thumb': { background: 'rgba(255,255,255,0.25)', borderRadius: '4px' },
+                                    }}
+                                >
+                                    <Box sx={{ display: 'flex', gap: 1.5, width: 'max-content' }}>
                                         {lesson.content.matchDefinitions.pairs.map((pair) => {
                                             const isMatched = !!matchDefinitionsAnswers[pair.id];
                                             const isSelected = selectedWordId === pair.id;
                                             const isCorrect = isMatched && matchDefinitionsAnswers[pair.id] === pair.definition;
-
-                                            // Determine border color based on state
                                             let borderColor = 'rgba(255,255,255,0.3)';
                                             let borderWidth = 1;
-
                                             if (showFeedback && isMatched) {
-                                                borderColor = isCorrect ? '#4caf50' : '#f44336'; // green or red
+                                                borderColor = isCorrect ? '#4caf50' : '#f44336';
                                                 borderWidth = 3;
                                             } else if (isMatched) {
-                                                borderColor = '#2196f3'; // primary blue
+                                                borderColor = '#2196f3';
                                                 borderWidth = 2;
                                             } else if (isSelected) {
                                                 borderColor = '#2196f3';
                                                 borderWidth = 2;
                                             }
-
                                             return (
                                                 <Button
                                                     key={pair.id}
@@ -465,87 +566,80 @@ export function TaskReading({
                                                     onClick={() => handleMatchSelect('word', pair.id)}
                                                     sx={{
                                                         justifyContent: 'flex-start',
-                                                        py: 1.5,
-                                                        borderColor: borderColor,
-                                                        borderWidth: borderWidth,
+                                                        py: 1.5, px: 2,
+                                                        borderColor, borderWidth,
                                                         fontWeight: isSelected ? 'bold' : 'normal',
                                                         color: 'white',
-                                                        '&:hover': {
-                                                            borderColor: borderColor,
-                                                            borderWidth: borderWidth,
-                                                            backgroundColor: 'rgba(255,255,255,0.05)',
-                                                        },
+                                                        whiteSpace: 'nowrap',
+                                                        flexShrink: 0,
+                                                        '&:hover': { borderColor, borderWidth, backgroundColor: 'rgba(255,255,255,0.05)' },
                                                     }}
                                                 >
                                                     {pair.word}
                                                     {showFeedback && isMatched && (
                                                         isCorrect
-                                                            ? <CheckIcon sx={{ ml: 'auto', color: '#4caf50' }} fontSize="small" />
-                                                            : <CancelIcon sx={{ ml: 'auto', color: '#f44336' }} fontSize="small" />
+                                                            ? <CheckIcon sx={{ ml: 1, color: '#4caf50' }} fontSize="small" />
+                                                            : <CancelIcon sx={{ ml: 1, color: '#f44336' }} fontSize="small" />
                                                     )}
                                                 </Button>
                                             );
                                         })}
-                                    </Stack>
-                                </Grid>
+                                    </Box>
+                                </Box>
 
-                                {/* Definitions Column */}
-                                <Grid size={{ xs: 12, md: 6 }}>
-                                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom color="text.secondary">
-                                        Definitions
-                                    </Typography>
-                                    <Stack spacing={2}>
+                                {/* Definitions - Mobile horizontal scroll */}
+                                <Typography variant="subtitle1" fontWeight="bold" gutterBottom color="text.secondary">
+                                    Definitions
+                                </Typography>
+                                <Box
+                                    sx={{
+                                        overflowX: 'auto',
+                                        WebkitOverflowScrolling: 'touch',
+                                        pb: 1.5,
+                                        '&::-webkit-scrollbar': { height: '6px' },
+                                        '&::-webkit-scrollbar-track': { background: 'rgba(255,255,255,0.05)', borderRadius: '4px' },
+                                        '&::-webkit-scrollbar-thumb': { background: 'rgba(255,255,255,0.25)', borderRadius: '4px' },
+                                    }}
+                                >
+                                    <Box sx={{ display: 'flex', gap: 1.5, width: 'max-content' }}>
                                         {shuffledDefinitions.map((pair) => {
-                                            // Check if this definition is used in any answer
                                             const connectedWordId = Object.keys(matchDefinitionsAnswers).find(
                                                 key => matchDefinitionsAnswers[key] === pair.definition
                                             );
                                             const isUsed = !!connectedWordId;
-
-                                            // Determine correctness - check if correct word matches this definition
                                             const correctWordPair = lesson.content.matchDefinitions?.pairs.find(p => p.id === connectedWordId);
                                             const isCorrect = correctWordPair && correctWordPair.definition === pair.definition;
-
-                                            // Determine border color based on state
                                             let borderColor = 'rgba(255,255,255,0.3)';
                                             let borderWidth = 1;
-
                                             if (showFeedback && isUsed) {
-                                                borderColor = isCorrect ? '#4caf50' : '#f44336'; // green or red
+                                                borderColor = isCorrect ? '#4caf50' : '#f44336';
                                                 borderWidth = 3;
                                             } else if (isUsed) {
-                                                borderColor = '#2196f3'; // primary blue
+                                                borderColor = '#2196f3';
                                                 borderWidth = 2;
                                             }
-
                                             return (
                                                 <Button
                                                     key={pair.id}
                                                     variant="outlined"
                                                     onClick={() => handleMatchSelect('definition', pair.definition)}
                                                     sx={{
-                                                        justifyContent: 'flex-start',
-                                                        textAlign: 'left',
-                                                        py: 1.5,
-                                                        height: '100%',
-                                                        textTransform: 'none',
-                                                        borderColor: borderColor,
-                                                        borderWidth: borderWidth,
-                                                        color: 'white',
-                                                        '&:hover': {
-                                                            borderColor: borderColor,
-                                                            borderWidth: borderWidth,
-                                                            backgroundColor: 'rgba(255,255,255,0.05)',
-                                                        },
+                                                        justifyContent: 'flex-start', textAlign: 'left',
+                                                        py: 1.5, px: 2, textTransform: 'none',
+                                                        borderColor, borderWidth, color: 'white',
+                                                        minWidth: '200px', maxWidth: '280px',
+                                                        flexShrink: 0,
+                                                        whiteSpace: 'normal',
+                                                        '&:hover': { borderColor, borderWidth, backgroundColor: 'rgba(255,255,255,0.05)' },
                                                     }}
                                                 >
                                                     {pair.definition}
                                                 </Button>
                                             );
                                         })}
-                                    </Stack>
-                                </Grid>
-                            </Grid>
+                                    </Box>
+                                </Box>
+                            </Box>
                         </CardContent>
                     </Card>
                 )}
@@ -588,7 +682,7 @@ export function TaskReading({
                 </Card>
 
                 {/* Submit Button */}
-                <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+                <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={2} sx={{ mt: 2 }}>
                     <Button
                         fullWidth
                         variant="outlined"

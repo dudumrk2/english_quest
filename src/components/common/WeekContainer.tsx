@@ -19,7 +19,7 @@ export const WeekContainer: React.FC<WeekContainerProps> = ({
         <Paper
             elevation={0}
             sx={{
-                p: 3,
+                p: { xs: 2, md: 3 },
                 bgcolor: 'background.paper',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 opacity: isLocked ? 0.5 : 1,

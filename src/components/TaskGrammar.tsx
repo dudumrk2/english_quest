@@ -9,7 +9,6 @@ import {
     Divider,
     Alert,
     Stack,
-    Paper,
 } from '@mui/material';
 import {
     School as GrammarIcon,
@@ -20,8 +19,14 @@ import {
 } from '@mui/icons-material';
 import { triggerCelebration } from '../utils/confetti';
 
+interface TaskGrammarProps {
+    lesson: any;
+    onComplete: () => void;
+    initialAnswers?: Record<string, string>;
+    onSaveAnswers?: (answers: Record<string, string>) => void;
+}
 
-export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }) {
+export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }: TaskGrammarProps) {
     const [answers, setAnswers] = useState(initialAnswers);
     const [showFeedback, setShowFeedback] = useState(false);
 
@@ -71,11 +76,11 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
     };
 
     return (
-        <Box sx={{ maxWidth: 900, mx: 'auto', p: { xs: 2, md: 3 } }}>
+        <Box sx={{ maxWidth: 900, mx: 'auto', p: { xs: 1, md: 3 } }}>
             {/* Header */}
             <Box
                 sx={{
-                    p: 3,
+                    p: { xs: 2, md: 3 },
                     mb: 4,
                     background: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
                     color: 'white',
@@ -84,12 +89,12 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
                 }}
             >
                 <Stack direction="row" spacing={2} alignItems="center">
-                    <GrammarIcon sx={{ fontSize: 40 }} />
+                    <GrammarIcon sx={{ fontSize: { xs: 32, md: 40 } }} />
                     <Box>
-                        <Typography variant="h4" fontWeight={700} sx={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                        <Typography variant="h4" fontWeight={700} sx={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)', fontSize: { xs: '1.5rem', md: '2.125rem' } }}>
                             {lesson.title}
                         </Typography>
-                        <Typography variant="subtitle1" sx={{ opacity: 0.9 }}>
+                        <Typography variant="subtitle1" sx={{ opacity: 0.9, fontSize: { xs: '0.9rem', md: '1rem' } }}>
                             Grammar Mission
                         </Typography>
                     </Box>
@@ -99,7 +104,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
             <Stack spacing={4}>
                 {/* Grammar Rule Card */}
                 <Card elevation={3} sx={{ borderLeft: '6px solid #f6d365' }}>
-                    <CardContent sx={{ p: 4 }}>
+                    <CardContent sx={{ p: { xs: 2, md: 4 } }}>
                         <Stack direction="row" spacing={2} alignItems="start" mb={2}>
                             <TipIcon color="warning" sx={{ fontSize: 32, mt: 0.5 }} />
                             <Box>
@@ -124,7 +129,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
 
                 {/* Practice Exercises Card */}
                 <Card elevation={2}>
-                    <CardContent sx={{ p: 4 }}>
+                    <CardContent sx={{ p: { xs: 2, md: 4 } }}>
                         <Stack direction="row" spacing={1} alignItems="center" mb={3} justifyContent="space-between">
                             <Stack direction="row" spacing={1} alignItems="center">
                                 <PracticeIcon color="primary" />
@@ -136,7 +141,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
                         <Divider sx={{ mb: 4 }} />
 
                         <Stack spacing={4}>
-                            {lesson.content.exercises.map((ex, idx) => {
+                            {lesson.content.exercises.map((ex: any, idx: number) => {
                                 // Check if this is a multiple choice exercise (has options)
                                 if (ex.options && ex.options.length > 0) {
                                     const isCorrect = answers[ex.id] === ex.answer;
@@ -148,7 +153,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
                                         const parts = ex.question.split(ex.targetWord);
                                         return (
                                             <span>
-                                                {parts.map((part, i) => (
+                                                {parts.map((part: string, i: number) => (
                                                     <React.Fragment key={i}>
                                                         {part}
                                                         {i < parts.length - 1 && (
@@ -173,16 +178,16 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
                                                 <Box component="span" sx={{ fontWeight: 'bold', color: 'text.secondary', minWidth: '24px' }}>
                                                     {idx + 1}.
                                                 </Box>
-                                                <Typography variant="h6" sx={{ fontSize: '1.2rem' }}>
+                                                <Typography variant="h6" sx={{ fontSize: { xs: '1rem', md: '1.2rem' } }}>
                                                     {renderQuestion()}
                                                 </Typography>
                                             </Stack>
 
-                                            <Stack direction="row" spacing={2} sx={{ ml: 5 }}>
-                                                {ex.options.map((option) => {
+                                            <Stack direction="row" spacing={2} sx={{ ml: { xs: 3, md: 5 }, flexWrap: 'wrap', gap: 1 }} useFlexGap>
+                                                {ex.options.map((option: string) => {
                                                     const isSelected = answers[ex.id] === option;
-                                                    let color = 'primary';
-                                                    let variant = isSelected ? 'contained' : 'outlined';
+                                                    let color: 'primary' | 'success' | 'error' = 'primary';
+                                                    let variant: 'contained' | 'outlined' = isSelected ? 'contained' : 'outlined';
 
                                                     if (showResult) {
                                                         if (option === ex.answer) {
@@ -317,7 +322,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
                             })}
                         </Stack>
 
-                        <Stack direction="row" spacing={2} mt={6}>
+                        <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={2} mt={6}>
                             <Button
                                 fullWidth
                                 variant="outlined"

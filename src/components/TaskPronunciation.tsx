@@ -251,11 +251,11 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
     };
 
     return (
-        <Box sx={{ maxWidth: 800, mx: 'auto', p: { xs: 2, md: 3 } }}>
+        <Box sx={{ maxWidth: 800, mx: 'auto', p: { xs: 1, md: 3 } }}>
             {/* Header */}
             <Box
                 sx={{
-                    p: 3,
+                    p: { xs: 2, md: 3 },
                     mb: 4,
                     background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
                     color: '#1a4731',
@@ -264,12 +264,12 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                 }}
             >
                 <Stack direction="row" spacing={2} alignItems="center">
-                    <PronunciationIcon sx={{ fontSize: 40 }} />
+                    <PronunciationIcon sx={{ fontSize: { xs: 32, md: 40 } }} />
                     <Box>
-                        <Typography variant="h4" fontWeight={700} sx={{ textShadow: '0 1px 2px rgba(255,255,255,0.5)' }}>
+                        <Typography variant="h4" fontWeight={700} sx={{ textShadow: '0 1px 2px rgba(255,255,255,0.5)', fontSize: { xs: '1.5rem', md: '2.125rem' } }}>
                             {lesson.title}
                         </Typography>
-                        <Typography variant="subtitle1" fontWeight={500}>
+                        <Typography variant="subtitle1" fontWeight={500} sx={{ fontSize: { xs: '0.9rem', md: '1rem' } }}>
                             Read Aloud Mission
                         </Typography>
                     </Box>
@@ -279,7 +279,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
             <Stack spacing={4}>
                 {/* Reading Text Card */}
                 <Card elevation={3} sx={{ position: 'relative', overflow: 'visible' }}>
-                    <CardContent sx={{ p: 4 }}>
+                    <CardContent sx={{ p: { xs: 2, md: 4 } }}>
                         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
                             <Typography variant="overline" color="text.secondary" fontWeight={600}>
                                 Read this text aloud:
@@ -451,7 +451,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
 
                 {/* Hebrew Summary Section */}
                 <Card elevation={2} sx={{ mt: 4 }}>
-                    <CardContent sx={{ p: 3 }}>
+                    <CardContent sx={{ p: { xs: 2, md: 3 } }}>
                         <Stack direction="row" spacing={1} alignItems="center" mb={2}>
                             <WriteIcon color="warning" />
                             <Typography variant="h6" fontWeight={600}>
@@ -483,7 +483,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
 
                 {/* Writing Challenge Section */}
                 <Card elevation={2}>
-                    <CardContent sx={{ p: 3 }}>
+                    <CardContent sx={{ p: { xs: 2, md: 3 } }}>
                         <Stack direction="row" spacing={1} alignItems="center" mb={2}>
                             <WriteIcon color="primary" />
                             <Typography variant="h6" fontWeight={600}>
@@ -550,7 +550,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
 
                 {/* Complete Button */}
                 <Box mt={4}>
-                    <Stack direction="row" spacing={2}>
+                    <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={2}>
                         <Button
                             fullWidth
                             variant="outlined"

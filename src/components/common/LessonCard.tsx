@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, CardActionArea, Typography, Box, Chip, Stack, IconButton } from '@mui/material';
+import { Card, CardContent, Typography, Box, Chip, Stack, IconButton } from '@mui/material';
 import { CheckCircle, Lock, PlayArrow, DeleteOutline } from '@mui/icons-material';
 
 export interface LessonCardProps {
@@ -32,8 +32,10 @@ export const LessonCard: React.FC<LessonCardProps> = ({
     return (
         <Card
             elevation={isCurrent ? 8 : 0}
+            onClick={!isLocked ? onClick : undefined}
             sx={{
                 height: '100%',
+                cursor: isLocked ? 'default' : 'pointer',
                 border: '2px solid',
                 borderColor: isCompleted
                     ? 'success.main'
@@ -57,59 +59,57 @@ export const LessonCard: React.FC<LessonCardProps> = ({
                 },
             }}
         >
-            <CardActionArea onClick={onClick} disabled={isLocked} sx={{ height: '100%' }}>
-                <CardContent>
-                    <Stack spacing={1.5}>
-                        {/* Day Badge */}
-                        <Stack direction="row" justifyContent="space-between" alignItems="center">
-                            <Chip label={`Day ${day}`} size="small" sx={{ fontWeight: 600 }} />
-                            {hasData && (
-                                <IconButton
-                                    size="small"
-                                    onClick={onClear}
-                                    sx={{
-                                        color: 'error.main',
-                                        '&:hover': { bgcolor: 'rgba(211, 47, 47, 0.08)' }
-                                    }}
-                                    title="Clear progress"
-                                >
-                                    <DeleteOutline fontSize="small" />
-                                </IconButton>
-                            )}
-                            {isCompleted && <CheckCircle color="success" fontSize="small" />}
-                            {isSkipped && <Typography variant="caption" sx={{ color: 'warning.main', fontWeight: 'bold' }}>SKIP</Typography>}
-                            {isLocked && <Lock fontSize="small" />}
-                            {isCurrent && (
-                                <PlayArrow
-                                    color="primary"
-                                    fontSize="small"
-                                    sx={{ animation: 'pulse 2s ease-in-out infinite' }}
-                                />
-                            )}
-                        </Stack>
-
-                        {/* Icon */}
-                        <Box textAlign="center" py={1}>
-                            {icon}
-                        </Box>
-
-                        {/* Title */}
-                        <Typography variant="subtitle2" fontWeight={600} noWrap textAlign="center">
-                            {title}
-                        </Typography>
-
-                        {/* Type */}
-                        <Typography
-                            variant="caption"
-                            color="text.secondary"
-                            textAlign="center"
-                            sx={{ textTransform: 'capitalize' }}
-                        >
-                            {type}
-                        </Typography>
+            <CardContent>
+                <Stack spacing={1.5}>
+                    {/* Day Badge */}
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Chip label={`Day ${day}`} size="small" sx={{ fontWeight: 600 }} />
+                        {hasData && (
+                            <IconButton
+                                size="small"
+                                onClick={onClear}
+                                sx={{
+                                    color: 'error.main',
+                                    '&:hover': { bgcolor: 'rgba(211, 47, 47, 0.08)' }
+                                }}
+                                title="Clear progress"
+                            >
+                                <DeleteOutline fontSize="small" />
+                            </IconButton>
+                        )}
+                        {isCompleted && <CheckCircle color="success" fontSize="small" />}
+                        {isSkipped && <Typography variant="caption" sx={{ color: 'warning.main', fontWeight: 'bold' }}>SKIP</Typography>}
+                        {isLocked && <Lock fontSize="small" />}
+                        {isCurrent && (
+                            <PlayArrow
+                                color="primary"
+                                fontSize="small"
+                                sx={{ animation: 'pulse 2s ease-in-out infinite' }}
+                            />
+                        )}
                     </Stack>
-                </CardContent>
-            </CardActionArea>
+
+                    {/* Icon */}
+                    <Box textAlign="center" py={1}>
+                        {icon}
+                    </Box>
+
+                    {/* Title */}
+                    <Typography variant="subtitle2" fontWeight={600} noWrap textAlign="center">
+                        {title}
+                    </Typography>
+
+                    {/* Type */}
+                    <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        textAlign="center"
+                        sx={{ textTransform: 'capitalize' }}
+                    >
+                        {type}
+                    </Typography>
+                </Stack>
+            </CardContent>
         </Card>
     );
 };

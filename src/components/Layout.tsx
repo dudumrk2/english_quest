@@ -10,6 +10,8 @@ import {
     IconButton,
     Container,
     Stack,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
 import {
     EmojiEvents as TrophyIcon,
@@ -20,6 +22,8 @@ import { StatChip } from './common/StatChip';
 
 export const Layout: React.FC<LayoutProps> = ({ children, points, streak, onLogout, activeLesson, onBack }) => {
     const { user } = useAuth();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     return (
         <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 4 }}>
@@ -28,16 +32,17 @@ export const Layout: React.FC<LayoutProps> = ({ children, points, streak, onLogo
                 position="sticky"
                 elevation={0}
                 sx={{
-                    mt: 2,
-                    mx: 2,
-                    width: 'calc(100% - 32px)',
-                    borderRadius: 2,
+                    mt: { xs: 0, sm: 2 },
+                    mx: { xs: 0, sm: 2 },
+                    width: { xs: '100%', sm: 'calc(100% - 32px)' },
+                    borderRadius: { xs: 0, sm: 2 },
                     backdropFilter: 'blur(20px)',
                     backgroundColor: 'rgba(30, 41, 59, 0.8)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderBottom: { xs: '1px solid rgba(255, 255, 255, 0.1)', sm: 'none' },
+                    border: { xs: 'none', sm: '1px solid rgba(255, 255, 255, 0.1)' },
                 }}
             >
-                <Toolbar>
+                <Toolbar sx={{ flexWrap: 'wrap', minHeight: { xs: 64, sm: 70 }, py: { xs: 1, sm: 0 } }}>
                     {/* User Info */}
                     <Stack direction="row" spacing={2} alignItems="center" sx={{ flexGrow: 1 }}>
                         <Avatar
@@ -52,7 +57,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, points, streak, onLogo
                         >
                             {user?.name?.charAt(0)}
                         </Avatar>
-                        <Box>
+                        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                             <Typography variant="subtitle1" fontWeight={600}>
                                 {user?.name || 'Nadav'}
                             </Typography>
@@ -60,15 +65,28 @@ export const Layout: React.FC<LayoutProps> = ({ children, points, streak, onLogo
                                 {activeLesson ? `Week ${activeLesson.week} • Day ${activeLesson.day}` : 'English Quest'}
                             </Typography>
                         </Box>
+                        {/* Mobile only simplified text */}
+                        <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+                            <Typography variant="subtitle2" fontWeight={600}>
+                                {activeLesson ? `W${activeLesson.week}•D${activeLesson.day}` : 'Quest'}
+                            </Typography>
+                        </Box>
                     </Stack>
 
                     {/* Stats */}
                     <Stack direction="row" spacing={2} alignItems="center">
-                        <StatChip icon={<TrophyIcon />} value={points} suffix="XP" color="warning" />
+                        <StatChip
+                            icon={<TrophyIcon />}
+                            value={points}
+                            suffix={!isMobile ? "XP" : ""}
+                            color="warning"
+                            size="small"
+                        />
                         <StatChip
                             icon={<FlameIcon />}
                             value={streak}
-                            suffix="Day Streak"
+                            suffix={!isMobile ? "Day Streak" : ""}
+                            size="small"
                             sx={{
                                 bgcolor: 'rgba(249, 115, 22, 0.2)',
                                 color: '#fb923c',
@@ -116,7 +134,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, points, streak, onLogo
             </AppBar>
 
             {/* Main Content */}
-            <Container maxWidth="xl" sx={{ mt: 4 }}>
+            <Container maxWidth="xl" sx={{ mt: { xs: 2, sm: 4 }, px: { xs: 2, sm: 3 } }}>
                 {children}
             </Container>
         </Box>

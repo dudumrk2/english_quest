@@ -34,23 +34,38 @@ export const theme = createTheme({
         fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
         h1: {
             fontWeight: 700,
-            fontSize: '3rem',
+            fontSize: '2.5rem',
+            '@media (min-width:600px)': {
+                fontSize: '3rem',
+            },
         },
         h2: {
             fontWeight: 700,
-            fontSize: '2.5rem',
+            fontSize: '2rem',
+            '@media (min-width:600px)': {
+                fontSize: '2.5rem',
+            },
         },
         h3: {
             fontWeight: 600,
-            fontSize: '2rem',
+            fontSize: '1.75rem',
+            '@media (min-width:600px)': {
+                fontSize: '2rem',
+            },
         },
         h4: {
             fontWeight: 600,
-            fontSize: '1.5rem',
+            fontSize: '1.25rem',
+            '@media (min-width:600px)': {
+                fontSize: '1.5rem',
+            },
         },
         h5: {
             fontWeight: 600,
-            fontSize: '1.25rem',
+            fontSize: '1.1rem',
+            '@media (min-width:600px)': {
+                fontSize: '1.25rem',
+            },
         },
         h6: {
             fontWeight: 600,
@@ -67,7 +82,10 @@ export const theme = createTheme({
                     textTransform: 'none',
                     fontWeight: 600,
                     borderRadius: 8,
-                    padding: '10px 24px',
+                    padding: '8px 16px',
+                    '@media (min-width:600px)': {
+                        padding: '10px 24px',
+                    },
                 },
                 contained: {
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
