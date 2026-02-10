@@ -127,6 +127,12 @@ export interface DashboardProps {
     lessonAnswers: Record<number, any>;
     onStartLesson: (lesson: Lesson) => void;
     onClearLesson: (lessonId: number) => void;
+    // Cloud sync
+    isGoogleUser?: boolean;
+    isSyncing?: boolean;
+    lastSyncedAt?: string | null;
+    onSaveToCloud?: () => void;
+    onLoadFromCloud?: () => void;
 }
 
 export interface TaskProps {

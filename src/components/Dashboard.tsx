@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { lessons } from '../data/lessons';
 import { DashboardProps, Lesson } from '../types';
-import { Box, Typography, Grid, Stack, useTheme, useMediaQuery } from '@mui/material';
+import {
+    Box, Typography, Grid, Stack, useTheme, useMediaQuery,
+    Button, CircularProgress, Snackbar, Alert,
+} from '@mui/material';
 import {
     MenuBook as ReadingIcon,
     School as GrammarIcon,
     RecordVoiceOver as PronunciationIcon,
     Translate as TranslateIcon,
     Extension as ExtensionIcon,
+    CloudUpload as CloudUploadIcon,
+    CloudDownload as CloudDownloadIcon,
 } from '@mui/icons-material';
 import { LessonCard } from './common/LessonCard';
 import { WeekContainer } from './common/WeekContainer';
@@ -28,11 +33,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
     lessonAnswers,
     onStartLesson,
     onClearLesson,
+    isGoogleUser,
+    isSyncing,
+    lastSyncedAt,
+    onSaveToCloud,
+    onLoadFromCloud,
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [weeks, setWeeks] = useState<number[]>([]);
+    const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
+        open: false, message: '', severity: 'success',
+    });
 
     useEffect(() => {
         // Extract unique weeks
@@ -57,6 +70,30 @@ export const Dashboard: React.FC<DashboardProps> = ({
         return (completed / weekLessons.length) * 100;
     };
 
+    const handleSave = async () => {
+        try {
+            await onSaveToCloud?.();
+            setSnackbar({ open: true, message: '☁️ Progress saved to cloud!', severity: 'success' });
+        } catch {
+            setSnackbar({ open: true, message: 'Failed to save. Check your connection.', severity: 'error' });
+        }
+    };
+
+    const handleLoad = async () => {
+        if (!window.confirm('This will replace your local progress with the cloud version. Continue?')) return;
+        try {
+            await onLoadFromCloud?.();
+            setSnackbar({ open: true, message: '☁️ Progress loaded from cloud!', severity: 'success' });
+        } catch {
+            setSnackbar({ open: true, message: 'Failed to load. Check your connection.', severity: 'error' });
+        }
+    };
+
+    const formatSyncTime = (iso: string) => {
+        const date = new Date(iso);
+        return date.toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    };
+
     return (
         <Box>
             {/* Header */}
@@ -67,6 +104,59 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <Typography variant="h6" color="text.secondary" sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}>
                     Select your next mission, Commander
                 </Typography>
+
+                {/* Cloud Sync Buttons - only for Google users */}
+                {isGoogleUser && (
+                    <Stack
+                        direction="row"
+                        spacing={1.5}
+                        justifyContent="center"
+                        alignItems="center"
+                        sx={{ mt: 2 }}
+                    >
+                        <Button
+                            variant="outlined"
+                            size="small"
+                            startIcon={isSyncing ? <CircularProgress size={16} /> : <CloudUploadIcon />}
+                            onClick={handleSave}
+                            disabled={isSyncing}
+                            sx={{
+                                borderColor: 'rgba(59, 130, 246, 0.5)',
+                                color: '#60a5fa',
+                                textTransform: 'none',
+                                '&:hover': {
+                                    borderColor: '#3b82f6',
+                                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                },
+                            }}
+                        >
+                            Save to Cloud
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            size="small"
+                            startIcon={isSyncing ? <CircularProgress size={16} /> : <CloudDownloadIcon />}
+                            onClick={handleLoad}
+                            disabled={isSyncing}
+                            sx={{
+                                borderColor: 'rgba(139, 92, 246, 0.5)',
+                                color: '#a78bfa',
+                                textTransform: 'none',
+                                '&:hover': {
+                                    borderColor: '#8b5cf6',
+                                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                                },
+                            }}
+                        >
+                            Load from Cloud
+                        </Button>
+                        {lastSyncedAt && (
+                            <Typography variant="caption" color="text.secondary">
+                                Last sync: {formatSyncTime(lastSyncedAt)}
+                            </Typography>
+                        )}
+                    </Stack>
+                )}
             </Box>
 
             {/* Weeks Grid */}
@@ -162,6 +252,24 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     );
                 })}
             </Stack>
+
+            {/* Snackbar for sync feedback */}
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={3000}
+                onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+                    severity={snackbar.severity}
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };
+

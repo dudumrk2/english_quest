@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { lessons } from '../data/lessons';
 import { AppState, Lesson } from '../types';
+import { saveToCloud as saveToCloudService, loadFromCloud as loadFromCloudService } from '../services/cloudSync';
 
 interface WeeklyProgress {
     total: number;
@@ -16,10 +17,17 @@ interface AppStore {
     saveLessonAnswers: (lessonId: number, answers: any) => void;
     clearLessonAnswers: (lessonId: number) => void;
     resetAllProgress: () => void;
+    // Cloud sync
+    isSyncing: boolean;
+    lastSyncedAt: string | null;
+    saveToCloud: () => Promise<void>;
+    loadFromCloud: () => Promise<void>;
 }
 
 export function useAppStore(userEmail?: string): AppStore {
     const storageKey = `nadav-english-app-${userEmail || 'default'}`;
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
 
     // Load state from localStorage or use defaults
     const [state, setState] = useState<AppState>(() => {
@@ -159,6 +167,35 @@ export function useAppStore(userEmail?: string): AppStore {
         };
     };
 
+    // Cloud sync: save current state to Firestore
+    const saveToCloud = useCallback(async () => {
+        if (!userEmail || userEmail === 'demo@nadav-english.com') return;
+        setIsSyncing(true);
+        try {
+            await saveToCloudService(userEmail, state);
+            const now = new Date().toISOString();
+            setLastSyncedAt(now);
+        } finally {
+            setIsSyncing(false);
+        }
+    }, [userEmail, state]);
+
+    // Cloud sync: load state from Firestore
+    const loadFromCloud = useCallback(async () => {
+        if (!userEmail || userEmail === 'demo@nadav-english.com') return;
+        setIsSyncing(true);
+        try {
+            const cloudData = await loadFromCloudService(userEmail);
+            if (cloudData) {
+                setState(cloudData.state);
+                setLastSyncedAt(cloudData.lastSyncedAt);
+                localStorage.setItem(storageKey, JSON.stringify(cloudData.state));
+            }
+        } finally {
+            setIsSyncing(false);
+        }
+    }, [userEmail, storageKey]);
+
     return {
         state,
         completeLesson,
@@ -166,6 +203,10 @@ export function useAppStore(userEmail?: string): AppStore {
         getWeeklyProgress,
         saveLessonAnswers,
         clearLessonAnswers,
-        resetAllProgress
+        resetAllProgress,
+        isSyncing,
+        lastSyncedAt,
+        saveToCloud,
+        loadFromCloud,
     };
 }

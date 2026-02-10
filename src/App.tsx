@@ -23,7 +23,7 @@ type ViewType = 'dashboard' | 'lesson' | 'summary';
 
 function AppContent() {
     const { user, isAuthenticated } = useAuth();
-    const { state, completeLesson, saveLessonAnswers, clearLessonAnswers, resetAllProgress } = useAppStore(user?.email);
+    const { state, completeLesson, saveLessonAnswers, clearLessonAnswers, resetAllProgress, isSyncing, lastSyncedAt, saveToCloud, loadFromCloud } = useAppStore(user?.email);
     const [view, setView] = useState<ViewType>('dashboard');
     const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
 
@@ -95,6 +95,11 @@ function AppContent() {
                 lessonAnswers={state.lessonAnswers}
                 onStartLesson={handleStartLesson}
                 onClearLesson={clearLessonAnswers}
+                isGoogleUser={user?.email !== 'demo@nadav-english.com'}
+                isSyncing={isSyncing}
+                lastSyncedAt={lastSyncedAt}
+                onSaveToCloud={saveToCloud}
+                onLoadFromCloud={loadFromCloud}
             />
         );
     };
