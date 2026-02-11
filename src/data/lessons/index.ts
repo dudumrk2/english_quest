@@ -13,6 +13,8 @@ import { week10Lessons } from './week10-graduation';
 import { week11Lessons } from './week11-travel';
 import { week12Lessons } from './week12-community';
 import { week13Lessons } from './week13-grammar';
+import { week14Lessons } from './week14-travel-past';
+import { week15Lessons } from './week15-community-past';
 
 export const lessons: Lesson[] = [
     ...week01Lessons,
@@ -28,4 +30,6 @@ export const lessons: Lesson[] = [
     ...week11Lessons,
     ...week12Lessons,
     ...week13Lessons,
+    ...week14Lessons,
+    ...week15Lessons,
 ];
