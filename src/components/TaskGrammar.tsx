@@ -18,27 +18,63 @@ import {
     Assignment as PracticeIcon,
 } from '@mui/icons-material';
 import { triggerCelebration } from '../utils/confetti';
-
-interface TaskGrammarProps {
-    lesson: any;
-    onComplete: () => void;
-    initialAnswers?: Record<string, string>;
-    onSaveAnswers?: (answers: Record<string, string>) => void;
-}
+import { TaskGrammarProps, Exercise } from '../types';
 
 export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }: TaskGrammarProps) {
-    const [answers, setAnswers] = useState(initialAnswers);
+    const [answers, setAnswers] = useState(initialAnswers?.answers || {});
     const [showFeedback, setShowFeedback] = useState(false);
 
-    const [attempts, setAttempts] = useState({});
+    const [attempts, setAttempts] = useState<Record<string, number>>({});
 
     // Update local state and parent state
-    const handleAnswerChange = (id, value) => {
-        const newAnswers = { ...answers, [id]: value };
+    // Update local state and parent state
+    const handleAnswerChange = (id: string, value: string, index: number = 0, totalInputs: number = 1) => {
+        let newAnswerValue = value;
+
+        // If there are multiple inputs, we need to manage the pipe-separated string
+        if (totalInputs > 1) {
+            const currentParts = (answers[id] || '').split('|');
+            // Ensure array is long enough
+            while (currentParts.length < totalInputs) currentParts.push('');
+
+            currentParts[index] = value;
+            newAnswerValue = currentParts.join('|');
+        }
+
+        const newAnswers = { ...answers, [id]: newAnswerValue };
         setAnswers(newAnswers);
         if (onSaveAnswers) {
             onSaveAnswers(newAnswers);
         }
+    };
+
+    // Helper to check answer correctness handling multiple blanks
+    const checkAnswer = (userAnswer: string | undefined, correctAnswer: string, question: string) => {
+        if (!userAnswer) return false;
+
+        const answerParts = userAnswer.split('|');
+        const questionParts = question.split(/_{3,}/);
+
+        // If we have multiple parts, we need to reconstruct the sentence to match the expected answer
+        // The expected answer typically includes the text *between* the blanks for multi-blank questions
+        // e.g. "Did you go" corresponds to "_____ you _____"
+
+        if (answerParts.length > 1) {
+            let constructed = answerParts[0];
+            for (let i = 1; i < answerParts.length; i++) {
+                // Add the static text between blanks
+                // questionParts[0] is before first blank
+                // questionParts[1] is between first and second blank
+                if (i < questionParts.length) {
+                    constructed += questionParts[i];
+                }
+                constructed += answerParts[i];
+            }
+            return constructed.toLowerCase().trim() === correctAnswer.toLowerCase();
+        }
+
+        // Single part - direct comparison
+        return userAnswer.toLowerCase().trim() === correctAnswer.toLowerCase();
     };
 
 
@@ -54,7 +90,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
         let attemptsChanged = false;
 
         lesson.content.exercises.forEach(ex => {
-            const isCorrect = answers[ex.id]?.toLowerCase().trim() === ex.answer.toLowerCase();
+            const isCorrect = checkAnswer(answers[ex.id], ex.answer, ex.question);
             if (!isCorrect) {
                 newAttempts[ex.id] = (newAttempts[ex.id] || 0) + 1;
                 attemptsChanged = true;
@@ -66,7 +102,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
         }
 
         const allCorrect = lesson.content.exercises.every(
-            (ex) => answers[ex.id]?.toLowerCase().trim() === ex.answer.toLowerCase()
+            (ex) => checkAnswer(answers[ex.id], ex.answer, ex.question)
         );
 
         if (allCorrect) {
@@ -141,10 +177,9 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
                         <Divider sx={{ mb: 4 }} />
 
                         <Stack spacing={4}>
-                            {lesson.content.exercises.map((ex: any, idx: number) => {
+                            {lesson.content.exercises.map((ex: Exercise, idx: number) => {
                                 // Check if this is a multiple choice exercise (has options)
                                 if (ex.options && ex.options.length > 0) {
-                                    const isCorrect = answers[ex.id] === ex.answer;
                                     const showResult = showFeedback;
 
                                     // Helper to highlight target word
@@ -241,66 +276,75 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
                                 // Default fill-in-the-blank behavior
                                 // Split question by '_____' or just use the question if no placeholder
                                 const parts = ex.question.split(/_{3,}/);
-                                const isCorrect = answers[ex.id]?.toLowerCase().trim() === ex.answer.toLowerCase();
+                                const totalBlanks = parts.length - 1;
+                                const isCorrect = checkAnswer(answers[ex.id], ex.answer, ex.question);
                                 const showError = showFeedback && !isCorrect;
+
+                                // Get current values for this exercise
+                                const currentValues = (answers[ex.id] || '').split('|');
 
                                 return (
                                     <Box key={ex.id}>
-                                        <Typography variant="h6" sx={{ lineHeight: 2.5, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+                                        <Typography variant="h6" component="div" sx={{ lineHeight: 2.5, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
                                             <Box component="span" sx={{ fontWeight: 'bold', color: 'text.secondary', mr: 1 }}>
                                                 {idx + 1}.
                                             </Box>
-                                            {parts.map((part, i) => (
-                                                <React.Fragment key={i}>
-                                                    <span>{part}</span>
-                                                    {i < parts.length - 1 && (
-                                                        <TextField
-                                                            variant="standard"
-                                                            size="small"
-                                                            placeholder={`${ex.answer[0]}...`}
-                                                            value={answers[ex.id] || ''}
-                                                            onChange={(e) => handleAnswerChange(ex.id, e.target.value)}
-                                                            error={showError}
-                                                            sx={{
-                                                                width: 140,
-                                                                mx: 1,
-                                                                '& .MuiInputBase-input': {
-                                                                    textAlign: 'center',
-                                                                    fontWeight: 'bold',
-                                                                    fontSize: '1.1rem',
-                                                                    color: showFeedback
-                                                                        ? isCorrect
-                                                                            ? 'success.main'
-                                                                            : 'error.main'
-                                                                        : '#ffffff', // White for dark mode visibility
-                                                                },
-                                                                // Default visible line
-                                                                '& .MuiInput-underline:before': {
-                                                                    borderBottom: '2px solid #94a3b8 !important' // Always visible
-                                                                },
-                                                                '& .MuiInput-underline:hover:before': {
-                                                                    borderBottom: '2px solid #64748b !important' // Darker on hover
-                                                                },
-                                                                // Focus state (active)
-                                                                '& .MuiInput-underline:after': {
-                                                                    borderBottom: '3px solid #f6d365' // Theme color when typing
-                                                                },
-                                                            }}
-                                                            InputProps={{
-                                                                endAdornment: showFeedback && (
-                                                                    <Box sx={{ ml: 1 }}>
-                                                                        {isCorrect ? (
-                                                                            <CheckIcon color="success" fontSize="small" />
-                                                                        ) : (
-                                                                            <CancelIcon color="error" fontSize="small" />
-                                                                        )}
-                                                                    </Box>
-                                                                ),
-                                                            }}
-                                                        />
-                                                    )}
-                                                </React.Fragment>
-                                            ))}
+                                            {parts.map((part, i) => {
+                                                // We have a blank after every part except the last one
+                                                const hasBlankAfter = i < parts.length - 1;
+
+                                                return (
+                                                    <React.Fragment key={i}>
+                                                        <span>{part}</span>
+                                                        {hasBlankAfter && (
+                                                            <TextField
+                                                                variant="standard"
+                                                                size="small"
+                                                                placeholder={totalBlanks > 1 ? '...' : `${ex.answer[0]}...`}
+                                                                value={currentValues[i] || ''}
+                                                                onChange={(e) => handleAnswerChange(ex.id, e.target.value, i, totalBlanks)}
+                                                                error={showError}
+                                                                sx={{
+                                                                    width: 140,
+                                                                    mx: 1,
+                                                                    '& .MuiInputBase-input': {
+                                                                        textAlign: 'center',
+                                                                        fontWeight: 'bold',
+                                                                        fontSize: '1.1rem',
+                                                                        color: showFeedback
+                                                                            ? isCorrect
+                                                                                ? 'success.main'
+                                                                                : 'error.main'
+                                                                            : '#ffffff', // White for dark mode visibility
+                                                                    },
+                                                                    // Default visible line
+                                                                    '& .MuiInput-underline:before': {
+                                                                        borderBottom: '2px solid #94a3b8 !important' // Always visible
+                                                                    },
+                                                                    '& .MuiInput-underline:hover:before': {
+                                                                        borderBottom: '2px solid #64748b !important' // Darker on hover
+                                                                    },
+                                                                    // Focus state (active)
+                                                                    '& .MuiInput-underline:after': {
+                                                                        borderBottom: '3px solid #f6d365' // Theme color when typing
+                                                                    },
+                                                                }}
+                                                                InputProps={{
+                                                                    endAdornment: showFeedback && (
+                                                                        <Box sx={{ ml: 1 }}>
+                                                                            {isCorrect ? (
+                                                                                <CheckIcon color="success" fontSize="small" />
+                                                                            ) : (
+                                                                                <CancelIcon color="error" fontSize="small" />
+                                                                            )}
+                                                                        </Box>
+                                                                    ),
+                                                                }}
+                                                            />
+                                                        )}
+                                                    </React.Fragment>
+                                                )
+                                            })}
                                         </Typography>
 
                                         {showError && answers[ex.id]?.trim() && (
@@ -311,8 +355,12 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
                                                     </span>
                                                 ) : (
                                                     <span>
-                                                        💡 Hint: The answer starts with "{ex.answer[0]}". Check the rule above!
-                                                        {ex.answer.includes(' ') && ' (Note: this answer has multiple words)'}
+                                                        {totalBlanks > 1 ? (
+                                                            <span>💡 Hint: Check the rule above!</span>
+                                                        ) : (
+                                                            <span>💡 Hint: The answer starts with "{ex.answer[0]}". Check the rule above!
+                                                                {ex.answer.includes(' ') && ' (Note: this answer has multiple words)'}</span>
+                                                        )}
                                                     </span>
                                                 )}
                                             </Alert>

@@ -29,18 +29,15 @@ import { triggerCelebration } from '../utils/confetti';
 import { renderTextWithHighlight } from '../utils/textRenderer';
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
 import {
-    PASSING_ACCURACY_THRESHOLD,
-    MAX_PRONUNCIATION_ATTEMPTS,
-    MIN_SENTENCE_WORD_COUNT,
     CHALLENGE_WORDS_COUNT,
-    REQUIRED_SENTENCES_COUNT,
 } from '../data/constants';
+import { PronunciationFeedback, TaskPronunciationProps } from '../types';
 
 // Uses shared utilities from utils/textRenderer.tsx and hooks/useSpeechSynthesis.ts
 
 // Helper to calculate accuracy
-const calculateAccuracy = (original, transcript) => {
-    const normalize = (text) => text.toLowerCase().replace(/[.,!?;:]/g, '').split(/\s+/);
+const calculateAccuracy = (original: string, transcript: string) => {
+    const normalize = (text: string) => text.toLowerCase().replace(/[.,!?;:]/g, '').split(/\s+/);
     const originalWords = normalize(original);
     const transcriptWords = normalize(transcript);
 
@@ -54,22 +51,22 @@ const calculateAccuracy = (original, transcript) => {
     return accuracy;
 };
 
-export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }) {
+export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }: TaskPronunciationProps) {
     const [attempts, setAttempts] = useState(0);
     const [isRecording, setIsRecording] = useState(false);
-    const [feedback, setFeedback] = useState(null);
+    const [feedback, setFeedback] = useState<PronunciationFeedback | null>(null);
     const [summary, setSummary] = useState(initialAnswers.summary || '');
     const [writtenSentences, setWrittenSentences] = useState(initialAnswers.sentences || ['', '', '', '', '']);
     const [readingComplete, setReadingComplete] = useState(false);
-    const [audioURL, setAudioURL] = useState(null);
+    const [audioURL, setAudioURL] = useState<string | null>(null);
 
     // Use shared speech synthesis hook for audio playback
-    const { isPlaying, highlightRange, toggle: toggleAudio } = useSpeechSynthesis();
+    const { isPlaying, highlightRange, toggle: toggleAudio, stop } = useSpeechSynthesis();
 
     // Refs for speech recording (used by toggleRecording)
-    const mediaRecorderRef = useRef(null);
-    const chunksRef = useRef([]);
-    const recognitionRef = useRef(null);
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const chunksRef = useRef<Blob[]>([]);
+    const recognitionRef = useRef<any>(null);
     const transcriptRef = useRef('');
 
     // Get vocabulary words for the challenge (using constant)
@@ -134,8 +131,8 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                 else message = "Try to speak clearly and closer to the mic.";
 
                 setFeedback({
-                    accuracy,
                     transcript: transcriptRef.current || "(No speech detected)",
+                    accuracy,
                     message
                 });
 
@@ -147,9 +144,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
 
         } else {
             if (isPlaying) {
-                window.speechSynthesis.cancel();
-                setIsPlaying(false);
-                setHighlightRange(null);
+                stop();
             }
 
             // START
@@ -172,7 +167,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                 mediaRecorderRef.current.start();
 
                 if (recognitionRef.current) {
-                    recognitionRef.current.onresult = (event) => {
+                    recognitionRef.current.onresult = (event: any) => {
                         let currentTx = '';
                         for (let i = 0; i < event.results.length; ++i) {
                             currentTx += event.results[i][0].transcript;
@@ -196,7 +191,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
     };
 
     // Handler for summary text
-    const handleSummaryChange = (e) => {
+    const handleSummaryChange = (e: any) => {
         const val = e.target.value;
         setSummary(val);
         if (onSaveAnswers) {
@@ -222,7 +217,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
         return used;
     }, [writtenSentences, challengeWords]);
 
-    const handleSentenceChange = (index, value) => {
+    const handleSentenceChange = (index: number, value: string) => {
         const newSentences = [...writtenSentences];
         newSentences[index] = value;
         setWrittenSentences(newSentences);
@@ -407,8 +402,8 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                         elevation={2}
                         sx={{
                             borderLeft: '6px solid',
-                            borderColor: feedback?.accuracy > 70 ? 'success.main' : 'warning.main',
-                            bgcolor: feedback?.accuracy > 70 ? '#f0fdf4' : '#fffbeb'
+                            borderColor: (feedback?.accuracy || 0) > 70 ? 'success.main' : 'warning.main',
+                            bgcolor: (feedback?.accuracy || 0) > 70 ? '#f0fdf4' : '#fffbeb'
                         }}
                     >
                         <CardContent>
@@ -419,8 +414,8 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                                     </Typography>
                                     <Chip
                                         label={`${feedback?.accuracy || 0}% Accuracy`}
-                                        color={feedback?.accuracy > 70 ? "success" : "warning"}
-                                        icon={feedback?.accuracy > 70 ? <CheckIcon /> : <WaveIcon />}
+                                        color={(feedback?.accuracy || 0) > 70 ? "success" : "warning"}
+                                        icon={(feedback?.accuracy || 0) > 70 ? <CheckIcon /> : <WaveIcon />}
                                     />
                                 </Stack>
 
@@ -437,10 +432,10 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                                     <LinearProgress
                                         variant="determinate"
                                         value={feedback?.accuracy || 0}
-                                        color={feedback?.accuracy > 70 ? "success" : "warning"}
+                                        color={(feedback?.accuracy || 0) > 70 ? "success" : "warning"}
                                         sx={{ height: 8, borderRadius: 4 }}
                                     />
-                                    <Typography variant="body2" color={feedback?.accuracy > 70 ? "success.main" : "warning.dark"} mt={1} fontWeight={500}>
+                                    <Typography variant="body2" color={(feedback?.accuracy || 0) > 70 ? "success.main" : "warning.dark"} mt={1} fontWeight={500}>
                                         {feedback?.message}
                                     </Typography>
                                 </Box>

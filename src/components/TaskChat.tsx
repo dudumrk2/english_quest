@@ -1,38 +1,34 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
     Box,
     Typography,
-    TextField,
-    Button,
-    Card,
-    CardContent,
-    Divider,
-    Stack,
+    Paper,
     IconButton,
     Avatar,
-    Paper,
-    Fade,
+    TextField
 } from '@mui/material';
 import {
     SmartToy as RobotIcon,
     Person as PersonIcon,
     Mic as MicIcon,
-    MicOff as MicOffIcon,
     Send as SendIcon,
     VolumeUp as VolumeIcon,
     Stop as StopIcon,
 } from '@mui/icons-material';
 import { getChatResponse } from '../services/gemini';
 
-export function TaskChat({ lesson, onComplete }) {
+import { TaskChatProps, ChatContent } from '../types';
+
+export function TaskChat({ lesson, onComplete }: TaskChatProps) {
+    const content = lesson.content as ChatContent;
     const [messages, setMessages] = useState([
-        { role: 'assistant', text: lesson.content.initialMessage }
+        { role: 'assistant', text: content.initialMessage || 'Hello!' }
     ]);
-    const [input, setInput] = useState('');
-    const [isListening, setIsListening] = useState(false);
-    const [isTyping, setIsTyping] = useState(false);
-    const recognitionRef = useRef(null);
-    const messagesEndRef = useRef(null);
+    const [inputText, setInputText] = useState('');
+    const [isRecording, setIsRecording] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const recognitionRef = useRef<any>(null);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -44,28 +40,31 @@ export function TaskChat({ lesson, onComplete }) {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages, isTyping]);
+    }, [messages, isLoading]);
 
     useEffect(() => {
         // Initialize speech recognition
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognitionRef.current = new SpeechRecognition();
-            recognitionRef.current.continuous = false;
-            recognitionRef.current.lang = 'en-US';
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
 
-            recognitionRef.current.onstart = () => setIsListening(true);
-            recognitionRef.current.onend = () => setIsListening(false);
-            recognitionRef.current.onerror = () => setIsListening(false);
+            recognition.onstart = () => setIsRecording(true);
+            recognition.onend = () => setIsRecording(false);
+            recognition.onerror = () => setIsRecording(false);
 
-            recognitionRef.current.onresult = (event) => {
+            recognition.onresult = (event: any) => {
                 const transcript = event.results[0][0].transcript;
-                setInput(transcript);
+                setInputText(prev => prev + (prev ? ' ' : '') + transcript);
             };
+
+            recognitionRef.current = recognition;
         }
     }, []);
 
-    const speak = (text) => {
+    const speak = (text: string) => {
         window.speechSynthesis.cancel(); // Stop previous speech
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
@@ -74,7 +73,7 @@ export function TaskChat({ lesson, onComplete }) {
     };
 
     const toggleMic = () => {
-        if (isListening) {
+        if (isRecording) {
             recognitionRef.current?.stop();
         } else {
             recognitionRef.current?.start();
@@ -82,18 +81,20 @@ export function TaskChat({ lesson, onComplete }) {
     };
 
     const handleSend = async () => {
-        if (!input.trim()) return;
+        if (!inputText.trim()) return;
 
-        const userMsg = { role: 'user', text: input };
+        const userMsg = { role: 'user', text: inputText };
         setMessages(prev => [...prev, userMsg]);
-        setInput('');
-        setIsTyping(true);
+        setInputText('');
+        setIsLoading(true);
 
         // Call Gemini AI
         try {
-            const responseText = await getChatResponse(messages, input);
+            // Convert messages to history format expected by service if needed, or pass full history
+            // Assuming getChatResponse takes (history, newMessage)
+            const responseText = await getChatResponse(messages, inputText);
 
-            setIsTyping(false);
+            setIsLoading(false);
             setMessages(prev => [...prev, { role: 'assistant', text: responseText }]);
             speak(responseText);
 
@@ -107,7 +108,7 @@ export function TaskChat({ lesson, onComplete }) {
 
         } catch (error) {
             console.error("Chat Error:", error);
-            setIsTyping(false);
+            setIsLoading(false);
             setMessages(prev => [...prev, { role: 'assistant', text: "Sorry, I had a glitch. Can you say that again?" }]);
         }
     };
@@ -136,7 +137,7 @@ export function TaskChat({ lesson, onComplete }) {
                         AI Tutor
                     </Typography>
                     <Typography variant="caption" sx={{ opacity: 0.9, display: 'block' }}>
-                        Topic: {lesson.content.topic}
+                        Topic: {content.topic || 'General Conversation'}
                     </Typography>
                 </Box>
             </Paper>
@@ -214,7 +215,7 @@ export function TaskChat({ lesson, onComplete }) {
                     </Box>
                 ))}
 
-                {isTyping && (
+                {isLoading && (
                     <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', ml: 5 }}>
                         <Box sx={{
                             width: 8, height: 8, bgcolor: '#90caf9', borderRadius: '50%',
@@ -257,21 +258,21 @@ export function TaskChat({ lesson, onComplete }) {
             >
                 <IconButton
                     onClick={toggleMic}
-                    color={isListening ? 'error' : 'default'}
+                    color={isRecording ? 'error' : 'default'}
                     sx={{
-                        border: isListening ? '2px solid' : '1px solid #e0e0e0',
-                        animation: isListening ? 'pulse 1.5s infinite' : 'none'
+                        border: isRecording ? '2px solid' : '1px solid #e0e0e0',
+                        animation: isRecording ? 'pulse 1.5s infinite' : 'none'
                     }}
                 >
-                    {isListening ? <StopIcon /> : <MicIcon />}
+                    {isRecording ? <StopIcon /> : <MicIcon />}
                 </IconButton>
 
                 <TextField
                     fullWidth
                     variant="standard"
                     placeholder="Type your message..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                     InputProps={{ disableUnderline: true }}
                     sx={{ px: 2 }}
@@ -280,9 +281,9 @@ export function TaskChat({ lesson, onComplete }) {
                 <IconButton
                     color="primary"
                     onClick={handleSend}
-                    disabled={!input.trim()}
+                    disabled={!inputText.trim()}
                     sx={{
-                        bgcolor: input.trim() ? 'primary.main' : 'action.disabledBackground',
+                        bgcolor: inputText.trim() ? 'primary.main' : 'action.disabledBackground',
                         color: 'white',
                         '&:hover': { bgcolor: 'primary.dark' },
                         '&.Mui-disabled': { color: 'rgba(255,255,255,0.5)' }

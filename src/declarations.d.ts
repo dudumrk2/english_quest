@@ -33,3 +33,8 @@ declare module './components/WeeklySummary' {
 declare module './components/Login' {
     export const Login: any;
 }
+
+interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+}

@@ -4,7 +4,9 @@ import confetti from 'canvas-confetti';
 
 import { lessons } from '../data/lessons';
 
-export function WeeklySummary({ week, onContinue }) {
+import { WeeklySummaryProps } from '../types';
+
+export function WeeklySummary({ week, onContinue }: WeeklySummaryProps) {
     const weekLessons = lessons.filter(l => l.week === week).sort((a, b) => a.day - b.day);
     const totalMissions = weekLessons.length;
 

@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
-    TextField,
+    Grid,
     Button,
     Card,
     CardContent,
     Stack,
     IconButton,
-    Grid,
+    TextField,
     Alert,
-    Divider
 } from '@mui/material';
 import {
     VolumeUp,
@@ -20,25 +19,26 @@ import {
 } from '@mui/icons-material';
 import { triggerCelebration } from '../utils/confetti';
 import { lessons } from '../data/lessons';
+import { TaskVocabularyProps, VocabularyItem, VocabularyAnswers } from '../types';
 
-export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }) {
-    const [words, setWords] = useState([]);
-    const [answers, setAnswers] = useState(initialAnswers);
+export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }: TaskVocabularyProps) {
+    const [words, setWords] = useState<VocabularyItem[]>([]);
+    const [answers, setAnswers] = useState<VocabularyAnswers['answers']>(initialAnswers?.answers || {});
     const [showFeedback, setShowFeedback] = useState(false);
     const [completedCount, setCompletedCount] = useState(0);
-    const [attempts, setAttempts] = useState({});
+    const [attempts, setAttempts] = useState<Record<string, number>>({});
 
     useEffect(() => {
         window.scrollTo(0, 0);
 
         // Aggregate vocabulary from the current week
-        const weekWords = [];
-        const seenWords = new Set();
+        const weekWords: VocabularyItem[] = [];
+        const seenWords = new Set<string>();
 
-        lessons.forEach(l => {
+        lessons.forEach((l) => {
             if (l.week !== lesson.week) return;
 
-            const addWord = (item) => {
+            const addWord = (item: VocabularyItem) => {
                 const normalizedWord = item.word.toLowerCase().trim();
                 if (!seenWords.has(normalizedWord)) {
                     seenWords.add(normalizedWord);
@@ -46,11 +46,13 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
                 }
             };
 
-            if (l.content.vocabulary) {
+            // Type guard to check if content has vocabulary
+            if ('vocabulary' in l.content && Array.isArray(l.content.vocabulary)) {
                 l.content.vocabulary.forEach(addWord);
             }
 
-            if (l.content.pairs) {
+            // Type guard to check if content has pairs
+            if ('pairs' in l.content && Array.isArray(l.content.pairs)) {
                 l.content.pairs.forEach(addWord);
             }
         });
@@ -58,17 +60,17 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
         setWords(weekWords);
     }, [lesson.week]);
 
-    const handleAnswerChange = (word, value) => {
+    const handleAnswerChange = (word: string, value: string) => {
         const newAnswers = { ...answers, [word]: value };
         setAnswers(newAnswers);
         if (onSaveAnswers) {
-            onSaveAnswers(newAnswers);
+            onSaveAnswers({ answers: newAnswers });
         }
     };
 
     // Clear logic moved to Dashboard
 
-    const speak = (text) => {
+    const speak = (text: string) => {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
@@ -81,7 +83,7 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
         const newAttempts = { ...attempts };
 
         words.forEach(w => {
-            const userAnswer = answers[w.word]?.trim() || '';
+            const userAnswer = answers?.[w.word]?.trim() || '';
             const isCorrect = checkAnswer(userAnswer, w.translation);
 
             if (isCorrect) {
@@ -101,10 +103,10 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
         }
     };
 
-    const checkAnswer = (user, correct) => {
+    const checkAnswer = (user: string, correct: string) => {
         if (!user) return false;
         // Simple fuzzy match: remove special chars, lowercase
-        const normalize = (s) => s.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").toLowerCase().trim();
+        const normalize = (s: string) => s.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").toLowerCase().trim();
         const userNorm = normalize(user);
 
         // Handle multiple correct answers split by "/"
@@ -146,12 +148,12 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
                 <CardContent sx={{ p: { xs: 2, md: 4 } }}>
                     <Grid container spacing={4}>
                         {words.map((item, index) => {
-                            const isCorrect = checkAnswer(answers[item.word], item.translation);
+                            const isCorrect = checkAnswer(answers?.[item.word] || '', item.translation);
                             const isError = showFeedback && !isCorrect;
                             const attemptCount = attempts[item.word] || 0;
 
                             return (
-                                <Grid item xs={12} sm={6} key={index}>
+                                <Grid size={{ xs: 12, sm: 6 }} key={index}>
                                     <Box
                                         sx={{
                                             p: 2,
@@ -177,7 +179,7 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
                                             size="small"
                                             placeholder="תרגום לעברית..."
                                             dir="rtl"
-                                            value={answers[item.word] || ''}
+                                            value={answers?.[item.word] || ''}
                                             onChange={(e) => handleAnswerChange(item.word, e.target.value)}
                                             error={isError}
                                             InputProps={{

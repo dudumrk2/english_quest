@@ -433,7 +433,7 @@ export function TaskReading({
                             <Box sx={{ display: { xs: 'none', md: 'block' } }}>
                                 <Grid container spacing={4}>
                                     {/* Words Column - Desktop */}
-                                    <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
+                                    <Grid size={{ xs: 12, md: 6 }} sx={{ minWidth: 0 }}>
                                         <Typography variant="subtitle1" fontWeight="bold" gutterBottom color="text.secondary">
                                             Words
                                         </Typography>
@@ -482,7 +482,7 @@ export function TaskReading({
                                     </Grid>
 
                                     {/* Definitions Column - Desktop */}
-                                    <Grid item xs={12} md={6} sx={{ minWidth: 0 }}>
+                                    <Grid size={{ xs: 12, md: 6 }} sx={{ minWidth: 0 }}>
                                         <Typography variant="subtitle1" fontWeight="bold" gutterBottom color="text.secondary">
                                             Definitions
                                         </Typography>
