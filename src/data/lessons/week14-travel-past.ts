@@ -19,9 +19,6 @@ export const week14Lessons: Lesson[] = [
                 { word: "plane", translation: "מטוס", context: "We flew on a big plane.", contextTranslation: "טסנו במטוס גדול." },
                 { word: "country", translation: "מדינה / ארץ", context: "Italy is a beautiful country.", contextTranslation: "איטליה היא מדינה יפה." },
                 { word: "experience", translation: "חוויה", context: "It was a cold experience.", contextTranslation: "זו הייתה חוויה קרה." },
-                { word: "mountain", translation: "הר", context: "The mountain was white.", contextTranslation: "ההר היה לבן." },
-                { word: "snow", translation: "שלג", context: "There was a lot of snow.", contextTranslation: "היה הרבה שלג." },
-                { word: "cold", translation: "קר", context: "It was very cold outside.", contextTranslation: "היה מאוד קר בחוץ." },
                 { word: "offer", translation: "להציע / הצעה", context: "He offered to help me ski.", contextTranslation: "הוא הציע לעזור לי לגלוש." },
                 { word: "save", translation: "לחסוך / להציל", context: "We saved money for the trip.", contextTranslation: "חסכנו כסף לטיול." },
                 { word: "seem", translation: "להיראות", context: "The hill seemed high.", contextTranslation: "הגבעה נראתה גבוהה." },
@@ -57,8 +54,6 @@ export const week14Lessons: Lesson[] = [
                 { word: "vacation", translation: "חופשה" },
                 { word: "adventure", translation: "הרפתקה" },
                 { word: "country", translation: "מדינה / ארץ" },
-                { word: "snow", translation: "שלג" },
-                { word: "cold", translation: "קר" },
                 { word: "suggest", translation: "להציע" },
                 { word: "wonderful", translation: "נפלא" },
                 { word: "purpose", translation: "מטרה" },
@@ -94,7 +89,6 @@ export const week14Lessons: Lesson[] = [
             vocabulary: [
                 { word: "line", translation: "תור" },
                 { word: "ticket", translation: "כרטיס" },
-                { word: "snow", translation: "שלג" },
                 { word: "offer", translation: "להציע" },
                 { word: "seem", translation: "להיראות" },
                 { word: "middle", translation: "אמצע" },
@@ -127,20 +121,20 @@ export const week14Lessons: Lesson[] = [
         type: 'pronunciation',
         title: 'Past Tense Sounds',
         content: {
-            text: "We walked in the snow. I slipped on the ice. We played all day. Dad cooked a hot meal. Mom cleaned our clothes. The trip ended too soon.",
+            text: "Dad suggested a trip. Mom offered to help. We saved our money. It seemed wonderful. We talked all day. She insisted on paying.",
             vocabulary: [
-                { word: "walked", translation: "הלך (בעבר)" },
-                { word: "played", translation: "שיחק (בעבר)" },
-                { word: "cooked", translation: "בישל (בעבר)" },
-                { word: "cleaned", translation: "ניקה (בעבר)" },
-                { word: "ended", translation: "נגמר (בעבר)" },
-                { word: "slipped", translation: "החליק (בעבר)" }
+                { word: "suggested", translation: "הציע (בעבר)" },
+                { word: "offered", translation: "הציע (בעבר)" },
+                { word: "saved", translation: "חסך / הציל (בעבר)" },
+                { word: "seemed", translation: "נראה (בעבר)" },
+                { word: "talked", translation: "דיבר (בעבר)" },
+                { word: "insisted", translation: "התעקש (בעבר)" }
             ],
             tips: [
-                "Regular verbs ending in 'ed' can sound like 't', 'd', or 'id'.",
-                "Walked sounds like 'Walkt'.",
-                "Played sounds like 'Playd'.",
-                "Ended sounds like 'End-id'."
+                "Regular verbs ending in 'ed' have 3 sounds: 't', 'd', or 'id'.",
+                "Sounds like 'd': Offered, Saved, Seemed.",
+                "Sounds like 't': Talked.",
+                "Sounds like 'id': Suggested, Insisted (because they end in 't')."
             ]
         }
     },
@@ -149,20 +143,19 @@ export const week14Lessons: Lesson[] = [
         week: 14,
         day: 5,
         type: 'pronunciation',
-        title: 'Pronunciation Challenge: Pizza Night',
+        title: 'Pronunciation Challenge: Dinner Talk',
         content: {
-            text: "We went to a restaurant in Rome. I ordered a huge pizza. It tasted wonderful. We talked about our adventure. The waiter offered us free dessert. It was a cool evening.",
+            text: "We talked about the trip. Dad suggested we eat pizza. The waiter offered us water. It seemed like a good place. I insisted on paying.",
             vocabulary: [
-                { word: "ordered", translation: "הזמין (בעבר)" },
-                { word: "tasted", translation: "היה לזה טעם (בעבר)" },
                 { word: "talked", translation: "דיבר (בעבר)" },
+                { word: "suggested", translation: "הציע (בעבר)" },
                 { word: "offered", translation: "הציע (בעבר)" },
-                { word: "wonderful", translation: "נפלא" },
-                { word: "adventure", translation: "הרפתקה" }
+                { word: "seemed", translation: "נראה (בעבר)" },
+                { word: "insisted", translation: "התעקש (בעבר)" }
             ],
             tips: [
-                "Ordered ends with a soft 'd'.",
-                "Tasted ends with 'id' because it ends with 't'."
+                "Stress the correct syllable: sug-GES-ted.",
+                "Remember: Talked ends with a 't' sound (Talk-t)."
             ]
         }
     },

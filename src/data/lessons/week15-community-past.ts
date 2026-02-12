@@ -98,9 +98,6 @@ export const week15Lessons: Lesson[] = [
                 { word: "church", translation: "כנסייה" },
                 { word: "something else", translation: "משהו אחר" },
                 { word: "have a talk", translation: "לשוחח" },
-                { word: "believe", translation: "להאמין" },
-                { word: "mean", translation: "להתכוון" },
-                { word: "rude", translation: "גס רוח" },
                 { word: "let go of", translation: "לשחרר" },
                 { word: "even", translation: "אפילו" }
             ],
