@@ -27,6 +27,17 @@ export interface ReadingContent {
     vocabulary: VocabularyItem[];
     fillInTheBlanks?: FillInTheBlankSection;
     matchDefinitions?: MatchDefinitionsSection;
+    inlineChoices?: {
+        title?: string;
+        exercises: InlineChoiceExercise[];
+    };
+}
+
+export interface InlineChoiceExercise {
+    id: string; // matches placeholder in text, e.g. "[[c1]]" or just "c1"
+    text?: string; // (unused if embedded)
+    options: string[]; // e.g., ["saw", "didn't see"]
+    answer: string; // e.g., "didn't see"
 }
 
 export interface MatchDefinitionsSection {
@@ -156,6 +167,7 @@ export interface ReadingAnswers {
     answers?: Record<string, string>;
     fillInTheBlankAnswers?: Record<string, string>;
     matchDefinitionsAnswers?: Record<string, string>;
+    inlineChoiceAnswers?: Record<string, string>;
     summary?: string;
 }
 

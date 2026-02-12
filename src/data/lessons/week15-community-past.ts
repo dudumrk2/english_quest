@@ -147,21 +147,36 @@ export const week15Lessons: Lesson[] = [
         id: 1505,
         week: 15,
         day: 5,
-        type: 'pronunciation',
-        title: 'Pronunciation Challenge: The Interview',
+        type: 'reading',
+        title: 'The Community Garden',
         content: {
-            text: "Reporter: Did you see the accident? Witness: No, I didn't see it. Reporter: Did you hear the noise? Witness: Yes, I heard a loud bang. Reporter: What did you do? Witness: I called for help. Reporter: Did anyone get hurt? Witness: I don't think so.",
+            text: "The neighborhood was looking old and dirty. There was trash on the streets. We decided to change it. We [[c1]] for the city to help. We [[c2]] the park ourselves. Did we [[c3]]? No! We [[c4]] flowers and [[c5]] the benches. Everyone [[c6]], even the children. Now, the community is beautiful and we are proud.",
             vocabulary: [
-                { word: "did you see", translation: "האם ראית" },
-                { word: "did you hear", translation: "האם שמעת" },
-                { word: "what did you do", translation: "מה עשית" },
-                { word: "did anyone", translation: "האם מישהו" },
-                { word: "think so", translation: "האם חשבת כך" }
+                { word: "neighborhood", translation: "שכונה" },
+                { word: "trash", translation: "זבל" },
+                { word: "decide", translation: "להחליט" },
+                { word: "bench", translation: "ספסל" },
+                { word: "proud", translation: "גאה" },
+                { word: "paint", translation: "לצבוע" }
             ],
-            tips: [
-                "In questions, 'Did you' connects together: 'Did-ya' or 'Did-ju'.",
-                "Try to act out the reporter and the witness with different voices!"
-            ]
+            questions: [
+                { id: "q1", text: "Why did they decide to change the neighborhood?", answer: "It was old and dirty." },
+                { id: "q2", text: "Did they wait for the city to help?", answer: "No, they didn't wait." },
+                { id: "q3", text: "What did they do in the park?", answer: "They cleaned it and planted flowers." },
+                { id: "q4", text: "Who helped with the work?", answer: "Everyone, even the children." },
+                { id: "q5", text: "How do they feel now?", answer: "They are proud." }
+            ],
+            inlineChoices: {
+                title: "Choose the Correct Form",
+                exercises: [
+                    { id: "c1", options: ["didn't wait", "wasn't wait"], answer: "didn't wait" },
+                    { id: "c2", options: ["clean", "cleaned"], answer: "cleaned" },
+                    { id: "c3", options: ["stop", "stopped"], answer: "stop" },
+                    { id: "c4", options: ["plant", "planted"], answer: "planted" },
+                    { id: "c5", options: ["painted", "painting"], answer: "painted" },
+                    { id: "c6", options: ["helped", "help"], answer: "helped" }
+                ]
+            }
         }
     },
     {

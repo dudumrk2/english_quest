@@ -78,11 +78,11 @@ function AppContent() {
             };
 
             switch (activeLesson.type) {
-                case 'reading': return <TaskReading {...commonProps} lesson={activeLesson as any} />;
-                case 'grammar': return <TaskGrammar {...commonProps} lesson={activeLesson as any} />;
-                case 'pronunciation': return <TaskPronunciation {...commonProps} lesson={activeLesson as any} />;
-                case 'vocabulary': return <TaskVocabulary {...commonProps} lesson={activeLesson as any} />;
-                case 'vocabulary_matching': return <TaskVocabularyMatching {...commonProps} lesson={activeLesson as any} />;
+                case 'reading': return <TaskReading key={activeLesson.id} {...commonProps} lesson={activeLesson as any} />;
+                case 'grammar': return <TaskGrammar key={activeLesson.id} {...commonProps} lesson={activeLesson as any} />;
+                case 'pronunciation': return <TaskPronunciation key={activeLesson.id} {...commonProps} lesson={activeLesson as any} />;
+                case 'vocabulary': return <TaskVocabulary key={activeLesson.id} {...commonProps} lesson={activeLesson as any} />;
+                case 'vocabulary_matching': return <TaskVocabularyMatching key={activeLesson.id} {...commonProps} lesson={activeLesson as any} />;
                 default: return <div />;
             }
         }

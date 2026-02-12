@@ -42,6 +42,9 @@ export function TaskReading({
     const [fillInTheBlankAnswers, setFillInTheBlankAnswers] = useState<Record<string, string>>(initialAnswers.fillInTheBlankAnswers || {});
     // New state for match definitions
     const [matchDefinitionsAnswers, setMatchDefinitionsAnswers] = useState<Record<string, string>>(initialAnswers.matchDefinitionsAnswers || {});
+    // New state for inline choices
+    // New state for inline choices - NOT saved to initialAnswers as requested
+    const [inlineChoiceAnswers, setInlineChoiceAnswers] = useState<Record<string, string>>({});
     const [selectedWordId, setSelectedWordId] = useState<string | null>(null);
     const [shuffledDefinitions, setShuffledDefinitions] = useState<MatchPair[]>([]);
     const [shuffledOptions, setShuffledOptions] = useState<Record<string, string[]>>({});
@@ -82,10 +85,104 @@ export function TaskReading({
 
     // Render text with vocabulary tooltips and word highlighting
     const renderContent = () => {
-        return renderTextWithHighlight(
-            lesson.content.text,
-            lesson.content.vocabulary,
-            highlightRange
+        if (!lesson.content.inlineChoices) {
+            return renderTextWithHighlight(
+                lesson.content.text,
+                lesson.content.vocabulary,
+                highlightRange
+            );
+        }
+
+        const parts = lesson.content.text.split(/(\[\[.*?\]\])/g);
+        let currentTextIndex = 0;
+
+        return (
+            <span>
+                {parts.map((part, index) => {
+                    if (part.startsWith('[[') && part.endsWith(']]')) {
+                        const id = part.slice(2, -2); // Remove [[ and ]]
+                        const exercise = lesson.content.inlineChoices?.exercises.find(e => e.id === id);
+
+                        // Increment index for the placeholder length
+                        currentTextIndex += part.length;
+
+                        if (!exercise) return part;
+
+                        const userAnswer = inlineChoiceAnswers[id];
+                        const isCorrect = userAnswer === exercise.answer;
+                        // Show result immediately upon selection, or when global feedback is shown
+                        const showResult = showFeedback || !!userAnswer;
+
+                        return (
+                            <span key={index} style={{ margin: '0 5px', display: 'inline-block' }}>
+                                {exercise.options.map((option, optIdx) => {
+                                    const isSelected = userAnswer === option;
+
+                                    // Lighter blue for default state to differentiate from vocabulary words
+                                    let color = '#29b6f6'; // Light Blue 400
+                                    let fontWeight = '500';
+                                    let textDecoration = 'none';
+
+                                    if (showResult) {
+                                        if (option === exercise.answer) {
+                                            color = '#4caf50'; // Green for correct answer
+                                            fontWeight = 'bold';
+                                        } else if (isSelected && !isCorrect) {
+                                            color = '#ef5350'; // Red for wrong selection
+                                            textDecoration = 'line-through';
+                                        } else {
+                                            // Unselected options in result mode
+                                            color = '#bdbdbd';
+                                            fontWeight = 'normal';
+                                        }
+                                    } else if (isSelected) {
+                                        color = '#0288d1'; // Darker blue when selected
+                                        fontWeight = 'bold';
+                                    }
+
+                                    return (
+                                        <span key={optIdx}>
+                                            <span
+                                                onClick={() => !showFeedback && handleInlineChoiceChange(id, option)}
+                                                style={{
+                                                    cursor: showFeedback ? 'default' : 'pointer',
+                                                    color: color,
+                                                    fontWeight: fontWeight,
+                                                    textDecoration: textDecoration,
+                                                    padding: '2px 6px',
+                                                    borderRadius: '4px',
+                                                    backgroundColor: isSelected ? 'rgba(3, 169, 244, 0.1)' : 'rgba(41, 182, 246, 0.05)',
+                                                    border: isSelected ? '1px solid rgba(3, 169, 244, 0.5)' : '1px solid transparent',
+                                                    transition: 'all 0.2s',
+                                                    // Add explicit distinct styling from vocabulary
+                                                    borderBottom: 'none'
+                                                }}
+                                            >
+                                                {option}
+                                            </span>
+                                            {optIdx < exercise.options.length - 1 && (
+                                                <span style={{ margin: '0 4px', color: '#999' }}>/</span>
+                                            )}
+                                        </span>
+                                    );
+                                })}
+                            </span>
+                        );
+                    } else {
+                        // For text parts, we render them with highlight support
+                        // We need to adjust the highlight range logic if we want strict highlighting, 
+                        // but for now we'll pass null to avoid offset mismatch issues since we are splitting the DOM
+                        const chunkLength = part.length;
+                        const elem = renderTextWithHighlight(
+                            part,
+                            lesson.content.vocabulary,
+                            null // highlightRange // Disable highlight for split text for now to avoid complexity
+                        );
+                        currentTextIndex += chunkLength;
+                        return <span key={index}>{elem}</span>;
+                    }
+                })}
+            </span>
         );
     };
 
@@ -94,6 +191,7 @@ export function TaskReading({
         const newAnswers = { ...answers, [id]: value };
         setAnswers(newAnswers);
         if (onSaveAnswers) {
+            // Exclude inlineChoiceAnswers from save as requested
             onSaveAnswers({ answers: newAnswers, fillInTheBlankAnswers, matchDefinitionsAnswers, summary });
         }
     };
@@ -120,6 +218,7 @@ export function TaskReading({
                 setSelectedWordId(null); // Clear selection after match
 
                 if (onSaveAnswers) {
+                    // Exclude inlineChoiceAnswers from save as requested
                     onSaveAnswers({ answers, fillInTheBlankAnswers, matchDefinitionsAnswers: newAnswers, summary });
                 }
             } else if (existingOwner) {
@@ -128,6 +227,7 @@ export function TaskReading({
                 delete newAnswers[existingOwner];
                 setMatchDefinitionsAnswers(newAnswers);
                 if (onSaveAnswers) {
+                    // Exclude inlineChoiceAnswers from save as requested
                     onSaveAnswers({ answers, fillInTheBlankAnswers, matchDefinitionsAnswers: newAnswers, summary });
                 }
             }
@@ -138,14 +238,23 @@ export function TaskReading({
         const newAnswers = { ...fillInTheBlankAnswers, [id]: value };
         setFillInTheBlankAnswers(newAnswers);
         if (onSaveAnswers) {
+            // Exclude inlineChoiceAnswers from save as requested
             onSaveAnswers({ answers, fillInTheBlankAnswers: newAnswers, matchDefinitionsAnswers, summary });
         }
+    };
+
+    const handleInlineChoiceChange = (id: string, value: string): void => {
+        const newAnswers = { ...inlineChoiceAnswers, [id]: value };
+        setInlineChoiceAnswers(newAnswers);
+        // Do NOT save inline choices to persistent store as requested by user
+        // if (onSaveAnswers) { ... }
     };
 
     const handleSummaryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
         const value = e.target.value;
         setSummary(value);
         if (onSaveAnswers) {
+            // Exclude inlineChoiceAnswers from save as requested
             onSaveAnswers({ answers, fillInTheBlankAnswers, matchDefinitionsAnswers, summary: value });
         }
     };
@@ -209,7 +318,15 @@ export function TaskReading({
             );
         }
 
-        if (questionsCorrect && fillInTheBlanksCorrect && matchDefinitionsCorrect && summary.trim().length > 0) {
+        // Check inline choices correctness
+        let inlineChoicesCorrect = true;
+        if (lesson.content.inlineChoices) {
+            inlineChoicesCorrect = lesson.content.inlineChoices.exercises.every(
+                (ex) => inlineChoiceAnswers[ex.id] === ex.answer
+            );
+        }
+
+        if (questionsCorrect && fillInTheBlanksCorrect && matchDefinitionsCorrect && inlineChoicesCorrect && summary.trim().length > 0) {
             triggerCelebration();
             setTimeout(() => onComplete(), 1500);
         }

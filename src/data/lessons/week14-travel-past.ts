@@ -142,21 +142,41 @@ export const week14Lessons: Lesson[] = [
         id: 1405,
         week: 14,
         day: 5,
-        type: 'pronunciation',
-        title: 'Pronunciation Challenge: Dinner Talk',
+        type: 'reading',
+        title: 'The Lost City of Pompeii',
         content: {
-            text: "We talked about the trip. Dad suggested we eat pizza. The waiter offered us water. It seemed like a good place. I insisted on paying.",
+            text: "The ancient Roman city of Pompeii was beautiful. But one day the volcano Vesuvius [[c1]], and everything changed. On that day, people [[c2]] the sun because the sky was black with smoke. Hot rocks [[c3]] on Pompeii. People panicked and [[c4]] to run away, but the smoke, rocks and lava [[c5]] them. Other people [[c6]] indoors because they thought it was safe, but it [[c7]]. This was the end of ancient Pompeii.\n\nAfter many years people built a new city there, but they [[c8]] what was under their houses. Then in 1549 a famous architect [[c9]] signs of Pompeii and in 1748 they [[c10]] to dig and found the ancient city. Today, many people from around the world visit Pompeii and hear its sad story.",
             vocabulary: [
-                { word: "talked", translation: "דיבר (בעבר)" },
-                { word: "suggested", translation: "הציע (בעבר)" },
-                { word: "offered", translation: "הציע (בעבר)" },
-                { word: "seemed", translation: "נראה (בעבר)" },
-                { word: "insisted", translation: "התעקש (בעבר)" }
+                { word: "ancient", translation: "עתיק" },
+                { word: "volcano", translation: "הר געש" },
+                { word: "erupt", translation: "להתפרץ" },
+                { word: "smoke", translation: "עשן" },
+                { word: "panic", translation: "להיכנס לפאניקה" },
+                { word: "architect", translation: "אדריכל" },
+                { word: "indoors", translation: "בתוך הבית" }
             ],
-            tips: [
-                "Stress the correct syllable: sug-GES-ted.",
-                "Remember: Talked ends with a 't' sound (Talk-t)."
-            ]
+            questions: [
+                { id: "q1", text: "Why did everything change in Pompeii?", answer: "The volcano Vesuvius erupted." },
+                { id: "q2", text: "What did people do in order to save themselves?", answer: "They tried to run away." },
+                { id: "q3", text: "What happened to the Roman City of Pompeii after the volcano erupted?", answer: "It was destroyed/This was the end of ancient Pompeii." },
+                { id: "q4", text: "When did they begin to dig?", answer: "In 1748." },
+                { id: "q5", text: "Who found signs of Pompeii in 1549?", answer: "A famous architect." }
+            ],
+            inlineChoices: {
+                title: "Choose the Correct Form",
+                exercises: [
+                    { id: "c1", options: ["erupt", "erupted"], answer: "erupted" },
+                    { id: "c2", options: ["saw", "didn't see"], answer: "didn't see" },
+                    { id: "c3", options: ["fell", "didn't fall"], answer: "fell" },
+                    { id: "c4", options: ["tried", "didn't try"], answer: "tried" },
+                    { id: "c5", options: ["stopped", "didn't stop"], answer: "stopped" },
+                    { id: "c6", options: ["stayed", "didn't stay"], answer: "stayed" },
+                    { id: "c7", options: ["was", "wasn't"], answer: "wasn't" },
+                    { id: "c8", options: ["knew", "didn't know"], answer: "didn't know" },
+                    { id: "c9", options: ["found", "didn't find"], answer: "found" },
+                    { id: "c10", options: ["began", "didn't begin"], answer: "began" }
+                ]
+            }
         }
     },
     {

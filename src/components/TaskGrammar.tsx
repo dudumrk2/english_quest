@@ -44,7 +44,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
         const newAnswers = { ...answers, [id]: newAnswerValue };
         setAnswers(newAnswers);
         if (onSaveAnswers) {
-            onSaveAnswers(newAnswers);
+            onSaveAnswers({ answers: newAnswers });
         }
     };
 
@@ -70,11 +70,15 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
                 }
                 constructed += answerParts[i];
             }
-            return constructed.toLowerCase().trim() === correctAnswer.toLowerCase();
+            const normalizedConstructed = constructed.replace(/\s+/g, ' ').trim().toLowerCase();
+            const normalizedCorrect = correctAnswer.replace(/\s+/g, ' ').trim().toLowerCase();
+            return normalizedConstructed === normalizedCorrect;
         }
 
         // Single part - direct comparison
-        return userAnswer.toLowerCase().trim() === correctAnswer.toLowerCase();
+        const normalizedUser = userAnswer.replace(/\s+/g, ' ').trim().toLowerCase();
+        const normalizedCorrect = correctAnswer.replace(/\s+/g, ' ').trim().toLowerCase();
+        return normalizedUser === normalizedCorrect;
     };
 
 
