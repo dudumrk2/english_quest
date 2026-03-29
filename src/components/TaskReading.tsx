@@ -52,6 +52,8 @@ export function TaskReading({
     const [summary, setSummary] = useState(initialAnswers.summary || '');
 
     const [attempts, setAttempts] = useState<Record<string, number>>({});
+    const [lastCheckedAnswers, setLastCheckedAnswers] = useState<Record<string, string>>({});
+    const [lastCheckedFillInTheBlankAnswers, setLastCheckedFillInTheBlankAnswers] = useState<Record<string, string>>({});
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -268,35 +270,47 @@ export function TaskReading({
         const newAttempts = { ...attempts };
         let attemptsChanged = false;
 
+        // Current answers for comparison next time
+        const currentCheckedAnswers = { ...lastCheckedAnswers };
+        const currentCheckedFitb = { ...lastCheckedFillInTheBlankAnswers };
+
         lesson.content.questions.forEach(q => {
-            const isCorrect = answers[q.id]?.toLowerCase().trim() === q.answer.toLowerCase();
-            if (!isCorrect) {
+            const currentVal = answers[q.id]?.toLowerCase().trim() || '';
+            const lastVal = lastCheckedAnswers[q.id]?.toLowerCase().trim() || '';
+            const isCorrect = currentVal === q.answer.toLowerCase();
+
+            // Only increment attempt if:
+            // 1. It's incorrect
+            // 2. It's not empty
+            // 3. It's different from the last checked value
+            if (!isCorrect && currentVal !== '' && currentVal !== lastVal) {
                 newAttempts[q.id] = (newAttempts[q.id] || 0) + 1;
                 attemptsChanged = true;
             }
+            currentCheckedAnswers[q.id] = currentVal;
         });
+
+        // Track attempts for fill-in-the-blank
+        if (lesson.content.fillInTheBlanks) {
+            lesson.content.fillInTheBlanks.exercises.forEach(ex => {
+                const currentVal = fillInTheBlankAnswers[ex.id] || '';
+                const lastVal = lastCheckedFillInTheBlankAnswers[ex.id] || '';
+                const isCorrect = currentVal === ex.answer;
+
+                if (!isCorrect && currentVal !== '' && currentVal !== lastVal) {
+                    newAttempts[ex.id] = (newAttempts[ex.id] || 0) + 1;
+                    attemptsChanged = true;
+                }
+                currentCheckedFitb[ex.id] = currentVal;
+            });
+        }
 
         if (attemptsChanged) {
             setAttempts(newAttempts);
         }
 
-        // Track attempts for fill-in-the-blank
-        if (lesson.content.fillInTheBlanks) {
-            let fitbAttemptsChanged = false;
-            const currentAttempts = { ...newAttempts }; // Use updated attempts from questions
-
-            lesson.content.fillInTheBlanks.exercises.forEach(ex => {
-                const isCorrect = fillInTheBlankAnswers[ex.id] === ex.answer;
-                if (!isCorrect) {
-                    currentAttempts[ex.id] = (currentAttempts[ex.id] || 0) + 1;
-                    fitbAttemptsChanged = true;
-                }
-            });
-
-            if (fitbAttemptsChanged) {
-                setAttempts(currentAttempts);
-            }
-        }
+        setLastCheckedAnswers(currentCheckedAnswers);
+        setLastCheckedFillInTheBlankAnswers(currentCheckedFitb);
 
         const questionsCorrect = lesson.content.questions.every(
             (q) => answers[q.id]?.toLowerCase().trim() === q.answer.toLowerCase()

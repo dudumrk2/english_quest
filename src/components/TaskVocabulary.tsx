@@ -27,6 +27,7 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
     const [showFeedback, setShowFeedback] = useState(false);
     const [completedCount, setCompletedCount] = useState(0);
     const [attempts, setAttempts] = useState<Record<string, number>>({});
+    const [lastCheckedAnswers, setLastCheckedAnswers] = useState<Record<string, string>>({});
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -81,20 +82,35 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
         setShowFeedback(true);
         let correct = 0;
         const newAttempts = { ...attempts };
+        let attemptsChanged = false;
+
+        // Current answers for comparison next time
+        const currentCheckedAnswers = { ...lastCheckedAnswers };
 
         words.forEach(w => {
-            const userAnswer = answers?.[w.word]?.trim() || '';
-            const isCorrect = checkAnswer(userAnswer, w.translation);
+            const currentVal = answers?.[w.word]?.trim() || '';
+            const lastVal = lastCheckedAnswers[w.word]?.trim() || '';
+            const isCorrect = checkAnswer(currentVal, w.translation);
 
             if (isCorrect) {
                 correct++;
             } else {
-                // Increment attempts for incorrect answers
-                newAttempts[w.word] = (newAttempts[w.word] || 0) + 1;
+                // Only increment attempt if:
+                // 1. It's incorrect
+                // 2. It's not empty
+                // 3. It's different from the last checked value
+                if (currentVal !== '' && currentVal !== lastVal) {
+                    newAttempts[w.word] = (newAttempts[w.word] || 0) + 1;
+                    attemptsChanged = true;
+                }
             }
+            currentCheckedAnswers[w.word] = currentVal;
         });
 
-        setAttempts(newAttempts);
+        if (attemptsChanged) {
+            setAttempts(newAttempts);
+        }
+        setLastCheckedAnswers(currentCheckedAnswers);
         setCompletedCount(correct);
 
         if (correct === words.length) {

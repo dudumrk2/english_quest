@@ -25,6 +25,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
     const [showFeedback, setShowFeedback] = useState(false);
 
     const [attempts, setAttempts] = useState<Record<string, number>>({});
+    const [lastCheckedAnswers, setLastCheckedAnswers] = useState<Record<string, string>>({});
 
     // Update local state and parent state
     // Update local state and parent state
@@ -93,17 +94,30 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
         const newAttempts = { ...attempts };
         let attemptsChanged = false;
 
+        // Current answers for comparison next time
+        const currentCheckedAnswers = { ...lastCheckedAnswers };
+
         lesson.content.exercises.forEach(ex => {
-            const isCorrect = checkAnswer(answers[ex.id], ex.answer, ex.question);
-            if (!isCorrect) {
+            const currentVal = answers[ex.id]?.trim() || '';
+            const lastVal = lastCheckedAnswers[ex.id]?.trim() || '';
+            const isCorrect = checkAnswer(currentVal, ex.answer, ex.question);
+
+            // Only increment attempt if:
+            // 1. It's incorrect
+            // 2. It's not empty
+            // 3. It's different from the last checked value
+            if (!isCorrect && currentVal !== '' && currentVal !== lastVal) {
                 newAttempts[ex.id] = (newAttempts[ex.id] || 0) + 1;
                 attemptsChanged = true;
             }
+            currentCheckedAnswers[ex.id] = currentVal;
         });
 
         if (attemptsChanged) {
             setAttempts(newAttempts);
         }
+
+        setLastCheckedAnswers(currentCheckedAnswers);
 
         const allCorrect = lesson.content.exercises.every(
             (ex) => checkAnswer(answers[ex.id], ex.answer, ex.question)
