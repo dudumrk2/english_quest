@@ -3,7 +3,7 @@ import { lessons } from '../data/lessons';
 import { DashboardProps, Lesson } from '../types';
 import {
     Box, Typography, Grid, Stack, useTheme, useMediaQuery,
-    Button, CircularProgress, Snackbar, Alert,
+    Button, CircularProgress, Snackbar, Alert, Accordion, AccordionSummary, AccordionDetails
 } from '@mui/material';
 import {
     MenuBook as ReadingIcon,
@@ -13,6 +13,8 @@ import {
     Extension as ExtensionIcon,
     CloudUpload as CloudUploadIcon,
     CloudDownload as CloudDownloadIcon,
+    ExpandMore as ExpandMoreIcon,
+    EmojiEvents as EmojiEventsIcon,
 } from '@mui/icons-material';
 import { LessonCard } from './common/LessonCard';
 import { WeekContainer } from './common/WeekContainer';
@@ -68,6 +70,100 @@ export const Dashboard: React.FC<DashboardProps> = ({
         const weekLessons = lessons.filter((l) => l.week === week);
         const completed = weekLessons.filter((l) => completedLessons.includes(l.id)).length;
         return (completed / weekLessons.length) * 100;
+    };
+
+    const activeWeeks = weeks.filter(week => getWeekProgress(week) < 100);
+    const fullyCompletedWeeks = weeks.filter(week => getWeekProgress(week) === 100);
+
+    const renderWeek = (week: number) => {
+        const weekLessons = lessons
+            .filter((l) => l.week === week)
+            .sort((a, b) => a.day - b.day);
+        const isWeekLocked = false; // Unlocked for demo
+        const progress = getWeekProgress(week);
+
+        return (
+            <WeekContainer key={week} week={week} progress={progress} isLocked={isWeekLocked}>
+                <Box sx={{
+                    overflowX: isMobile ? 'auto' : 'visible',
+                    overflowY: 'hidden',
+                    display: isMobile ? 'flex' : 'block',
+                    pb: isMobile ? 2 : 0, // Space for scrollbar
+                    // Scrollbar styling for Webkit
+                    '&::-webkit-scrollbar': {
+                        height: '6px', // Horizontal scrollbar height
+                        width: '6px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                        background: 'transparent',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        background: theme.palette.divider,
+                        borderRadius: '3px',
+                    },
+                }}>
+                    <Grid
+                        container
+                        spacing={2}
+                        sx={{
+                            flexWrap: isMobile ? 'nowrap' : 'wrap',
+                            width: isMobile ? 'max-content' : '100%',
+                            px: isMobile ? 1 : 0 // Add some padding on sides for horizontal scroll
+                        }}
+                    >
+                        {weekLessons.map((lesson: Lesson) => {
+                            const isCompleted = completedLessons.includes(lesson.id);
+                            const isSkipped = skippedLessons?.includes(lesson.id) ?? false;
+                            const isCurrent = lesson.id === currentLessonId;
+                            const TaskIcon = taskIcons[lesson.type] || ReadingIcon;
+
+                            const hasData = lessonAnswers[lesson.id] && Object.keys(lessonAnswers[lesson.id]).length > 0;
+
+                            return (
+                                <Grid
+                                    size={{ xs: 12, sm: 6, md: 4, lg: 2 }}
+                                    key={lesson.id}
+                                    id={`lesson-${lesson.id}`}
+                                    sx={{
+                                        minWidth: isMobile ? '160px' : 'auto', // Ensure cards don't shrink too much
+                                    }}
+                                >
+                                    <LessonCard
+                                        day={lesson.day}
+                                        title={lesson.title}
+                                        type={lesson.type}
+                                        icon={
+                                            <TaskIcon
+                                                sx={{
+                                                    fontSize: 40,
+                                                    color: isCompleted
+                                                        ? 'success.main'
+                                                        : isSkipped
+                                                            ? 'warning.main'
+                                                            : isCurrent
+                                                                ? 'primary.main'
+                                                                : 'text.secondary',
+                                                }}
+                                            />
+                                        }
+                                        isCompleted={isCompleted}
+                                        isSkipped={isSkipped}
+                                        isCurrent={isCurrent}
+                                        isLocked={false} // Unlocked for demo
+                                        hasData={!!hasData}
+                                        onClear={(e) => {
+                                            e.stopPropagation();
+                                            onClearLesson(lesson.id);
+                                        }}
+                                        onClick={() => onStartLesson(lesson)}
+                                    />
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
+                </Box>
+            </WeekContainer>
+        );
     };
 
     const handleSave = async () => {
@@ -161,96 +257,50 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
             {/* Weeks Grid */}
             <Stack spacing={4}>
-                {weeks.map((week) => {
-                    const weekLessons = lessons
-                        .filter((l) => l.week === week)
-                        .sort((a, b) => a.day - b.day);
-                    const isWeekLocked = false; // Unlocked for demo
-                    const progress = getWeekProgress(week);
+                {/* Active and Upcoming Weeks */}
+                {activeWeeks.length > 0 ? (
+                    activeWeeks.map((week) => renderWeek(week))
+                ) : (
+                    <Typography variant="h6" color="text.secondary" textAlign="center" sx={{ mt: 4 }}>
+                        All available missions completed! You are awesome! 🎉
+                    </Typography>
+                )}
 
-                    return (
-                        <WeekContainer key={week} week={week} progress={progress} isLocked={isWeekLocked}>
-                            <Box sx={{
-                                overflowX: isMobile ? 'auto' : 'visible',
-                                overflowY: 'hidden',
-                                display: isMobile ? 'flex' : 'block',
-                                pb: isMobile ? 2 : 0, // Space for scrollbar
-                                // Scrollbar styling for Webkit
-                                '&::-webkit-scrollbar': {
-                                    height: '6px', // Horizontal scrollbar height
-                                    width: '6px',
-                                },
-                                '&::-webkit-scrollbar-track': {
-                                    background: 'transparent',
-                                },
-                                '&::-webkit-scrollbar-thumb': {
-                                    background: theme.palette.divider,
-                                    borderRadius: '3px',
-                                },
-                            }}>
-                                <Grid
-                                    container
-                                    spacing={2}
-                                    sx={{
-                                        flexWrap: isMobile ? 'nowrap' : 'wrap',
-                                        width: isMobile ? 'max-content' : '100%',
-                                        px: isMobile ? 1 : 0 // Add some padding on sides for horizontal scroll
-                                    }}
-                                >
-                                    {weekLessons.map((lesson: Lesson) => {
-                                        const isCompleted = completedLessons.includes(lesson.id);
-                                        const isSkipped = skippedLessons?.includes(lesson.id) ?? false;
-                                        const isCurrent = lesson.id === currentLessonId;
-                                        const TaskIcon = taskIcons[lesson.type] || ReadingIcon;
-
-                                        const hasData = lessonAnswers[lesson.id] && Object.keys(lessonAnswers[lesson.id]).length > 0;
-
-                                        return (
-                                            <Grid
-                                                size={{ xs: 12, sm: 6, md: 4, lg: 2 }}
-                                                key={lesson.id}
-                                                id={`lesson-${lesson.id}`}
-                                                sx={{
-                                                    minWidth: isMobile ? '160px' : 'auto', // Ensure cards don't shrink too much
-                                                }}
-                                            >
-                                                <LessonCard
-                                                    day={lesson.day}
-                                                    title={lesson.title}
-                                                    type={lesson.type}
-                                                    icon={
-                                                        <TaskIcon
-                                                            sx={{
-                                                                fontSize: 40,
-                                                                color: isCompleted
-                                                                    ? 'success.main'
-                                                                    : isSkipped
-                                                                        ? 'warning.main'
-                                                                        : isCurrent
-                                                                            ? 'primary.main'
-                                                                            : 'text.secondary',
-                                                            }}
-                                                        />
-                                                    }
-                                                    isCompleted={isCompleted}
-                                                    isSkipped={isSkipped}
-                                                    isCurrent={isCurrent}
-                                                    isLocked={false} // Unlocked for demo
-                                                    hasData={!!hasData}
-                                                    onClear={(e) => {
-                                                        e.stopPropagation();
-                                                        onClearLesson(lesson.id);
-                                                    }}
-                                                    onClick={() => onStartLesson(lesson)}
-                                                />
-                                            </Grid>
-                                        );
-                                    })}
-                                </Grid>
+                {/* Completed Weeks Archive */}
+                {fullyCompletedWeeks.length > 0 && (
+                    <Accordion
+                        sx={{
+                            bgcolor: 'background.paper',
+                            backgroundImage: 'none',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            borderRadius: '16px !important',
+                            '&:before': { display: 'none' },
+                            mt: 4,
+                        }}
+                    >
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon sx={{ color: 'primary.main' }} />}
+                            sx={{ p: { xs: 2, md: 3 } }}
+                        >
+                            <Box display="flex" alignItems="center" gap={2}>
+                                <EmojiEventsIcon color="warning" fontSize="large" sx={{ animation: 'pulse 2s infinite' }} />
+                                <Box>
+                                    <Typography variant="h5" color="primary" fontWeight={700}>
+                                        Completed Missions ({fullyCompletedWeeks.length})
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        These weeks are 100% finished. Great job!
+                                    </Typography>
+                                </Box>
                             </Box>
-                        </WeekContainer>
-                    );
-                })}
+                        </AccordionSummary>
+                        <AccordionDetails sx={{ p: { xs: 2, md: 3 }, pt: 0 }}>
+                            <Stack spacing={4}>
+                                {fullyCompletedWeeks.map((week) => renderWeek(week))}
+                            </Stack>
+                        </AccordionDetails>
+                    </Accordion>
+                )}
             </Stack>
 
             {/* Snackbar for sync feedback */}

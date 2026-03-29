@@ -15,6 +15,10 @@ import { week12Lessons } from './week12-community';
 import { week13Lessons } from './week13-grammar';
 import { week14Lessons } from './week14-travel-past';
 import { week15Lessons } from './week15-community-past';
+import { week16Lessons } from './week16-mystery';
+import { week17Lessons } from './week17-exploration';
+import { week18Lessons } from './week18-hotel';
+import { week19Lessons } from './week19-rescue';
 
 export const lessons: Lesson[] = [
     ...week01Lessons,
@@ -32,4 +36,8 @@ export const lessons: Lesson[] = [
     ...week13Lessons,
     ...week14Lessons,
     ...week15Lessons,
+    ...week16Lessons,
+    ...week17Lessons,
+    ...week18Lessons,
+    ...week19Lessons,
 ];
