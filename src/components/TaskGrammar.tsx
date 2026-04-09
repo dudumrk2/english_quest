@@ -19,6 +19,7 @@ import {
 } from '@mui/icons-material';
 import { triggerCelebration } from '../utils/confetti';
 import { TaskGrammarProps, Exercise } from '../types';
+import { isAnswerCorrect } from '../utils/validation';
 
 export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }: TaskGrammarProps) {
     const [answers, setAnswers] = useState(initialAnswers?.answers || {});
@@ -71,15 +72,11 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
                 }
                 constructed += answerParts[i];
             }
-            const normalizedConstructed = constructed.replace(/\s+/g, ' ').trim().toLowerCase();
-            const normalizedCorrect = correctAnswer.replace(/\s+/g, ' ').trim().toLowerCase();
-            return normalizedConstructed === normalizedCorrect;
+            return isAnswerCorrect(constructed, correctAnswer);
         }
 
         // Single part - direct comparison
-        const normalizedUser = userAnswer.replace(/\s+/g, ' ').trim().toLowerCase();
-        const normalizedCorrect = correctAnswer.replace(/\s+/g, ' ').trim().toLowerCase();
-        return normalizedUser === normalizedCorrect;
+        return isAnswerCorrect(userAnswer, correctAnswer);
     };
 
 

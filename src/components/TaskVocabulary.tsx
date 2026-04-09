@@ -20,6 +20,7 @@ import {
 import { triggerCelebration } from '../utils/confetti';
 import { lessons } from '../data/lessons';
 import { TaskVocabularyProps, VocabularyItem, VocabularyAnswers } from '../types';
+import { isAnswerCorrect } from '../utils/validation';
 
 export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSaveAnswers }: TaskVocabularyProps) {
     const [words, setWords] = useState<VocabularyItem[]>([]);
@@ -121,13 +122,9 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
 
     const checkAnswer = (user: string, correct: string) => {
         if (!user) return false;
-        // Simple fuzzy match: remove special chars, lowercase
-        const normalize = (s: string) => s.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").toLowerCase().trim();
-        const userNorm = normalize(user);
-
         // Handle multiple correct answers split by "/"
-        const correctOptions = correct.split('/').map(normalize);
-        return correctOptions.some(opt => opt === userNorm || userNorm.includes(opt));
+        const correctOptions = correct.split('/');
+        return correctOptions.some(opt => isAnswerCorrect(user, opt.trim()));
     };
 
     return (

@@ -30,6 +30,7 @@ import { triggerCelebration } from '../utils/confetti';
 import { renderTextWithHighlight } from '../utils/textRenderer';
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
 import type { TaskReadingProps, MatchPair } from '../types';
+import { isAnswerCorrect } from '../utils/validation';
 
 export function TaskReading({
     lesson,
@@ -275,9 +276,9 @@ export function TaskReading({
         const currentCheckedFitb = { ...lastCheckedFillInTheBlankAnswers };
 
         lesson.content.questions.forEach(q => {
-            const currentVal = answers[q.id]?.toLowerCase().trim() || '';
-            const lastVal = lastCheckedAnswers[q.id]?.toLowerCase().trim() || '';
-            const isCorrect = currentVal === q.answer.toLowerCase();
+            const currentVal = answers[q.id]?.trim() || '';
+            const lastVal = lastCheckedAnswers[q.id]?.trim() || '';
+            const isCorrect = isAnswerCorrect(currentVal, q.answer);
 
             // Only increment attempt if:
             // 1. It's incorrect
@@ -313,7 +314,7 @@ export function TaskReading({
         setLastCheckedFillInTheBlankAnswers(currentCheckedFitb);
 
         const questionsCorrect = lesson.content.questions.every(
-            (q) => answers[q.id]?.toLowerCase().trim() === q.answer.toLowerCase()
+            (q) => isAnswerCorrect(answers[q.id], q.answer)
         );
 
         // Check fill-in-the-blank correctness (if section exists)
@@ -425,8 +426,7 @@ export function TaskReading({
                         <Divider sx={{ mb: 2 }} />
                         <Stack spacing={2.5}>
                             {lesson.content.questions.map((q, idx) => {
-                                const isCorrect =
-                                    answers[q.id]?.toLowerCase().trim() === q.answer.toLowerCase();
+                                const isCorrect = isAnswerCorrect(answers[q.id], q.answer);
                                 const showError = showFeedback && !isCorrect;
 
                                 return (
