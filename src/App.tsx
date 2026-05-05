@@ -10,6 +10,7 @@ import { TaskPronunciation } from './components/TaskPronunciation';
 import { TaskVocabulary } from './components/TaskVocabulary';
 import { TaskVocabularyMatching } from './components/TaskVocabularyMatching';
 import { WeeklySummary } from './components/WeeklySummary';
+import { TestsDashboard } from './components/TestsDashboard';
 import { Login } from './components/Login';
 import { useAppStore } from './hooks/useAppStore';
 import { useAuth } from './hooks/useAuth';
@@ -19,7 +20,7 @@ import { Lesson } from './types';
 // Replace with your Google Client ID or leave empty for demo mode only
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
-type ViewType = 'dashboard' | 'lesson' | 'summary';
+type ViewType = 'dashboard' | 'lesson' | 'summary' | 'tests';
 
 function AppContent() {
     const { user, isAuthenticated } = useAuth();
@@ -87,6 +88,10 @@ function AppContent() {
             }
         }
 
+        if (view === 'tests') {
+            return <TestsDashboard onBack={() => setView('dashboard')} />;
+        }
+
         return (
             <Dashboard
                 currentLessonId={state.currentLessonId}
@@ -100,6 +105,7 @@ function AppContent() {
                 lastSyncedAt={lastSyncedAt}
                 onSaveToCloud={saveToCloud}
                 onLoadFromCloud={loadFromCloud}
+                onOpenTests={() => setView('tests')}
             />
         );
     };

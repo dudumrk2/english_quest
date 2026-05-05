@@ -15,6 +15,7 @@ import {
     CloudDownload as CloudDownloadIcon,
     ExpandMore as ExpandMoreIcon,
     EmojiEvents as EmojiEventsIcon,
+    Quiz as QuizIcon,
 } from '@mui/icons-material';
 import { LessonCard } from './common/LessonCard';
 import { WeekContainer } from './common/WeekContainer';
@@ -40,6 +41,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     lastSyncedAt,
     onSaveToCloud,
     onLoadFromCloud,
+    onOpenTests,
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -200,6 +202,30 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <Typography variant="h6" color="text.secondary" sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}>
                     Select your next mission, Commander
                 </Typography>
+
+                {/* Practice Tests Button */}
+                <Button
+                    variant="contained"
+                    startIcon={<QuizIcon />}
+                    onClick={onOpenTests}
+                    sx={{
+                        mt: 3,
+                        px: 4,
+                        py: 1,
+                        fontWeight: 700,
+                        textTransform: 'none',
+                        fontSize: '1rem',
+                        background: 'linear-gradient(135deg, #f59e0b, #ef4444)',
+                        borderRadius: 3,
+                        boxShadow: '0 4px 20px rgba(239,68,68,0.3)',
+                        '&:hover': {
+                            background: 'linear-gradient(135deg, #d97706, #dc2626)',
+                            boxShadow: '0 6px 25px rgba(239,68,68,0.4)',
+                        },
+                    }}
+                >
+                    Practice Tests
+                </Button>
 
                 {/* Cloud Sync Buttons - only for Google users */}
                 {isGoogleUser && (
