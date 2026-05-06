@@ -70,5 +70,37 @@ export const day02: GrammarDay = {
       options: ['does', 'do', 'is', 'are'],
       answer: 'do',
     },
+    {
+      id: 'd02-e09',
+      type: 'fill_in',
+      sentence: '___ your best friend walk to school every morning? (Do/Does)',
+      answer: 'Does',
+    },
+    {
+      id: 'd02-e10',
+      type: 'multiple_choice',
+      sentence: 'How many languages ___ your teacher speak?',
+      options: ['do', 'does', 'is', 'are'],
+      answer: 'does',
+    },
+    {
+      id: 'd02-e11',
+      type: 'fill_in',
+      sentence: 'What sport ___ you play in PE class? (do/does)',
+      answer: 'do',
+    },
+    {
+      id: 'd02-e12',
+      type: 'multiple_choice',
+      sentence: '___ your mum work on Fridays?',
+      options: ['Do', 'Does', 'Is', 'Are'],
+      answer: 'Does',
+    },
+    {
+      id: 'd02-e13',
+      type: 'fill_in',
+      sentence: 'When ___ the football match start? (do/does)',
+      answer: 'does',
+    },
   ],
 };

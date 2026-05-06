@@ -70,5 +70,37 @@ export const day08: GrammarDay = {
       options: ['does', 'do', 'did', 'was'],
       answer: 'did',
     },
+    {
+      id: 'd08-e09',
+      type: 'fill_in',
+      sentence: '___ your sister make her own birthday cake last year? (Did/Does)',
+      answer: 'Did',
+    },
+    {
+      id: 'd08-e10',
+      type: 'multiple_choice',
+      sentence: 'What time ___ they come home after the school trip?',
+      options: ['do', 'does', 'did', 'were'],
+      answer: 'did',
+    },
+    {
+      id: 'd08-e11',
+      type: 'fill_in',
+      sentence: 'Why ___ she not come to the party? (did/does)',
+      answer: 'did',
+    },
+    {
+      id: 'd08-e12',
+      type: 'multiple_choice',
+      sentence: '___ he know the answer to the last question?',
+      options: ['Does', 'Do', 'Did', 'Was'],
+      answer: 'Did',
+    },
+    {
+      id: 'd08-e13',
+      type: 'fill_in',
+      sentence: 'Where ___ your family go for the holidays last summer? (did/do)',
+      answer: 'did',
+    },
   ],
 };
