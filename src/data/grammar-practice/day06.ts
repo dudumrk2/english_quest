@@ -70,5 +70,37 @@ export const day06: GrammarDay = {
       options: ['create', 'created', 'are creating', 'creates'],
       answer: 'created',
     },
+    {
+      id: 'd06-e09',
+      type: 'fill_in',
+      sentence: 'My friend ___ (not / arrive) on time for the bus this morning.',
+      answer: "didn't arrive",
+    },
+    {
+      id: 'd06-e10',
+      type: 'multiple_choice',
+      sentence: 'She ___ her essay three times before handing it in.',
+      options: ['checks', 'checking', 'checked', "didn't checked"],
+      answer: 'checked',
+    },
+    {
+      id: 'd06-e11',
+      type: 'fill_in',
+      sentence: 'The coach ___ (train) the team every day last month.',
+      answer: 'trained',
+    },
+    {
+      id: 'd06-e12',
+      type: 'multiple_choice',
+      sentence: 'We ___ the science experiment because we ran out of time.',
+      options: ["didn't finish", "don't finish", "weren't finish", 'not finished'],
+      answer: "didn't finish",
+    },
+    {
+      id: 'd06-e13',
+      type: 'fill_in',
+      sentence: 'He ___ (not / call) his friend last night — he forgot.',
+      answer: "didn't call",
+    },
   ],
 };

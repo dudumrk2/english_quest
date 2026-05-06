@@ -85,5 +85,24 @@ export const day12: GrammarDay = {
       options: ["doesn't", "isn't", "didn't", "won't"],
       answer: "didn't",
     },
+    {
+      id: 'd12-e11',
+      type: 'fill_in',
+      sentence: 'She ___ (not / answer) any messages right now — her phone is off.',
+      answer: "isn't answering",
+    },
+    {
+      id: 'd12-e12',
+      type: 'multiple_choice',
+      sentence: 'I ___ eat fast food. It makes me feel unwell.',
+      options: ["don't", "didn't", "won't", "aren't"],
+      answer: "don't",
+    },
+    {
+      id: 'd12-e13',
+      type: 'fill_in',
+      sentence: 'He told me he ___ (not / come) to school tomorrow — he has a doctor\'s appointment.',
+      answer: "won't come",
+    },
   ],
 };

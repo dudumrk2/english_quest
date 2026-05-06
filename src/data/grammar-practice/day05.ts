@@ -86,5 +86,24 @@ export const day05: GrammarDay = {
       options: ['is telling', 'tell', 'tells', 'are telling'],
       answer: 'tells',
     },
+    {
+      id: 'd05-e11',
+      type: 'fill_in',
+      sentence: 'She ___ (not / understand) the question — she looks confused.',
+      answer: "doesn't understand",
+    },
+    {
+      id: 'd05-e12',
+      type: 'multiple_choice',
+      sentence: 'We ___ a new unit this week because the teacher changed the plan.',
+      options: ['study', 'studies', 'are studying', 'were studying'],
+      answer: 'are studying',
+    },
+    {
+      id: 'd05-e13',
+      type: 'fill_in',
+      sentence: 'My grandfather ___ (walk) in the park every morning at seven.',
+      answer: 'walks',
+    },
   ],
 };

@@ -70,5 +70,37 @@ export const day09: GrammarDay = {
       options: ["won't", 'will not to', "doesn't", 'not will'],
       answer: "won't",
     },
+    {
+      id: 'd09-e09',
+      type: 'fill_in',
+      sentence: 'My parents say I ___ (get) a new phone for my birthday.',
+      answer: 'will get',
+    },
+    {
+      id: 'd09-e10',
+      type: 'multiple_choice',
+      sentence: 'She is very tired, so she ___ stay up late tonight.',
+      options: ["won't", 'will', 'does', "doesn't"],
+      answer: "won't",
+    },
+    {
+      id: 'd09-e11',
+      type: 'fill_in',
+      sentence: 'I think the summer holidays ___ (start) in three weeks.',
+      answer: 'will start',
+    },
+    {
+      id: 'd09-e12',
+      type: 'multiple_choice',
+      sentence: 'He promised he ___ help me study for the exam tomorrow.',
+      options: ["won't", 'will', 'does', 'did'],
+      answer: 'will',
+    },
+    {
+      id: 'd09-e13',
+      type: 'fill_in',
+      sentence: 'They ___ (not / travel) by plane — they are afraid of flying.',
+      answer: "won't travel",
+    },
   ],
 };

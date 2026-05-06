@@ -70,5 +70,37 @@ export const day07: GrammarDay = {
       options: ['runned', 'ran', 'run', 'runs'],
       answer: 'ran',
     },
+    {
+      id: 'd07-e09',
+      type: 'fill_in',
+      sentence: 'The children ___ (swim) in the pool for an hour at the sports day.',
+      answer: 'swam',
+    },
+    {
+      id: 'd07-e10',
+      type: 'multiple_choice',
+      sentence: 'She ___ her keys and was late for school.',
+      options: ['losed', 'losted', 'lost', 'lose'],
+      answer: 'lost',
+    },
+    {
+      id: 'd07-e11',
+      type: 'fill_in',
+      sentence: 'My grandma ___ (teach) English for thirty years before she retired.',
+      answer: 'taught',
+    },
+    {
+      id: 'd07-e12',
+      type: 'multiple_choice',
+      sentence: 'He ___ to school on a different route and discovered a new café.',
+      options: ['goed', 'goes', 'going', 'went'],
+      answer: 'went',
+    },
+    {
+      id: 'd07-e13',
+      type: 'fill_in',
+      sentence: 'We ___ (drink) all the juice before the party even started.',
+      answer: 'drank',
+    },
   ],
 };

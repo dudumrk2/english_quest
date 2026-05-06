@@ -98,5 +98,12 @@ export const day14: GrammarDay = {
       sentence: 'Tom ___ (go) to football practice three times a week.',
       answer: 'goes',
     },
+    {
+      id: 'd14-e13',
+      type: 'multiple_choice',
+      sentence: 'She ___ her bag and realised her wallet was missing.',
+      options: ['opens', 'is opening', 'opened', 'will open'],
+      answer: 'opened',
+    },
   ],
 };

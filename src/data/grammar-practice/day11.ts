@@ -85,5 +85,24 @@ export const day11: GrammarDay = {
       options: ['changes', 'changed', 'is changing', 'will change'],
       answer: 'will change',
     },
+    {
+      id: 'd11-e11',
+      type: 'fill_in',
+      sentence: 'The birds ___ (sing) outside my window every morning.',
+      answer: 'sing',
+    },
+    {
+      id: 'd11-e12',
+      type: 'multiple_choice',
+      sentence: 'Be quiet! The baby ___ in the next room.',
+      options: ['sleeps', 'slept', 'is sleeping', 'will sleep'],
+      answer: 'is sleeping',
+    },
+    {
+      id: 'd11-e13',
+      type: 'fill_in',
+      sentence: 'My team ___ (lose) the final game last Saturday.',
+      answer: 'lost',
+    },
   ],
 };

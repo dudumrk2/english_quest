@@ -70,5 +70,37 @@ export const day10: GrammarDay = {
       options: ['does', 'did', 'will', 'do'],
       answer: 'will',
     },
+    {
+      id: 'd10-e09',
+      type: 'fill_in',
+      sentence: '___ the new sports centre be ready by September? (Will/Does)',
+      answer: 'Will',
+    },
+    {
+      id: 'd10-e10',
+      type: 'multiple_choice',
+      sentence: 'What ___ you study at university one day?',
+      options: ['do', 'did', 'will', 'are'],
+      answer: 'will',
+    },
+    {
+      id: 'd10-e11',
+      type: 'fill_in',
+      sentence: 'Who ___ win the match next Friday? (will/does)',
+      answer: 'will',
+    },
+    {
+      id: 'd10-e12',
+      type: 'multiple_choice',
+      sentence: '___ she bring her guitar to the school show?',
+      options: ['Does', 'Did', 'Will', 'Is'],
+      answer: 'Will',
+    },
+    {
+      id: 'd10-e13',
+      type: 'fill_in',
+      sentence: 'Where ___ the class go for the end-of-year trip? (will/do)',
+      answer: 'will',
+    },
   ],
 };
