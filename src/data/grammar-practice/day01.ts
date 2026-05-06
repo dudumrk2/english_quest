@@ -1,0 +1,74 @@
+import type { GrammarDay } from '../../types/grammar-practice';
+
+export const day01: GrammarDay = {
+  id: 1,
+  title: 'Present Simple — Positive & Negative',
+  tense: 'Present Simple',
+  focus: 'Positive & Negative',
+  explanation: {
+    formula:
+      'Positive: Subject + base verb (he/she/it → add s/es)\nNegative: Subject + don\'t / doesn\'t + base verb',
+    usage:
+      'Use the Present Simple for habits, routines, facts, and things that are always true.',
+    signalWords: ['always', 'usually', 'often', 'sometimes', 'rarely', 'never', 'every day', 'every week', 'on Mondays'],
+    examples: {
+      positive: 'She goes to school every day.',
+      negative: 'He doesn\'t play basketball on Sundays.',
+      yesNo: 'Do you study English every night?',
+      wh: 'What does she do after school?',
+    },
+  },
+  exercises: [
+    {
+      id: 'd01-e01',
+      type: 'fill_in',
+      sentence: 'My brother ___ (play) basketball every Saturday.',
+      answer: 'plays',
+    },
+    {
+      id: 'd01-e02',
+      type: 'fill_in',
+      sentence: 'We ___ (not / eat) lunch at school on Fridays.',
+      answer: "don't eat",
+    },
+    {
+      id: 'd01-e03',
+      type: 'fill_in',
+      sentence: 'The teacher ___ (explain) the rules every lesson.',
+      answer: 'explains',
+    },
+    {
+      id: 'd01-e04',
+      type: 'fill_in',
+      sentence: 'My parents ___ (not / watch) TV in the morning.',
+      answer: "don't watch",
+    },
+    {
+      id: 'd01-e05',
+      type: 'fill_in',
+      sentence: 'Sarah ___ (not / like) rainy days.',
+      answer: "doesn't like",
+    },
+    {
+      id: 'd01-e06',
+      type: 'multiple_choice',
+      sentence: 'Tom ___ to school by bus every morning.',
+      options: ['go', 'goes', 'is going', "doesn't goes"],
+      answer: 'goes',
+    },
+    {
+      id: 'd01-e07',
+      type: 'multiple_choice',
+      sentence: 'They ___ their homework before dinner.',
+      options: ['does', "doesn't do", 'do', 'doing'],
+      answer: 'do',
+    },
+    {
+      id: 'd01-e08',
+      type: 'multiple_choice',
+      sentence: 'My sister ___ read comic books. She prefers novels.',
+      options: ["don't", "doesn't", "isn't", "aren't"],
+      answer: "doesn't",
+    },
+  ],
+};
