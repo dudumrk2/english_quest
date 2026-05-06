@@ -11,22 +11,26 @@ import { TaskVocabulary } from './components/TaskVocabulary';
 import { TaskVocabularyMatching } from './components/TaskVocabularyMatching';
 import { WeeklySummary } from './components/WeeklySummary';
 import { TestsDashboard } from './components/TestsDashboard';
+import { GrammarPracticeDashboard } from './components/GrammarPracticeDashboard';
+import { GrammarPracticeLesson } from './components/GrammarPracticeLesson';
 import { Login } from './components/Login';
 import { useAppStore } from './hooks/useAppStore';
 import { useAuth } from './hooks/useAuth';
 import { lessons } from './data/lessons';
 import { Lesson } from './types';
+import type { GrammarDay } from './types/grammar-practice';
 
 // Replace with your Google Client ID or leave empty for demo mode only
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
-type ViewType = 'dashboard' | 'lesson' | 'summary' | 'tests';
+type ViewType = 'dashboard' | 'lesson' | 'summary' | 'tests' | 'grammar-practice' | 'grammar-practice-lesson';
 
 function AppContent() {
     const { user, isAuthenticated } = useAuth();
-    const { state, completeLesson, saveLessonAnswers, clearLessonAnswers, resetAllProgress, isSyncing, lastSyncedAt, saveToCloud, loadFromCloud } = useAppStore(user?.email);
+    const { state, completeLesson, saveLessonAnswers, clearLessonAnswers, resetAllProgress, completeGrammarDay, saveGrammarAnswers, isSyncing, lastSyncedAt, saveToCloud, loadFromCloud } = useAppStore(user?.email);
     const [view, setView] = useState<ViewType>('dashboard');
     const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
+    const [activeGrammarDay, setActiveGrammarDay] = useState<GrammarDay | null>(null);
 
     // Show login if not authenticated
     if (!isAuthenticated) {
@@ -92,6 +96,35 @@ function AppContent() {
             return <TestsDashboard onBack={() => setView('dashboard')} />;
         }
 
+        if (view === 'grammar-practice') {
+            return (
+                <GrammarPracticeDashboard
+                    completedGrammarDays={state.completedGrammarDays || []}
+                    onBack={() => setView('dashboard')}
+                    onStartDay={(day) => {
+                        setActiveGrammarDay(day);
+                        setView('grammar-practice-lesson');
+                    }}
+                />
+            );
+        }
+
+        if (view === 'grammar-practice-lesson' && activeGrammarDay) {
+            return (
+                <GrammarPracticeLesson
+                    key={activeGrammarDay.id}
+                    day={activeGrammarDay}
+                    initialAnswers={state.grammarAnswers?.[activeGrammarDay.id] || {}}
+                    onBack={() => setView('grammar-practice')}
+                    onComplete={(dayId, answers) => {
+                        completeGrammarDay(dayId);
+                        saveGrammarAnswers(dayId, answers);
+                        setView('grammar-practice');
+                    }}
+                />
+            );
+        }
+
         return (
             <Dashboard
                 currentLessonId={state.currentLessonId}
@@ -106,6 +139,7 @@ function AppContent() {
                 onSaveToCloud={saveToCloud}
                 onLoadFromCloud={loadFromCloud}
                 onOpenTests={() => setView('tests')}
+                onOpenGrammarPractice={() => setView('grammar-practice')}
             />
         );
     };

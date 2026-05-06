@@ -16,6 +16,7 @@ import {
     ExpandMore as ExpandMoreIcon,
     EmojiEvents as EmojiEventsIcon,
     Quiz as QuizIcon,
+    AutoStories as AutoStoriesIcon,
 } from '@mui/icons-material';
 import { LessonCard } from './common/LessonCard';
 import { WeekContainer } from './common/WeekContainer';
@@ -42,6 +43,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     onSaveToCloud,
     onLoadFromCloud,
     onOpenTests,
+    onOpenGrammarPractice,
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -203,29 +205,51 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     Select your next mission, Commander
                 </Typography>
 
-                {/* Practice Tests Button */}
-                <Button
-                    variant="contained"
-                    startIcon={<QuizIcon />}
-                    onClick={onOpenTests}
-                    sx={{
-                        mt: 3,
-                        px: 4,
-                        py: 1,
-                        fontWeight: 700,
-                        textTransform: 'none',
-                        fontSize: '1rem',
-                        background: 'linear-gradient(135deg, #f59e0b, #ef4444)',
-                        borderRadius: 3,
-                        boxShadow: '0 4px 20px rgba(239,68,68,0.3)',
-                        '&:hover': {
-                            background: 'linear-gradient(135deg, #d97706, #dc2626)',
-                            boxShadow: '0 6px 25px rgba(239,68,68,0.4)',
-                        },
-                    }}
-                >
-                    Practice Tests
-                </Button>
+                {/* Action Buttons */}
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" mt={3}>
+                    <Button
+                        variant="contained"
+                        startIcon={<QuizIcon />}
+                        onClick={onOpenTests}
+                        sx={{
+                            px: 4,
+                            py: 1,
+                            fontWeight: 700,
+                            textTransform: 'none',
+                            fontSize: '1rem',
+                            background: 'linear-gradient(135deg, #f59e0b, #ef4444)',
+                            borderRadius: 3,
+                            boxShadow: '0 4px 20px rgba(239,68,68,0.3)',
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #d97706, #dc2626)',
+                                boxShadow: '0 6px 25px rgba(239,68,68,0.4)',
+                            },
+                        }}
+                    >
+                        Practice Tests
+                    </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<AutoStoriesIcon />}
+                        onClick={onOpenGrammarPractice}
+                        sx={{
+                            px: 4,
+                            py: 1,
+                            fontWeight: 700,
+                            textTransform: 'none',
+                            fontSize: '1rem',
+                            background: 'linear-gradient(135deg, #10b981, #059669)',
+                            borderRadius: 3,
+                            boxShadow: '0 4px 20px rgba(16,185,129,0.3)',
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #059669, #047857)',
+                                boxShadow: '0 6px 25px rgba(16,185,129,0.4)',
+                            },
+                        }}
+                    >
+                        Grammar Practice
+                    </Button>
+                </Stack>
 
                 {/* Cloud Sync Buttons - only for Google users */}
                 {isGoogleUser && (

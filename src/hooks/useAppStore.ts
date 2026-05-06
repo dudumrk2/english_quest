@@ -17,6 +17,8 @@ interface AppStore {
     saveLessonAnswers: (lessonId: number, answers: any) => void;
     clearLessonAnswers: (lessonId: number) => void;
     resetAllProgress: () => void;
+    completeGrammarDay: (dayId: number) => void;
+    saveGrammarAnswers: (dayId: number, answers: Record<string, string>) => void;
     // Cloud sync
     isSyncing: boolean;
     lastSyncedAt: string | null;
@@ -38,6 +40,12 @@ export function useAppStore(userEmail?: string): AppStore {
             if (!parsed.lessonAnswers) {
                 parsed.lessonAnswers = {};
             }
+            if (!parsed.completedGrammarDays) {
+                parsed.completedGrammarDays = [];
+            }
+            if (!parsed.grammarAnswers) {
+                parsed.grammarAnswers = {};
+            }
             return parsed;
         }
         return {
@@ -47,7 +55,9 @@ export function useAppStore(userEmail?: string): AppStore {
             points: 0,
             streak: 0,
             lastLogin: null,
-            lessonAnswers: {}
+            lessonAnswers: {},
+            completedGrammarDays: [],
+            grammarAnswers: {}
         };
     });
 
@@ -65,6 +75,12 @@ export function useAppStore(userEmail?: string): AppStore {
             if (!parsed.lessonAnswers) {
                 parsed.lessonAnswers = {};
             }
+            if (!parsed.completedGrammarDays) {
+                parsed.completedGrammarDays = [];
+            }
+            if (!parsed.grammarAnswers) {
+                parsed.grammarAnswers = {};
+            }
             setState(parsed);
         } else {
             setState({
@@ -74,7 +90,9 @@ export function useAppStore(userEmail?: string): AppStore {
                 points: 0,
                 streak: 0,
                 lastLogin: null,
-                lessonAnswers: {}
+                lessonAnswers: {},
+                completedGrammarDays: [],
+                grammarAnswers: {}
             });
         }
     }, [storageKey]);
@@ -147,10 +165,34 @@ export function useAppStore(userEmail?: string): AppStore {
             points: 0,
             streak: 0,
             lastLogin: null,
-            lessonAnswers: {}
+            lessonAnswers: {},
+            completedGrammarDays: [],
+            grammarAnswers: {}
         };
         setState(initialState);
         localStorage.setItem(storageKey, JSON.stringify(initialState));
+    };
+
+    const completeGrammarDay = (dayId: number) => {
+        setState(prev => {
+            if (prev.completedGrammarDays.includes(dayId)) return prev;
+            return {
+                ...prev,
+                completedGrammarDays: [...prev.completedGrammarDays, dayId],
+                points: prev.points + 50,
+                streak: prev.streak + 1
+            };
+        });
+    };
+
+    const saveGrammarAnswers = (dayId: number, answers: Record<string, string>) => {
+        setState(prev => ({
+            ...prev,
+            grammarAnswers: {
+                ...prev.grammarAnswers,
+                [dayId]: answers
+            }
+        }));
     };
 
     const getCurrentLesson = (): Lesson => {
@@ -204,6 +246,8 @@ export function useAppStore(userEmail?: string): AppStore {
         saveLessonAnswers,
         clearLessonAnswers,
         resetAllProgress,
+        completeGrammarDay,
+        saveGrammarAnswers,
         isSyncing,
         lastSyncedAt,
         saveToCloud,

@@ -111,6 +111,8 @@ export interface AppState {
     streak: number;
     lastLogin: string | null;
     lessonAnswers: Record<number, any>;
+    completedGrammarDays: number[];
+    grammarAnswers: Record<number, Record<string, string>>;
 }
 
 // Message Types
@@ -150,6 +152,7 @@ export interface DashboardProps {
     onSaveToCloud?: () => void;
     onLoadFromCloud?: () => void;
     onOpenTests?: () => void;
+    onOpenGrammarPractice?: () => void;
 }
 
 export interface TaskProps {
