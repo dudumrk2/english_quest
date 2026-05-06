@@ -23,10 +23,12 @@ import {
     Lightbulb as TipIcon,
     Assignment as PracticeIcon,
     EmojiEvents as TrophyIcon,
+    MenuBook as ReviewIcon,
 } from '@mui/icons-material';
 import type { GrammarDay, GrammarExercise, FillInExercise, MultipleChoiceExercise } from '../types/grammar-practice';
 import { isAnswerCorrect } from '../utils/validation';
 import { triggerCelebration } from '../utils/confetti';
+import { GrammarIntro } from './GrammarIntro';
 
 interface GrammarPracticeLessonProps {
     day: GrammarDay;
@@ -41,6 +43,7 @@ export function GrammarPracticeLesson({
     onBack,
     onComplete,
 }: GrammarPracticeLessonProps) {
+    const [phase, setPhase] = useState<'intro' | 'practice'>('intro');
     const [answers, setAnswers] = useState<Record<string, string>>(initialAnswers);
     const [checked, setChecked] = useState<Record<string, boolean>>({});
     const [attempts, setAttempts] = useState<Record<string, number>>({});
@@ -49,6 +52,16 @@ export function GrammarPracticeLesson({
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [day.id]);
+
+    if (phase === 'intro') {
+        return (
+            <GrammarIntro
+                day={day}
+                onComplete={() => setPhase('practice')}
+                onBack={onBack}
+            />
+        );
+    }
 
     const handleChange = (id: string, value: string) => {
         setAnswers(prev => ({ ...prev, [id]: value }));
@@ -96,14 +109,30 @@ export function GrammarPracticeLesson({
 
     return (
         <Box sx={{ maxWidth: 900, mx: 'auto', p: { xs: 1, md: 3 } }}>
-            {/* Back */}
-            <Button
-                startIcon={<BackIcon />}
-                onClick={onBack}
-                sx={{ mb: 2, color: 'text.secondary', textTransform: 'none' }}
-            >
-                Back to Grammar Practice
-            </Button>
+            {/* Back + Review buttons */}
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2} flexWrap="wrap" gap={1}>
+                <Button
+                    startIcon={<BackIcon />}
+                    onClick={onBack}
+                    sx={{ color: 'text.secondary', textTransform: 'none' }}
+                >
+                    Back to Grammar Practice
+                </Button>
+                <Button
+                    startIcon={<ReviewIcon />}
+                    onClick={() => setPhase('intro')}
+                    variant="outlined"
+                    size="small"
+                    sx={{
+                        textTransform: 'none',
+                        borderColor: 'rgba(16,185,129,0.4)',
+                        color: '#34d399',
+                        '&:hover': { borderColor: '#10b981', bgcolor: 'rgba(16,185,129,0.08)' },
+                    }}
+                >
+                    📖 Review Explanation
+                </Button>
+            </Stack>
 
             {/* Header */}
             <Box
