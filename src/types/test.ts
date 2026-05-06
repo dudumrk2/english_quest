@@ -4,6 +4,7 @@ export interface Test {
     subtitle?: string;
     totalPoints: number;
     sections: TestSection[];
+    lockedUntil?: string; // ID of the test that must pass ≥80% to unlock this one
 }
 
 export type TestSection =

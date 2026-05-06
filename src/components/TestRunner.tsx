@@ -3,7 +3,7 @@ import {
     Box, Typography, Card, CardContent, TextField, Button,
     Radio, RadioGroup, FormControlLabel, FormControl,
     Chip, Stack, Divider, Alert, LinearProgress, Table,
-    TableBody, TableCell, TableHead, TableRow, Paper,
+    TableBody, TableCell, TableHead, TableRow, Paper, Snackbar,
 } from '@mui/material';
 import {
     CheckCircle as CheckIcon,
@@ -11,7 +11,10 @@ import {
     Refresh as RetryIcon,
     EmojiEvents as TrophyIcon,
     ArrowBack as BackIcon,
+    Save as SaveIcon,
 } from '@mui/icons-material';
+
+const DRAFT_PREFIX = 'nadav-english-test-draft-';
 import type {
     Test, TestSection, MCQuestion, FillSentence, VerbPair,
     SentenceFill, QuestionFormItem, PassageQuestion, PassageSegment,
@@ -148,11 +151,27 @@ function answerBorder(submitted: boolean, correct: boolean | undefined) {
 // ─── Main Component ───────────────────────────────────────────────────────
 
 export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
-    const [answers, setAnswers] = useState<Record<string, string>>({});
+    const draftKey = `${DRAFT_PREFIX}${test.id}`;
+
+    const [answers, setAnswers] = useState<Record<string, string>>(() => {
+        try {
+            const draft = localStorage.getItem(draftKey);
+            return draft ? JSON.parse(draft) : {};
+        } catch {
+            return {};
+        }
+    });
     const [submitted, setSubmitted] = useState(false);
+    const [hasDraft] = useState(() => !!localStorage.getItem(draftKey));
+    const [saveSnackbar, setSaveSnackbar] = useState(false);
 
     const setAnswer = (key: string, value: string) =>
         setAnswers(prev => ({ ...prev, [key]: value }));
+
+    const handleSaveProgress = () => {
+        localStorage.setItem(draftKey, JSON.stringify(answers));
+        setSaveSnackbar(true);
+    };
 
     // ── Compute results after submission ──────────────────────────────────
 
@@ -167,6 +186,7 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
         // Compute score eagerly so onComplete receives the real value before re-render
         const { totalScore: score } = computeScore(test, answers);
         setSubmitted(true);
+        localStorage.removeItem(draftKey);
         window.scrollTo({ top: 0, behavior: 'smooth' });
         onComplete({
             testId: test.id,
@@ -180,6 +200,7 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
     const handleRetry = () => {
         setAnswers({});
         setSubmitted(false);
+        localStorage.removeItem(draftKey);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -190,13 +211,33 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
         <Box>
             {/* Header */}
             <Box sx={{ mb: 4 }}>
-                <Button
-                    startIcon={<BackIcon />}
-                    onClick={onBack}
-                    sx={{ mb: 2, color: 'text.secondary', textTransform: 'none' }}
-                >
-                    Back to Practice Tests
-                </Button>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                    <Button
+                        startIcon={<BackIcon />}
+                        onClick={onBack}
+                        sx={{ color: 'text.secondary', textTransform: 'none' }}
+                    >
+                        Back to Practice Tests
+                    </Button>
+                    {!submitted && (
+                        <Button
+                            startIcon={<SaveIcon />}
+                            variant="outlined"
+                            size="small"
+                            onClick={handleSaveProgress}
+                            sx={{ textTransform: 'none', borderColor: 'rgba(99,102,241,0.4)', color: 'primary.light' }}
+                        >
+                            Save Progress
+                        </Button>
+                    )}
+                </Stack>
+
+                {hasDraft && !submitted && (
+                    <Alert severity="info" sx={{ mb: 2, py: 0.5 }}>
+                        Your saved progress has been loaded. Continue where you left off!
+                    </Alert>
+                )}
+
                 <Typography variant="h4" fontWeight={700} color="primary">
                     {test.title}
                 </Typography>
@@ -206,6 +247,14 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
                     </Typography>
                 )}
             </Box>
+
+            <Snackbar
+                open={saveSnackbar}
+                autoHideDuration={2500}
+                onClose={() => setSaveSnackbar(false)}
+                message="Progress saved!"
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            />
 
             {/* Score summary (shown after submit) */}
             {submitted && (
