@@ -3,7 +3,10 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { theme } from './theme';
 import { Layout } from './components/Layout';
+import { HomeScreen } from './components/HomeScreen';
 import { Dashboard } from './components/Dashboard';
+import { GrammarHub } from './components/GrammarHub';
+import { GrammarWeek13 } from './components/GrammarWeek13';
 import { TaskReading } from './components/TaskReading';
 import { TaskGrammar } from './components/TaskGrammar';
 import { TaskPronunciation } from './components/TaskPronunciation';
@@ -23,12 +26,12 @@ import type { GrammarDay } from './types/grammar-practice';
 // Replace with your Google Client ID or leave empty for demo mode only
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
-type ViewType = 'dashboard' | 'lesson' | 'summary' | 'tests' | 'grammar-practice' | 'grammar-practice-lesson';
+type ViewType = 'home' | 'dashboard' | 'lesson' | 'summary' | 'tests' | 'grammar-practice' | 'grammar-practice-lesson' | 'grammar-hub' | 'grammar-week13';
 
 function AppContent() {
     const { user, isAuthenticated } = useAuth();
     const { state, completeLesson, saveLessonAnswers, clearLessonAnswers, resetAllProgress, completeGrammarDay, saveGrammarAnswers, isSyncing, lastSyncedAt, saveToCloud, loadFromCloud } = useAppStore(user?.email);
-    const [view, setView] = useState<ViewType>('dashboard');
+    const [view, setView] = useState<ViewType>('home');
     const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
     const [activeGrammarDay, setActiveGrammarDay] = useState<GrammarDay | null>(null);
 
@@ -45,6 +48,12 @@ function AppContent() {
     const handleLessonComplete = (skipped: boolean = false) => {
         if (activeLesson) {
             completeLesson(activeLesson.id, 100, skipped);
+
+            // Week 13 lessons go back to the week 13 view
+            if (activeLesson.week === 13) {
+                setView('grammar-week13');
+                return;
+            }
 
             // Check if this is the last lesson of the week
             const weekLessons = lessons.filter(l => l.week === activeLesson.week);
@@ -69,6 +78,40 @@ function AppContent() {
     };
 
     const renderContent = () => {
+        if (view === 'home') {
+            return (
+                <HomeScreen
+                    onNavigateToDashboard={() => setView('dashboard')}
+                    onNavigateToGrammarHub={() => setView('grammar-hub')}
+                    onNavigateToTests={() => setView('tests')}
+                    points={state.points}
+                    streak={state.streak}
+                />
+            );
+        }
+
+        if (view === 'grammar-hub') {
+            return (
+                <GrammarHub
+                    completedGrammarDays={state.completedGrammarDays || []}
+                    completedLessons={state.completedLessons}
+                    onBack={() => setView('home')}
+                    onNavigateToGrammarPractice={() => setView('grammar-practice')}
+                    onNavigateToWeek13={() => setView('grammar-week13')}
+                />
+            );
+        }
+
+        if (view === 'grammar-week13') {
+            return (
+                <GrammarWeek13
+                    completedLessons={state.completedLessons}
+                    onBack={() => setView('grammar-hub')}
+                    onStartLesson={handleStartLesson}
+                />
+            );
+        }
+
         if (view === 'summary' && activeLesson) {
             return <WeeklySummary week={activeLesson.week} onContinue={() => setView('dashboard')} />;
         }
@@ -93,14 +136,14 @@ function AppContent() {
         }
 
         if (view === 'tests') {
-            return <TestsDashboard onBack={() => setView('dashboard')} />;
+            return <TestsDashboard onBack={() => setView('home')} />;
         }
 
         if (view === 'grammar-practice') {
             return (
                 <GrammarPracticeDashboard
                     completedGrammarDays={state.completedGrammarDays || []}
-                    onBack={() => setView('dashboard')}
+                    onBack={() => setView('grammar-hub')}
                     onStartDay={(day) => {
                         setActiveGrammarDay(day);
                         setView('grammar-practice-lesson');
@@ -138,14 +181,17 @@ function AppContent() {
                 lastSyncedAt={lastSyncedAt}
                 onSaveToCloud={saveToCloud}
                 onLoadFromCloud={loadFromCloud}
-                onOpenTests={() => setView('tests')}
-                onOpenGrammarPractice={() => setView('grammar-practice')}
+                onBack={() => setView('home')}
             />
         );
     };
 
     const handleBackToDashboard = () => {
-        setView('dashboard');
+        if (activeLesson?.week === 13) {
+            setView('grammar-week13');
+        } else {
+            setView('dashboard');
+        }
         setActiveLesson(null);
     };
 

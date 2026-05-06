@@ -49,7 +49,7 @@ export function GrammarPracticeDashboard({
                 onClick={onBack}
                 sx={{ mb: 2, color: 'text.secondary', textTransform: 'none' }}
             >
-                Back to Mission Control
+                חזרה ל-Grammar Practice
             </Button>
 
             {/* Header */}

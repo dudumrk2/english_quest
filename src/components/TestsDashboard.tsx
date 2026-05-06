@@ -73,7 +73,7 @@ export function TestsDashboard({ onBack }: TestsDashboardProps) {
                 onClick={onBack}
                 sx={{ mb: 2, color: 'text.secondary', textTransform: 'none' }}
             >
-                Back to Mission Control
+                חזרה לדף הבית
             </Button>
 
             <Box textAlign="center" mb={5}>

@@ -151,8 +151,7 @@ export interface DashboardProps {
     lastSyncedAt?: string | null;
     onSaveToCloud?: () => void;
     onLoadFromCloud?: () => void;
-    onOpenTests?: () => void;
-    onOpenGrammarPractice?: () => void;
+    onBack?: () => void;
 }
 
 export interface TaskProps {
