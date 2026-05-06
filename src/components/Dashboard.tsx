@@ -15,8 +15,7 @@ import {
     CloudDownload as CloudDownloadIcon,
     ExpandMore as ExpandMoreIcon,
     EmojiEvents as EmojiEventsIcon,
-    Quiz as QuizIcon,
-    AutoStories as AutoStoriesIcon,
+    ArrowBack as BackIcon,
 } from '@mui/icons-material';
 import { LessonCard } from './common/LessonCard';
 import { WeekContainer } from './common/WeekContainer';
@@ -42,8 +41,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     lastSyncedAt,
     onSaveToCloud,
     onLoadFromCloud,
-    onOpenTests,
-    onOpenGrammarPractice,
+    onBack,
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -54,8 +52,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
     });
 
     useEffect(() => {
-        // Extract unique weeks
-        const uniqueWeeks = Array.from(new Set(lessons.map(l => l.week))).sort((a, b) => a - b);
+        // Extract unique weeks, excluding week 13 (handled in GrammarWeek13)
+        const uniqueWeeks = Array.from(new Set(lessons.filter(l => l.week !== 13).map(l => l.week))).sort((a, b) => a - b);
         setWeeks(uniqueWeeks);
     }, []);
 
@@ -196,60 +194,25 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
     return (
         <Box>
+            {/* Back button */}
+            {onBack && (
+                <Button
+                    startIcon={<BackIcon />}
+                    onClick={onBack}
+                    sx={{ mb: 2, color: 'text.secondary', textTransform: 'none' }}
+                >
+                    חזרה לדף הבית
+                </Button>
+            )}
+
             {/* Header */}
             <Box textAlign="center" mb={{ xs: 4, md: 6 }}>
                 <GradientText variant="h3" gutterBottom sx={{ fontSize: { xs: '2rem', md: '3rem' } }}>
-                    Mission Control
+                    Reading & Vocabulary
                 </GradientText>
-                <Typography variant="h6" color="text.secondary" sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}>
-                    Select your next mission, Commander
+                <Typography variant="h6" color="text.secondary" sx={{ fontSize: { xs: '1rem', md: '1.25rem' }, direction: 'rtl' }}>
+                    סיפורים, אוצר מילים ושיעורי קריאה
                 </Typography>
-
-                {/* Action Buttons */}
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" mt={3}>
-                    <Button
-                        variant="contained"
-                        startIcon={<QuizIcon />}
-                        onClick={onOpenTests}
-                        sx={{
-                            px: 4,
-                            py: 1,
-                            fontWeight: 700,
-                            textTransform: 'none',
-                            fontSize: '1rem',
-                            background: 'linear-gradient(135deg, #f59e0b, #ef4444)',
-                            borderRadius: 3,
-                            boxShadow: '0 4px 20px rgba(239,68,68,0.3)',
-                            '&:hover': {
-                                background: 'linear-gradient(135deg, #d97706, #dc2626)',
-                                boxShadow: '0 6px 25px rgba(239,68,68,0.4)',
-                            },
-                        }}
-                    >
-                        Practice Tests
-                    </Button>
-                    <Button
-                        variant="contained"
-                        startIcon={<AutoStoriesIcon />}
-                        onClick={onOpenGrammarPractice}
-                        sx={{
-                            px: 4,
-                            py: 1,
-                            fontWeight: 700,
-                            textTransform: 'none',
-                            fontSize: '1rem',
-                            background: 'linear-gradient(135deg, #10b981, #059669)',
-                            borderRadius: 3,
-                            boxShadow: '0 4px 20px rgba(16,185,129,0.3)',
-                            '&:hover': {
-                                background: 'linear-gradient(135deg, #059669, #047857)',
-                                boxShadow: '0 6px 25px rgba(16,185,129,0.4)',
-                            },
-                        }}
-                    >
-                        Grammar Practice
-                    </Button>
-                </Stack>
 
                 {/* Cloud Sync Buttons - only for Google users */}
                 {isGoogleUser && (
