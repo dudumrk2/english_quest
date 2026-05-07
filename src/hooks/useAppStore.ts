@@ -38,8 +38,34 @@ interface AppStoreState {
     saveGrammarAnswers: (dayId: number, answers: Record<string, string>) => void;
 }
 
-const createStore = (userEmail: string) =>
-    create<AppStoreState>()(
+/**
+ * Pre-flight migration: convert old flat localStorage format to Zustand
+ * persist's expected { state, version } wrapper.  Runs once per key before
+ * the Zustand store reads from storage.
+ */
+function migrateOldStorageFormat(storageName: string) {
+    try {
+        const raw = localStorage.getItem(storageName);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        // Old format: flat AppState without Zustand's { state, version } wrapper
+        if (parsed && parsed.completedLessons !== undefined && !('version' in parsed)) {
+            const migrated = {
+                state: { state: migrateState(parsed) },
+                version: 1,
+            };
+            localStorage.setItem(storageName, JSON.stringify(migrated));
+        }
+    } catch {
+        // Ignore parse errors — let Zustand fall back to defaults
+    }
+}
+
+const createStore = (userEmail: string) => {
+    const storageName = `nadav-english-app-${userEmail}`;
+    migrateOldStorageFormat(storageName);
+
+    return create<AppStoreState>()(
         persist(
             (set) => ({
                 state: DEFAULT_STATE,
@@ -124,7 +150,7 @@ const createStore = (userEmail: string) =>
                 },
             }),
             {
-                name: `nadav-english-app-${userEmail}`,
+                name: storageName,
                 migrate: (persisted: any) => {
                     if (persisted && persisted.state) {
                         return { ...persisted, state: migrateState(persisted.state) };
@@ -138,6 +164,7 @@ const createStore = (userEmail: string) =>
             }
         )
     );
+};
 
 const storeCache = new Map<string, ReturnType<typeof createStore>>();
 

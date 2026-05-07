@@ -1,4 +1,4 @@
-import { Fragment, useState, useMemo } from 'react';
+import { Fragment, useState, useMemo, useEffect, useRef } from 'react';
 import {
     Box, Typography, Card, CardContent, TextField, Button,
     Radio, RadioGroup, FormControlLabel, FormControl,
@@ -139,6 +139,19 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
 
     const setAnswer = (key: string, value: string) =>
         setAnswers(prev => ({ ...prev, [key]: value }));
+
+    // Auto-save draft to localStorage on every answer change
+    const isFirstRender = useRef(true);
+    useEffect(() => {
+        // Skip saving on initial mount (draft was just loaded)
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+        if (!submitted) {
+            localStorage.setItem(draftKey, JSON.stringify(answers));
+        }
+    }, [answers, submitted, draftKey]);
 
     const handleSaveProgress = () => {
         localStorage.setItem(draftKey, JSON.stringify(answers));
