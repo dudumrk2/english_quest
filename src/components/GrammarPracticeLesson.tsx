@@ -35,6 +35,7 @@ interface GrammarPracticeLessonProps {
     initialAnswers?: Record<string, string>;
     onBack: () => void;
     onComplete: (dayId: number, answers: Record<string, string>) => void;
+    onSaveAnswers?: (answers: Record<string, string>) => void;
 }
 
 export function GrammarPracticeLesson({
@@ -42,6 +43,7 @@ export function GrammarPracticeLesson({
     initialAnswers = {},
     onBack,
     onComplete,
+    onSaveAnswers,
 }: GrammarPracticeLessonProps) {
     const [phase, setPhase] = useState<'intro' | 'practice'>('intro');
     const [answers, setAnswers] = useState<Record<string, string>>(initialAnswers);
@@ -64,7 +66,9 @@ export function GrammarPracticeLesson({
     }
 
     const handleChange = (id: string, value: string) => {
-        setAnswers(prev => ({ ...prev, [id]: value }));
+        const updated = { ...answers, [id]: value };
+        setAnswers(updated);
+        onSaveAnswers?.(updated);
     };
 
     const isExerciseCorrect = (ex: GrammarExercise, userAnswer: string): boolean => {

@@ -154,6 +154,7 @@ function AppContent() {
                     day={activeGrammarDay}
                     initialAnswers={state.grammarAnswers?.[activeGrammarDay.id] || {}}
                     onBack={() => setView('grammar-practice')}
+                    onSaveAnswers={(answers) => saveGrammarAnswers(activeGrammarDay.id, answers)}
                     onComplete={(dayId, answers) => {
                         completeGrammarDay(dayId);
                         saveGrammarAnswers(dayId, answers);
