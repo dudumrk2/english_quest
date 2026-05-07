@@ -17,6 +17,11 @@ export const day03: GrammarDay = {
       yesNo: 'Is he reading a book?',
       wh: 'What are you doing right now?',
     },
+    narration: {
+      formula: 'The Present Progressive is for actions happening right now. To make a positive sentence, use the subject, then am, is, or are, then the verb with i-n-g. For negative, just add not after am, is, or are.',
+      signalWords: 'Look for words like now, right now, at the moment, or phrases like Look! and Listen! They all mean something is happening as we speak.',
+      examples: 'Here are some examples. Positive: She is writing a letter right now. Negative: They are not playing football at the moment. Yes-no question: Is he reading a book? WH question: What are you doing right now?',
+    },
   },
   exercises: [
     {

@@ -17,6 +17,11 @@ export const day02: GrammarDay = {
       yesNo: 'Does she play tennis every week?',
       wh: 'Where do you usually eat lunch?',
     },
+    narration: {
+      formula: 'To form a yes-no question in Present Simple, put Do or Does at the beginning, then the subject, then the base verb. For a WH question, start with the question word — like What, Where, or When — then add do or does, the subject, and the base verb.',
+      signalWords: 'Question words like what, where, when, who, why, and how are your clues. Also remember: use do with I, you, we, and they, and does with he, she, and it.',
+      examples: 'Here are some examples. Positive: She plays tennis every week. Negative: He doesn\'t study on Saturdays. Yes-no question: Does she play tennis every week? WH question: Where do you usually eat lunch?',
+    },
   },
   exercises: [
     {

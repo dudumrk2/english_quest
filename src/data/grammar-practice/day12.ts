@@ -17,6 +17,11 @@ export const day12: GrammarDay = {
       yesNo: "Don't they play? / Aren't they playing? / Didn't they play? / Won't they play?",
       wh: "Why don't they play? / Why aren't they playing? / Why didn't they play? / Why won't they play?",
     },
+    narration: {
+      formula: 'Each tense has its own way to make a negative sentence. In Present Simple, use don\'t or doesn\'t plus the base verb. In Present Progressive, add not after am, is, or are. In Past Simple, use didn\'t plus the base verb. And in Future Simple, use won\'t plus the base verb.',
+      signalWords: 'The same time clues help you choose the right negative form. Match every day to don\'t or doesn\'t. Right now to isn\'t or aren\'t. Yesterday to didn\'t. And tomorrow to won\'t.',
+      examples: 'Look at how the same idea changes in each tense. They don\'t play football every day. They aren\'t playing now. They didn\'t play yesterday. They won\'t play tomorrow. Each one uses a different negative helper.',
+    },
   },
   exercises: [
     {

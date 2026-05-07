@@ -17,6 +17,11 @@ export const day04: GrammarDay = {
       yesNo: 'Is she studying at the moment?',
       wh: 'What is he doing right now?',
     },
+    narration: {
+      formula: 'To ask a yes-no question in Present Progressive, move am, is, or are to the front, before the subject. For a WH question, put the question word first, then am, is, or are, then the subject, and finally the verb with i-n-g.',
+      signalWords: 'The same signal words apply here: right now, at the moment, now, look, and listen. They all tell you the action is happening in this moment.',
+      examples: 'Let\'s see some examples. Positive: She is studying at the moment. Negative: He is not watching TV. Yes-no question: Is she studying at the moment? WH question: What is he doing right now?',
+    },
   },
   exercises: [
     {
