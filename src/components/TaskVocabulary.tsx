@@ -15,9 +15,11 @@ import {
     VolumeUp,
     CheckCircle,
     Cancel,
-    Translate as TranslateIcon
+    Translate as TranslateIcon,
 } from '@mui/icons-material';
 import { triggerCelebration } from '../utils/confetti';
+import { useExerciseAttempts } from '../hooks/useExerciseAttempts';
+import { TaskHeader } from './common/TaskHeader';
 import { lessons } from '../data/lessons';
 import { TaskVocabularyProps, VocabularyItem, VocabularyAnswers } from '../types';
 import { isAnswerCorrect } from '../utils/validation';
@@ -27,8 +29,7 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
     const [answers, setAnswers] = useState<VocabularyAnswers['answers']>(initialAnswers?.answers || {});
     const [showFeedback, setShowFeedback] = useState(false);
     const [completedCount, setCompletedCount] = useState(0);
-    const [attempts, setAttempts] = useState<Record<string, number>>({});
-    const [lastCheckedAnswers, setLastCheckedAnswers] = useState<Record<string, string>>({});
+    const { trackAttempt, getAttemptCount } = useExerciseAttempts();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -70,8 +71,6 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
         }
     };
 
-    // Clear logic moved to Dashboard
-
     const speak = (text: string) => {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
@@ -82,36 +81,16 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
     const handleCheck = () => {
         setShowFeedback(true);
         let correct = 0;
-        const newAttempts = { ...attempts };
-        let attemptsChanged = false;
-
-        // Current answers for comparison next time
-        const currentCheckedAnswers = { ...lastCheckedAnswers };
 
         words.forEach(w => {
             const currentVal = answers?.[w.word]?.trim() || '';
-            const lastVal = lastCheckedAnswers[w.word]?.trim() || '';
             const isCorrect = checkAnswer(currentVal, w.translation);
-
             if (isCorrect) {
                 correct++;
-            } else {
-                // Only increment attempt if:
-                // 1. It's incorrect
-                // 2. It's not empty
-                // 3. It's different from the last checked value
-                if (currentVal !== '' && currentVal !== lastVal) {
-                    newAttempts[w.word] = (newAttempts[w.word] || 0) + 1;
-                    attemptsChanged = true;
-                }
             }
-            currentCheckedAnswers[w.word] = currentVal;
+            trackAttempt(w.word, currentVal, isCorrect);
         });
 
-        if (attemptsChanged) {
-            setAttempts(newAttempts);
-        }
-        setLastCheckedAnswers(currentCheckedAnswers);
         setCompletedCount(correct);
 
         if (correct === words.length) {
@@ -129,33 +108,12 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
 
     return (
         <Box sx={{ maxWidth: 900, mx: 'auto', p: { xs: 1, md: 3 } }}>
-            {/* Header */}
-            <Box
-                sx={{
-                    p: { xs: 2, md: 3 },
-                    mb: 4,
-                    background: 'linear-gradient(135deg, #1cb5e0 0%, #000851 100%)',
-                    color: 'white',
-                    borderRadius: 2,
-                    boxShadow: 2,
-                }}
-            >
-                <Stack direction="row" spacing={2} alignItems="center">
-                    <TranslateIcon sx={{ fontSize: { xs: 32, md: 40 } }} />
-                    <Box>
-                        <Typography variant="h4" fontWeight={700} sx={{ fontSize: { xs: '1.5rem', md: '2.125rem' } }}>
-                            Weekly Vocabulary Review
-                        </Typography>
-                        <Typography variant="subtitle1" sx={{ opacity: 0.9, fontSize: { xs: '0.9rem', md: '1rem' } }}>
-                            Week {lesson.week} • {words.length} Words to Review
-                        </Typography>
-                    </Box>
-                </Stack>
-            </Box>
-
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-                {/* Clear logic moved to Dashboard */}
-            </Box>
+            <TaskHeader
+                icon={<TranslateIcon sx={{ fontSize: { xs: 32, md: 40 } }} />}
+                title="Weekly Vocabulary Review"
+                subtitle={`Week ${lesson.week} • ${words.length} Words to Review`}
+                gradient="linear-gradient(135deg, #1cb5e0 0%, #000851 100%)"
+            />
 
             <Card elevation={3}>
                 <CardContent sx={{ p: { xs: 2, md: 4 } }}>
@@ -163,7 +121,7 @@ export function TaskVocabulary({ lesson, onComplete, initialAnswers = {}, onSave
                         {words.map((item, index) => {
                             const isCorrect = checkAnswer(answers?.[item.word] || '', item.translation);
                             const isError = showFeedback && !isCorrect;
-                            const attemptCount = attempts[item.word] || 0;
+                            const attemptCount = getAttemptCount(item.word);
 
                             return (
                                 <Grid size={{ xs: 12, sm: 6 }} key={index}>

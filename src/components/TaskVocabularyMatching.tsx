@@ -16,8 +16,8 @@ import {
     VolumeUp,
 } from '@mui/icons-material';
 import { triggerCelebration } from '../utils/confetti';
+import type { Lesson, VocabularyMatchingContent, VocabularyItem } from '../types';
 
-// Shuffle helper
 const shuffleArray = <T,>(array: T[]): T[] => {
     const newArray = [...array];
     for (let i = newArray.length - 1; i > 0; i--) {
@@ -28,7 +28,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 };
 
 interface TaskVocabularyMatchingProps {
-    lesson: any; // Using any for now as the full Lesson type might be complex to import/reconstruct here without looking at types.ts
+    lesson: Lesson & { content: VocabularyMatchingContent };
     onComplete: () => void;
     initialAnswers?: { matched?: string[] };
     onSaveAnswers?: (answers: { matched: string[] }) => void;
@@ -38,8 +38,7 @@ export function TaskVocabularyMatching({ lesson, onComplete, initialAnswers = {}
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    // pairs: { word: string, translation: string }[]
-    const pairs: { word: string; translation: string; context?: string; contextTranslation?: string }[] = lesson.content.pairs || [];
+    const pairs: VocabularyItem[] = lesson.content.pairs || [];
 
     // State
     const [selectedLeft, setSelectedLeft] = useState<string | null>(null); // English word

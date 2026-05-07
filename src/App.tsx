@@ -20,22 +20,20 @@ import { Login } from './components/Login';
 import { useAppStore } from './hooks/useAppStore';
 import { useAuth } from './hooks/useAuth';
 import { lessons } from './data/lessons';
-import { Lesson } from './types';
+import type { Lesson, ReadingContent, GrammarContent, PronunciationContent, VocabularyMatchingContent } from './types';
 import type { GrammarDay } from './types/grammar-practice';
 
-// Replace with your Google Client ID or leave empty for demo mode only
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 type ViewType = 'home' | 'dashboard' | 'lesson' | 'summary' | 'tests' | 'grammar-practice' | 'grammar-practice-lesson' | 'grammar-hub' | 'grammar-week13';
 
 function AppContent() {
-    const { user, isAuthenticated } = useAuth();
+    const { user, isAuthenticated, logout } = useAuth();
     const { state, completeLesson, saveLessonAnswers, clearLessonAnswers, resetAllProgress, completeGrammarDay, saveGrammarAnswers, isSyncing, lastSyncedAt, saveToCloud, loadFromCloud } = useAppStore(user?.email);
     const [view, setView] = useState<ViewType>('home');
     const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
     const [activeGrammarDay, setActiveGrammarDay] = useState<GrammarDay | null>(null);
 
-    // Show login if not authenticated
     if (!isAuthenticated) {
         return <Login />;
     }
@@ -49,13 +47,11 @@ function AppContent() {
         if (activeLesson) {
             completeLesson(activeLesson.id, 100, skipped);
 
-            // Week 13 lessons go back to the week 13 view
             if (activeLesson.week === 13) {
                 setView('grammar-week13');
                 return;
             }
 
-            // Check if this is the last lesson of the week
             const weekLessons = lessons.filter(l => l.week === activeLesson.week);
             const lastLesson = weekLessons.reduce((prev, current) => (prev.day > current.day) ? prev : current);
 
@@ -67,13 +63,36 @@ function AppContent() {
         }
     };
 
-    const { logout } = useAuth();
-
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to logout? This will clear all your progress and saved data.")) {
-            resetAllProgress(); // From global store
+            resetAllProgress();
             logout();
-            alert("All your data has been cleared. You will now return to the welcome page.");
+        }
+    };
+
+    const renderLesson = () => {
+        if (!activeLesson) return <div />;
+
+        const commonProps = {
+            lesson: activeLesson,
+            onComplete: handleLessonComplete,
+            initialAnswers: state.lessonAnswers?.[activeLesson.id] || {},
+            onSaveAnswers: (answers: any) => saveLessonAnswers(activeLesson.id, answers),
+        };
+
+        switch (activeLesson.type) {
+            case 'reading':
+                return <TaskReading key={activeLesson.id} {...commonProps} lesson={{ ...activeLesson, content: activeLesson.content as ReadingContent }} />;
+            case 'grammar':
+                return <TaskGrammar key={activeLesson.id} {...commonProps} lesson={{ ...activeLesson, content: activeLesson.content as GrammarContent }} />;
+            case 'pronunciation':
+                return <TaskPronunciation key={activeLesson.id} {...commonProps} lesson={{ ...activeLesson, content: activeLesson.content as PronunciationContent }} />;
+            case 'vocabulary':
+                return <TaskVocabulary key={activeLesson.id} {...commonProps} />;
+            case 'vocabulary_matching':
+                return <TaskVocabularyMatching key={activeLesson.id} {...commonProps} lesson={{ ...activeLesson, content: activeLesson.content as VocabularyMatchingContent }} />;
+            default:
+                return <div />;
         }
     };
 
@@ -116,23 +135,8 @@ function AppContent() {
             return <WeeklySummary week={activeLesson.week} onContinue={() => setView('dashboard')} />;
         }
 
-        if (view === 'lesson' && activeLesson) {
-            const commonProps = {
-                lesson: activeLesson,
-                onComplete: handleLessonComplete,
-                initialAnswers: state.lessonAnswers?.[activeLesson.id] || {},
-                onSaveAnswers: (answers: any) => saveLessonAnswers(activeLesson.id, answers),
-                onClearAnswers: () => clearLessonAnswers(activeLesson.id)
-            };
-
-            switch (activeLesson.type) {
-                case 'reading': return <TaskReading key={activeLesson.id} {...commonProps} lesson={activeLesson as any} />;
-                case 'grammar': return <TaskGrammar key={activeLesson.id} {...commonProps} lesson={activeLesson as any} />;
-                case 'pronunciation': return <TaskPronunciation key={activeLesson.id} {...commonProps} lesson={activeLesson as any} />;
-                case 'vocabulary': return <TaskVocabulary key={activeLesson.id} {...commonProps} lesson={activeLesson as any} />;
-                case 'vocabulary_matching': return <TaskVocabularyMatching key={activeLesson.id} {...commonProps} lesson={activeLesson as any} />;
-                default: return <div />;
-            }
+        if (view === 'lesson') {
+            return renderLesson();
         }
 
         if (view === 'tests') {

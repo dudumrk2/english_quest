@@ -18,6 +18,9 @@ import {
     Assignment as PracticeIcon,
 } from '@mui/icons-material';
 import { triggerCelebration } from '../utils/confetti';
+import { useExerciseAttempts } from '../hooks/useExerciseAttempts';
+import { TaskHeader } from './common/TaskHeader';
+import { TaskActionButtons } from './common/TaskActionButtons';
 import { TaskGrammarProps, Exercise } from '../types';
 import { isAnswerCorrect } from '../utils/validation';
 
@@ -25,8 +28,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
     const [answers, setAnswers] = useState(initialAnswers?.answers || {});
     const [showFeedback, setShowFeedback] = useState(false);
 
-    const [attempts, setAttempts] = useState<Record<string, number>>({});
-    const [lastCheckedAnswers, setLastCheckedAnswers] = useState<Record<string, string>>({});
+    const { trackAttempt, getAttemptCount } = useExerciseAttempts();
 
     // Update local state and parent state
     // Update local state and parent state
@@ -87,34 +89,10 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
     const handleSubmit = () => {
         setShowFeedback(true);
 
-        // Track attempts for incorrect answers
-        const newAttempts = { ...attempts };
-        let attemptsChanged = false;
-
-        // Current answers for comparison next time
-        const currentCheckedAnswers = { ...lastCheckedAnswers };
-
         lesson.content.exercises.forEach(ex => {
             const currentVal = answers[ex.id]?.trim() || '';
-            const lastVal = lastCheckedAnswers[ex.id]?.trim() || '';
-            const isCorrect = checkAnswer(currentVal, ex.answer, ex.question);
-
-            // Only increment attempt if:
-            // 1. It's incorrect
-            // 2. It's not empty
-            // 3. It's different from the last checked value
-            if (!isCorrect && currentVal !== '' && currentVal !== lastVal) {
-                newAttempts[ex.id] = (newAttempts[ex.id] || 0) + 1;
-                attemptsChanged = true;
-            }
-            currentCheckedAnswers[ex.id] = currentVal;
+            trackAttempt(ex.id, currentVal, checkAnswer(currentVal, ex.answer, ex.question));
         });
-
-        if (attemptsChanged) {
-            setAttempts(newAttempts);
-        }
-
-        setLastCheckedAnswers(currentCheckedAnswers);
 
         const allCorrect = lesson.content.exercises.every(
             (ex) => checkAnswer(answers[ex.id], ex.answer, ex.question)
@@ -128,29 +106,12 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
 
     return (
         <Box sx={{ maxWidth: 900, mx: 'auto', p: { xs: 1, md: 3 } }}>
-            {/* Header */}
-            <Box
-                sx={{
-                    p: { xs: 2, md: 3 },
-                    mb: 4,
-                    background: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
-                    color: 'white',
-                    borderRadius: 2,
-                    boxShadow: 2,
-                }}
-            >
-                <Stack direction="row" spacing={2} alignItems="center">
-                    <GrammarIcon sx={{ fontSize: { xs: 32, md: 40 } }} />
-                    <Box>
-                        <Typography variant="h4" fontWeight={700} sx={{ textShadow: '0 2px 4px rgba(0,0,0,0.1)', fontSize: { xs: '1.5rem', md: '2.125rem' } }}>
-                            {lesson.title}
-                        </Typography>
-                        <Typography variant="subtitle1" sx={{ opacity: 0.9, fontSize: { xs: '0.9rem', md: '1rem' } }}>
-                            Grammar Mission
-                        </Typography>
-                    </Box>
-                </Stack>
-            </Box>
+            <TaskHeader
+                icon={<GrammarIcon sx={{ fontSize: { xs: 32, md: 40 } }} />}
+                title={lesson.title}
+                subtitle="Grammar Mission"
+                gradient="linear-gradient(135deg, #f6d365 0%, #fda085 100%)"
+            />
 
             <Stack spacing={4}>
                 {/* Grammar Rule Card */}
@@ -242,7 +203,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
                                                     if (showResult) {
                                                         if (option === ex.answer) {
                                                             // Reveal correct answer only if selected OR max attempts reached
-                                                            if (isSelected || (attempts[ex.id] || 0) >= 2) {
+                                                            if (isSelected || getAttemptCount(ex.id) >= 2) {
                                                                 color = 'success';
                                                                 variant = 'contained';
                                                             }
@@ -273,7 +234,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
 
                                             {showResult && answers[ex.id] !== ex.answer && (
                                                 <Alert severity="info" sx={{ mt: 2, ml: 5, maxWidth: 400 }} variant="outlined">
-                                                    {(attempts[ex.id] || 0) >= 2 ? (
+                                                    {getAttemptCount(ex.id) >= 2 ? (
                                                         <span>
                                                             👀 The correct answer is: <strong>{ex.answer}</strong>
                                                         </span>
@@ -364,7 +325,7 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
 
                                         {showError && answers[ex.id]?.trim() && (
                                             <Alert severity="info" sx={{ mt: 1, ml: 4, maxWidth: 400 }} variant="outlined">
-                                                {(attempts[ex.id] || 0) >= 3 ? (
+                                                {getAttemptCount(ex.id) >= 3 ? (
                                                     <span>
                                                         👀 The correct answer is: <strong>{ex.answer}</strong>
                                                     </span>
@@ -385,48 +346,14 @@ export function TaskGrammar({ lesson, onComplete, initialAnswers = {}, onSaveAns
                             })}
                         </Stack>
 
-                        <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={2} mt={6}>
-                            <Button
-                                fullWidth
-                                variant="outlined"
-                                size="large"
-                                onClick={() => onComplete(true)}
-                                sx={{
-                                    py: 2,
-                                    fontSize: '1.1rem',
-                                    fontWeight: 700,
-                                    color: 'text.secondary',
-                                    borderWidth: 2,
-                                    '&:hover': {
-                                        borderWidth: 2,
-                                        bgcolor: 'rgba(0,0,0,0.05)'
-                                    }
-                                }}
-                            >
-                                Skip Lesson
-                            </Button>
-                            <Button
-                                fullWidth
-                                variant="contained"
-                                size="large"
-                                onClick={handleSubmit}
-                                sx={{
-                                    py: 2,
-                                    fontSize: '1.2rem',
-                                    fontWeight: 700,
-                                    background: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
-                                    color: 'white',
-                                    '&:hover': {
-                                        background: 'linear-gradient(135deg, #f5c94c 0%, #fc8e6d 100%)',
-                                        transform: 'translateY(-2px)',
-                                        boxShadow: 4,
-                                    },
-                                    transition: 'all 0.3s ease',
-                                }}
-                            >
-                                Check Answers
-                            </Button>
-                        </Stack>
+                        <Box sx={{ mt: 6 }}>
+                            <TaskActionButtons
+                                onSkip={() => onComplete(true)}
+                                onSubmit={handleSubmit}
+                                submitGradient="linear-gradient(135deg, #f6d365 0%, #fda085 100%)"
+                                submitHoverGradient="linear-gradient(135deg, #f5c94c 0%, #fc8e6d 100%)"
+                            />
+                        </Box>
                     </CardContent>
                 </Card>
             </Stack>
