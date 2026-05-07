@@ -133,12 +133,20 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
             return {};
         }
     });
+    // Keys that have been checked and are correct — these are locked and cannot be edited
+    const [lockedCorrect, setLockedCorrect] = useState<Set<string>>(new Set());
+    // Whether we're currently showing check feedback (between check and user editing)
+    const [showFeedback, setShowFeedback] = useState(false);
+    // Final submission — all answers correct, score reported
     const [submitted, setSubmitted] = useState(false);
     const [hasDraft] = useState(() => !!localStorage.getItem(draftKey));
     const [saveSnackbar, setSaveSnackbar] = useState(false);
 
-    const setAnswer = (key: string, value: string) =>
+    const setAnswer = (key: string, value: string) => {
+        // Don't allow editing locked (correct) answers
+        if (lockedCorrect.has(key)) return;
         setAnswers(prev => ({ ...prev, [key]: value }));
+    };
 
     // Auto-save draft to localStorage on every answer change
     const isFirstRender = useRef(true);
@@ -158,32 +166,61 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
         setSaveSnackbar(true);
     };
 
-    // ── Compute results after submission ──────────────────────────────────
+    // ── Compute results (used during feedback and final submission) ───────
 
     const { resultsMap, sectionScores, totalScore } = useMemo(
-        () => submitted
+        () => (showFeedback || submitted)
             ? computeScore(test, answers)
             : { resultsMap: {} as Record<string, boolean>, sectionScores: [] as { earned: number; total: number }[], totalScore: 0 },
-        [submitted, answers, test],
+        [showFeedback, submitted, answers, test],
     );
 
-    const handleSubmit = () => {
-        // Compute score eagerly so onComplete receives the real value before re-render
-        const { totalScore: score } = computeScore(test, answers);
-        setSubmitted(true);
-        localStorage.removeItem(draftKey);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        onComplete({
-            testId: test.id,
-            score,
-            totalPoints: test.totalPoints,
-            percentage: Math.round((score / test.totalPoints) * 100),
-            completedAt: new Date().toISOString(),
+    const handleCheck = () => {
+        const { resultsMap: currentResults } = computeScore(test, answers);
+
+        // Lock correct answers, clear wrong ones
+        const newLocked = new Set(lockedCorrect);
+        const updatedAnswers = { ...answers };
+
+        Object.entries(currentResults).forEach(([key, isCorrect]) => {
+            if (isCorrect) {
+                newLocked.add(key);
+            } else {
+                // Clear wrong answer so user can retry
+                delete updatedAnswers[key];
+            }
         });
+
+        setLockedCorrect(newLocked);
+        setAnswers(updatedAnswers);
+        setShowFeedback(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Check if ALL answers are now correct
+        const allCorrect = Object.values(currentResults).every(v => v);
+        if (allCorrect) {
+            setSubmitted(true);
+            localStorage.removeItem(draftKey);
+            const score = computeScore(test, answers).totalScore;
+            onComplete({
+                testId: test.id,
+                score,
+                totalPoints: test.totalPoints,
+                percentage: Math.round((score / test.totalPoints) * 100),
+                completedAt: new Date().toISOString(),
+            });
+        }
+    };
+
+    const handleTryAgain = () => {
+        // User acknowledged the feedback, go back to editing wrong answers
+        setShowFeedback(false);
     };
 
     const handleRetry = () => {
         setAnswers({});
+        setLockedCorrect(new Set());
+        setShowFeedback(false);
         setSubmitted(false);
         localStorage.removeItem(draftKey);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -191,6 +228,7 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
 
     const percentage = submitted ? Math.round((totalScore / test.totalPoints) * 100) : 0;
     const scoreColor = percentage >= 80 ? 'success' : percentage >= 60 ? 'warning' : 'error';
+    const wrongCount = showFeedback ? Object.values(resultsMap).filter(v => !v).length : 0;
 
     return (
         <Box>
@@ -241,7 +279,22 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             />
 
-            {/* Score summary (shown after submit) */}
+            {/* Feedback banner: wrong answers to fix */}
+            {showFeedback && !submitted && (
+                <Alert
+                    severity="warning"
+                    sx={{ mb: 3 }}
+                    action={
+                        <Button color="inherit" size="small" onClick={handleTryAgain} sx={{ textTransform: 'none', fontWeight: 700 }}>
+                            Fix Answers
+                        </Button>
+                    }
+                >
+                    You have <strong>{wrongCount}</strong> incorrect answer{wrongCount !== 1 ? 's' : ''}. Correct answers are saved — fix the rest and check again!
+                </Alert>
+            )}
+
+            {/* Score summary (shown after all correct) */}
             {submitted && (
                 <Card sx={{ mb: 4, border: `2px solid`, borderColor: `${scoreColor}.main`, bgcolor: 'background.paper' }}>
                     <CardContent sx={{ textAlign: 'center', py: 3 }}>
@@ -282,7 +335,7 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
                             onClick={handleRetry}
                             sx={{ mt: 3 }}
                         >
-                            Try Again
+                            Start Over
                         </Button>
                     </CardContent>
                 </Card>
@@ -291,34 +344,57 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
             {/* Sections */}
             <Stack spacing={4}>
                 {test.sections.map((section, si) =>
-                    renderSection(section, si, answers, setAnswer, submitted, resultsMap)
+                    renderSection(section, si, answers, setAnswer, showFeedback || submitted, resultsMap, lockedCorrect)
                 )}
             </Stack>
 
-            {/* Submit button */}
+            {/* Check / Fix buttons */}
             {!submitted && (
                 <Box sx={{ mt: 4, textAlign: 'center' }}>
-                    <Button
-                        variant="contained"
-                        size="large"
-                        onClick={handleSubmit}
-                        sx={{
-                            px: 6,
-                            py: 1.5,
-                            fontSize: '1.1rem',
-                            fontWeight: 700,
-                            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                        }}
-                    >
-                        Check My Answers
-                    </Button>
+                    {!showFeedback ? (
+                        <Button
+                            variant="contained"
+                            size="large"
+                            onClick={handleCheck}
+                            sx={{
+                                px: 6,
+                                py: 1.5,
+                                fontSize: '1.1rem',
+                                fontWeight: 700,
+                                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                            }}
+                        >
+                            ✅ Check My Answers
+                        </Button>
+                    ) : (
+                        <Stack spacing={2} alignItems="center">
+                            <Button
+                                variant="contained"
+                                size="large"
+                                onClick={handleTryAgain}
+                                sx={{
+                                    px: 6,
+                                    py: 1.5,
+                                    fontSize: '1.1rem',
+                                    fontWeight: 700,
+                                    textTransform: 'none',
+                                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                                    '&:hover': {
+                                        background: 'linear-gradient(135deg, #d97706, #b45309)',
+                                    },
+                                }}
+                            >
+                                🔄 Fix Wrong Answers
+                            </Button>
+                        </Stack>
+                    )}
                 </Box>
             )}
 
             {submitted && (
                 <Box sx={{ mt: 4, textAlign: 'center' }}>
                     <Button variant="outlined" startIcon={<RetryIcon />} onClick={handleRetry} sx={{ mr: 2 }}>
-                        Try Again
+                        Start Over
                     </Button>
                     <Button variant="text" startIcon={<BackIcon />} onClick={onBack}>
                         Back to Tests
@@ -342,8 +418,9 @@ function renderSection(
     si: number,
     answers: Record<string, string>,
     setAnswer: (key: string, value: string) => void,
-    submitted: boolean,
-    resultsMap: Record<string, boolean>
+    showingResults: boolean,
+    resultsMap: Record<string, boolean>,
+    lockedCorrect: Set<string>,
 ) {
     return (
         <Card key={si} sx={{ bgcolor: 'background.paper', border: '1px solid rgba(255,255,255,0.08)' }}>
@@ -360,29 +437,31 @@ function renderSection(
                 <Divider sx={{ mb: 2.5, borderColor: 'rgba(255,255,255,0.08)' }} />
 
                 {section.type === 'multiple_choice' &&
-                    renderMultipleChoice(section, si, answers, setAnswer, submitted, resultsMap)}
+                    renderMultipleChoice(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
                 {section.type === 'fill_from_bank' &&
-                    renderFillFromBank(section, si, answers, setAnswer, submitted, resultsMap)}
+                    renderFillFromBank(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
                 {section.type === 'verb_table' &&
-                    renderVerbTable(section, si, answers, setAnswer, submitted, resultsMap)}
+                    renderVerbTable(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
                 {section.type === 'sentence_completion' &&
-                    renderSentenceCompletion(section, si, answers, setAnswer, submitted, resultsMap)}
+                    renderSentenceCompletion(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
                 {section.type === 'question_formation' &&
-                    renderQuestionFormation(section, si, answers, setAnswer, submitted, resultsMap)}
+                    renderQuestionFormation(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
                 {section.type === 'passage_fill' &&
-                    renderPassageFill(section, si, answers, setAnswer, submitted, resultsMap)}
+                    renderPassageFill(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
             </CardContent>
         </Card>
     );
 }
 
+
 // ── A: Multiple Choice ────────────────────────────────────────────────────
 
-function renderMultipleChoice(section: MultipleChoiceSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, submitted: boolean, resultsMap: Record<string, boolean>) {
+function renderMultipleChoice(section: MultipleChoiceSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>) {
     return (
         <Stack spacing={2}>
             {section.questions.map((q: MCQuestion, qi: number) => {
                 const key = `${si}_${q.id}`;
+                const isLocked = lockedCorrect.has(key);
                 const isCorrect = resultsMap[key];
                 return (
                     <Box
@@ -390,8 +469,8 @@ function renderMultipleChoice(section: MultipleChoiceSection, si: number, answer
                         sx={{
                             p: 2,
                             borderRadius: 2,
-                            bgcolor: answerBg(submitted, isCorrect),
-                            border: answerBorder(submitted, isCorrect),
+                            bgcolor: isLocked ? answerBg(true, true) : answerBg(showingResults, isCorrect),
+                            border: isLocked ? answerBorder(true, true) : answerBorder(showingResults, isCorrect),
                         }}
                     >
                         <Typography variant="body1" sx={{ mb: 1 }}>
@@ -409,22 +488,22 @@ function renderMultipleChoice(section: MultipleChoiceSection, si: number, answer
                                                 minWidth: 100,
                                                 mx: 0.5,
                                                 textAlign: 'center',
-                                                color: submitted
-                                                    ? isCorrect
-                                                        ? 'success.main'
-                                                        : 'error.main'
-                                                    : 'text.primary',
+                                                color: isLocked
+                                                    ? 'success.main'
+                                                    : showingResults
+                                                        ? isCorrect ? 'success.main' : 'error.main'
+                                                        : 'text.primary',
                                                 fontWeight: 600,
                                             }}
                                         >
-                                            {answers[key] || '   '}
+                                            {answers[key] || '   '}
                                         </Box>
                                     )}
                                 </Fragment>
                             ))}
                         </Typography>
 
-                        <FormControl disabled={submitted}>
+                        <FormControl disabled={isLocked}>
                             <RadioGroup
                                 row
                                 value={answers[key] || ''}
@@ -442,15 +521,15 @@ function renderMultipleChoice(section: MultipleChoiceSection, si: number, answer
                             </RadioGroup>
                         </FormControl>
 
-                        {submitted && !isCorrect && (
-                            <Alert severity="error" icon={<WrongIcon />} sx={{ mt: 1, py: 0.5 }}>
-                                Correct answer: <strong>{q.answer}</strong>
-                            </Alert>
-                        )}
-                        {submitted && isCorrect && (
+                        {isLocked && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5, color: 'success.main' }}>
                                 <CheckIcon fontSize="small" /> Correct!
                             </Box>
+                        )}
+                        {showingResults && !isLocked && !isCorrect && (
+                            <Alert severity="warning" icon={<WrongIcon />} sx={{ mt: 1, py: 0.5 }}>
+                                Try again!
+                            </Alert>
                         )}
                     </Box>
                 );
@@ -461,7 +540,7 @@ function renderMultipleChoice(section: MultipleChoiceSection, si: number, answer
 
 // ── B: Fill from Bank ─────────────────────────────────────────────────────
 
-function renderFillFromBank(section: FillFromBankSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, submitted: boolean, resultsMap: Record<string, boolean>) {
+function renderFillFromBank(section: FillFromBankSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>) {
     const usedWords = new Set(Object.entries(answers)
         .filter(([k]) => k.startsWith(`${si}_`))
         .map(([, v]) => (v as string).toLowerCase()));
@@ -497,6 +576,7 @@ function renderFillFromBank(section: FillFromBankSection, si: number, answers: R
             <Stack spacing={2}>
                 {section.sentences.map((s: FillSentence, idx: number) => {
                     const key = `${si}_${s.id}`;
+                    const isLocked = lockedCorrect.has(key);
                     const isCorrect = resultsMap[key];
                     const parts = s.text.split('___');
                     return (
@@ -509,8 +589,8 @@ function renderFillFromBank(section: FillFromBankSection, si: number, answers: R
                                 gap: 0.5,
                                 p: 1.5,
                                 borderRadius: 2,
-                                bgcolor: answerBg(submitted, isCorrect),
-                                border: answerBorder(submitted, isCorrect),
+                                bgcolor: isLocked ? answerBg(true, true) : answerBg(showingResults, isCorrect),
+                                border: isLocked ? answerBorder(true, true) : answerBorder(showingResults, isCorrect),
                             }}
                         >
                             <Typography variant="body1">
@@ -520,7 +600,7 @@ function renderFillFromBank(section: FillFromBankSection, si: number, answers: R
                                 size="small"
                                 value={answers[key] || ''}
                                 onChange={e => setAnswer(key, e.target.value)}
-                                disabled={submitted}
+                                disabled={isLocked}
                                 placeholder="..."
                                 sx={{
                                     width: 120,
@@ -530,14 +610,7 @@ function renderFillFromBank(section: FillFromBankSection, si: number, answers: R
                             {parts[1] && (
                                 <Typography variant="body1">{parts[1]}</Typography>
                             )}
-                            {submitted && !isCorrect && (
-                                <Chip
-                                    label={`✓ ${s.answer}`}
-                                    size="small"
-                                    color="success"
-                                    sx={{ ml: 1 }}
-                                />
-                            )}
+                            {isLocked && <CheckIcon fontSize="small" sx={{ color: 'success.main', ml: 0.5 }} />}
                         </Box>
                     );
                 })}
@@ -548,7 +621,7 @@ function renderFillFromBank(section: FillFromBankSection, si: number, answers: R
 
 // ── C: Verb Table ─────────────────────────────────────────────────────────
 
-function renderVerbTable(section: VerbTableSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, submitted: boolean, resultsMap: Record<string, boolean>) {
+function renderVerbTable(section: VerbTableSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>) {
     const verbs: VerbPair[] = section.verbs;
     const half = Math.ceil(verbs.length / 2);
     const leftVerbs = verbs.slice(0, half);
@@ -570,12 +643,13 @@ function renderVerbTable(section: VerbTableSection, si: number, answers: Record<
                         const rv = rightVerbs[idx];
                         const lKey = `${si}_${lv.id}`;
                         const rKey = rv ? `${si}_${rv.id}` : '';
+                        const lLocked = lockedCorrect.has(lKey);
+                        const rLocked = rv ? lockedCorrect.has(rKey) : false;
                         const lOk = resultsMap[lKey];
                         const rOk = rv ? resultsMap[rKey] : undefined;
 
                         return (
                             <TableRow key={lv.id}>
-                                {/* Left verb */}
                                 <TableCell>
                                     <Typography fontFamily="monospace" fontWeight={600}>{lv.v1}</Typography>
                                 </TableCell>
@@ -583,12 +657,11 @@ function renderVerbTable(section: VerbTableSection, si: number, answers: Record<
                                     <VerbInput
                                         value={answers[lKey] || ''}
                                         onChange={val => setAnswer(lKey, val)}
-                                        submitted={submitted}
+                                        locked={lLocked}
+                                        showingResults={showingResults}
                                         correct={lOk}
-                                        correctAnswer={submitted && !lOk ? lv.v2 : undefined}
                                     />
                                 </TableCell>
-                                {/* Right verb */}
                                 <TableCell>
                                     {rv && <Typography fontFamily="monospace" fontWeight={600}>{rv.v1}</Typography>}
                                 </TableCell>
@@ -597,9 +670,9 @@ function renderVerbTable(section: VerbTableSection, si: number, answers: Record<
                                         <VerbInput
                                             value={answers[rKey] || ''}
                                             onChange={val => setAnswer(rKey, val)}
-                                            submitted={submitted}
+                                            locked={rLocked}
+                                            showingResults={showingResults}
                                             correct={rOk}
-                                            correctAnswer={submitted && !rOk ? rv.v2 : undefined}
                                         />
                                     )}
                                 </TableCell>
@@ -612,12 +685,12 @@ function renderVerbTable(section: VerbTableSection, si: number, answers: Record<
     );
 }
 
-function VerbInput({ value, onChange, submitted, correct, correctAnswer }: {
+function VerbInput({ value, onChange, locked, showingResults, correct }: {
     value: string;
     onChange: (v: string) => void;
-    submitted: boolean;
+    locked: boolean;
+    showingResults: boolean;
     correct: boolean | undefined;
-    correctAnswer?: string;
 }) {
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -625,38 +698,34 @@ function VerbInput({ value, onChange, submitted, correct, correctAnswer }: {
                 size="small"
                 value={value}
                 onChange={e => onChange(e.target.value)}
-                disabled={submitted}
+                disabled={locked}
                 placeholder="past form..."
                 sx={{
                     width: 130,
                     '& .MuiInputBase-root': {
-                        bgcolor: submitted
-                            ? correct
-                                ? 'rgba(34,197,94,0.1)'
-                                : 'rgba(239,68,68,0.1)'
-                            : undefined,
+                        bgcolor: locked
+                            ? 'rgba(34,197,94,0.1)'
+                            : showingResults && correct === false
+                                ? 'rgba(239,68,68,0.1)'
+                                : undefined,
                     },
                     '& .MuiInputBase-input': { py: 0.5, fontFamily: 'monospace' },
                 }}
             />
-            {submitted && correct && <CheckIcon fontSize="small" sx={{ color: 'success.main' }} />}
-            {submitted && !correct && <WrongIcon fontSize="small" sx={{ color: 'error.main' }} />}
-            {correctAnswer && (
-                <Typography variant="caption" color="success.main" fontFamily="monospace">
-                    → {correctAnswer}
-                </Typography>
-            )}
+            {locked && <CheckIcon fontSize="small" sx={{ color: 'success.main' }} />}
+            {showingResults && !locked && correct === false && <WrongIcon fontSize="small" sx={{ color: 'error.main' }} />}
         </Box>
     );
 }
 
 // ── D: Sentence Completion ────────────────────────────────────────────────
 
-function renderSentenceCompletion(section: SentenceCompletionSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, submitted: boolean, resultsMap: Record<string, boolean>) {
+function renderSentenceCompletion(section: SentenceCompletionSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>) {
     return (
         <Stack spacing={2}>
             {section.sentences.map((s: SentenceFill, idx: number) => {
                 const key = `${si}_${s.id}`;
+                const isLocked = lockedCorrect.has(key);
                 const isCorrect = resultsMap[key];
                 const parts = s.text.split('___');
                 return (
@@ -669,8 +738,8 @@ function renderSentenceCompletion(section: SentenceCompletionSection, si: number
                             gap: 0.5,
                             p: 1.5,
                             borderRadius: 2,
-                            bgcolor: answerBg(submitted, isCorrect),
-                            border: answerBorder(submitted, isCorrect),
+                            bgcolor: isLocked ? answerBg(true, true) : answerBg(showingResults, isCorrect),
+                            border: isLocked ? answerBorder(true, true) : answerBorder(showingResults, isCorrect),
                         }}
                     >
                         <Typography variant="body1">
@@ -680,7 +749,7 @@ function renderSentenceCompletion(section: SentenceCompletionSection, si: number
                             size="small"
                             value={answers[key] || ''}
                             onChange={e => setAnswer(key, e.target.value)}
-                            disabled={submitted}
+                            disabled={isLocked}
                             placeholder="verb..."
                             sx={{
                                 width: 150,
@@ -688,9 +757,7 @@ function renderSentenceCompletion(section: SentenceCompletionSection, si: number
                             }}
                         />
                         {parts[1] && <Typography variant="body1">{parts[1]}</Typography>}
-                        {submitted && !isCorrect && (
-                            <Chip label={`✓ ${s.answer}`} size="small" color="success" sx={{ ml: 1 }} />
-                        )}
+                        {isLocked && <CheckIcon fontSize="small" sx={{ color: 'success.main', ml: 0.5 }} />}
                     </Box>
                 );
             })}
@@ -700,11 +767,12 @@ function renderSentenceCompletion(section: SentenceCompletionSection, si: number
 
 // ── E: Question Formation ─────────────────────────────────────────────────
 
-function renderQuestionFormation(section: QuestionFormationSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, submitted: boolean, resultsMap: Record<string, boolean>) {
+function renderQuestionFormation(section: QuestionFormationSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>) {
     return (
         <Stack spacing={2.5}>
             {section.items.map((item: QuestionFormItem, idx: number) => {
                 const key = `${si}_${item.id}`;
+                const isLocked = lockedCorrect.has(key);
                 const isCorrect = resultsMap[key];
                 return (
                     <Box key={item.id}>
@@ -722,7 +790,7 @@ function renderQuestionFormation(section: QuestionFormationSection, si: number, 
                                 Answer given:
                             </Typography>
                             <Typography variant="body2" fontStyle="italic">
-                                "{item.givenAnswer}"
+                                {'"'}{item.givenAnswer}{'"'}
                             </Typography>
                         </Box>
                         <TextField
@@ -731,28 +799,25 @@ function renderQuestionFormation(section: QuestionFormationSection, si: number, 
                             label={`${idx + 1}. Your question`}
                             value={answers[key] || ''}
                             onChange={e => setAnswer(key, e.target.value)}
-                            disabled={submitted}
+                            disabled={isLocked}
                             placeholder="Write your question here..."
                             sx={{
                                 '& .MuiOutlinedInput-root': {
-                                    bgcolor: answerBg(submitted, isCorrect),
+                                    bgcolor: isLocked ? answerBg(true, true) : answerBg(showingResults, isCorrect),
                                 },
                             }}
                         />
-                        {submitted && (
-                            <Box sx={{ mt: 0.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                {isCorrect ? (
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'success.main' }}>
-                                        <CheckIcon fontSize="small" />
-                                        <Typography variant="caption">Correct!</Typography>
-                                    </Box>
-                                ) : (
-                                    <Typography variant="caption" color="error.main">
-                                        <WrongIcon fontSize="inherit" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-                                        Expected: <strong>{item.correctQuestion}</strong>
-                                    </Typography>
-                                )}
+                        {isLocked && (
+                            <Box sx={{ mt: 0.5, display: 'flex', alignItems: 'center', gap: 0.5, color: 'success.main' }}>
+                                <CheckIcon fontSize="small" />
+                                <Typography variant="caption">Correct!</Typography>
                             </Box>
+                        )}
+                        {showingResults && !isLocked && !isCorrect && (
+                            <Typography variant="caption" color="error.main" sx={{ mt: 0.5, display: 'block' }}>
+                                <WrongIcon fontSize="inherit" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
+                                Try again!
+                            </Typography>
                         )}
                     </Box>
                 );
@@ -763,7 +828,7 @@ function renderQuestionFormation(section: QuestionFormationSection, si: number, 
 
 // ── F: Passage Fill ───────────────────────────────────────────────────────
 
-function renderPassageFill(section: PassageFillSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, submitted: boolean, resultsMap: Record<string, boolean>) {
+function renderPassageFill(section: PassageFillSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>) {
     return (
         <Box>
             {/* Passage */}
@@ -784,6 +849,7 @@ function renderPassageFill(section: PassageFillSection, si: number, answers: Rec
                             return <Fragment key={idx}>{seg.content}</Fragment>;
                         }
                         const key = `${si}_${seg.id}`;
+                        const isLocked = lockedCorrect.has(key);
                         const isCorrect = resultsMap[key];
                         return (
                             <Fragment key={idx}>
@@ -795,15 +861,15 @@ function renderPassageFill(section: PassageFillSection, si: number, answers: Rec
                                         size="small"
                                         value={answers[key] || ''}
                                         onChange={e => setAnswer(key, e.target.value)}
-                                        disabled={submitted}
+                                        disabled={isLocked}
                                         sx={{
                                             width: 100,
                                             '& .MuiInputBase-root': {
-                                                bgcolor: submitted
-                                                    ? isCorrect
-                                                        ? 'rgba(34,197,94,0.15)'
-                                                        : 'rgba(239,68,68,0.15)'
-                                                    : undefined,
+                                                bgcolor: isLocked
+                                                    ? 'rgba(34,197,94,0.15)'
+                                                    : showingResults && !isCorrect
+                                                        ? 'rgba(239,68,68,0.15)'
+                                                        : undefined,
                                                 fontSize: '0.85rem',
                                             },
                                             '& .MuiInputBase-input': { py: 0.3, px: 1, textAlign: 'center', fontFamily: 'monospace' },
@@ -812,10 +878,8 @@ function renderPassageFill(section: PassageFillSection, si: number, answers: Rec
                                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem' }}>
                                         ({seg.hint})
                                     </Typography>
-                                    {submitted && !isCorrect && (
-                                        <Typography variant="caption" color="success.main" fontFamily="monospace" sx={{ fontSize: '0.65rem' }}>
-                                            ✓ {seg.answer}
-                                        </Typography>
+                                    {isLocked && (
+                                        <CheckIcon sx={{ fontSize: 14, color: 'success.main' }} />
                                     )}
                                 </Box>
                             </Fragment>
@@ -831,6 +895,7 @@ function renderPassageFill(section: PassageFillSection, si: number, answers: Rec
             <Stack spacing={2}>
                 {section.questions.map((q: PassageQuestion, idx: number) => {
                     const key = `${si}_${q.id}`;
+                    const isLocked = lockedCorrect.has(key);
                     const isCorrect = resultsMap[key];
                     return (
                         <Box key={q.id}>
@@ -842,17 +907,22 @@ function renderPassageFill(section: PassageFillSection, si: number, answers: Rec
                                 size="small"
                                 value={answers[key] || ''}
                                 onChange={e => setAnswer(key, e.target.value)}
-                                disabled={submitted}
+                                disabled={isLocked}
                                 placeholder="Write your answer here..."
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
-                                        bgcolor: answerBg(submitted, isCorrect),
+                                        bgcolor: isLocked ? answerBg(true, true) : answerBg(showingResults, isCorrect),
                                     },
                                 }}
                             />
-                            {submitted && (
-                                <Typography variant="caption" color={isCorrect ? 'success.main' : 'error.main'} sx={{ mt: 0.5, display: 'block' }}>
-                                    {isCorrect ? '✓ Correct!' : `Expected: ${q.answer}`}
+                            {isLocked && (
+                                <Typography variant="caption" color="success.main" sx={{ mt: 0.5, display: 'block' }}>
+                                    ✓ Correct!
+                                </Typography>
+                            )}
+                            {showingResults && !isLocked && !isCorrect && (
+                                <Typography variant="caption" color="error.main" sx={{ mt: 0.5, display: 'block' }}>
+                                    Try again!
                                 </Typography>
                             )}
                         </Box>
