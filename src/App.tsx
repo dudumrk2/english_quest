@@ -5,7 +5,6 @@ import { theme } from './theme';
 import { Layout } from './components/Layout';
 import { HomeScreen } from './components/HomeScreen';
 import { Dashboard } from './components/Dashboard';
-import { GrammarHub } from './components/GrammarHub';
 import { TaskReading } from './components/TaskReading';
 import { TaskGrammar } from './components/TaskGrammar';
 import { TaskPronunciation } from './components/TaskPronunciation';
@@ -110,11 +109,15 @@ function AppContent() {
         }
 
         if (view === 'grammar-hub') {
+            // Skip GrammarHub intermediate page — go directly to day list
             return (
-                <GrammarHub
+                <GrammarPracticeDashboard
                     completedGrammarDays={state.completedGrammarDays || []}
                     onBack={() => setView('home')}
-                    onNavigateToGrammarPractice={() => setView('grammar-practice')}
+                    onStartDay={(day) => {
+                        setActiveGrammarDay(day);
+                        setView('grammar-practice-lesson');
+                    }}
                 />
             );
         }

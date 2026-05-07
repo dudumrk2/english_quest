@@ -45,7 +45,7 @@ export function GrammarPracticeLesson({
 }: GrammarPracticeLessonProps) {
     const [phase, setPhase] = useState<'intro' | 'practice'>('intro');
     const [answers, setAnswers] = useState<Record<string, string>>(initialAnswers);
-    const [checked, setChecked] = useState<Record<string, boolean>>({});
+    const [showFeedback, setShowFeedback] = useState(false);
     const [attempts, setAttempts] = useState<Record<string, number>>({});
     const [lastChecked, setLastChecked] = useState<Record<string, string>>({});
 
@@ -67,20 +67,6 @@ export function GrammarPracticeLesson({
         setAnswers(prev => ({ ...prev, [id]: value }));
     };
 
-    const checkExercise = (ex: GrammarExercise, overrideAnswer?: string) => {
-        const userAnswer = (overrideAnswer ?? answers[ex.id])?.trim() || '';
-        const lastVal = lastChecked[ex.id]?.trim() || '';
-
-        const correct = isExerciseCorrect(ex, userAnswer);
-
-        if (!correct && userAnswer && userAnswer !== lastVal) {
-            setAttempts(prev => ({ ...prev, [ex.id]: (prev[ex.id] || 0) + 1 }));
-        }
-
-        setLastChecked(prev => ({ ...prev, [ex.id]: userAnswer }));
-        setChecked(prev => ({ ...prev, [ex.id]: true }));
-    };
-
     const isExerciseCorrect = (ex: GrammarExercise, userAnswer: string): boolean => {
         if (!userAnswer) return false;
         const correct = isAnswerCorrect(userAnswer, ex.answer);
@@ -94,18 +80,48 @@ export function GrammarPracticeLesson({
         return false;
     };
 
-    const correctCount = day.exercises.filter(ex => {
-        const userAnswer = answers[ex.id]?.trim() || '';
-        return isExerciseCorrect(ex, userAnswer);
-    }).length;
+    const handleCheckAll = () => {
+        setShowFeedback(true);
+
+        // Track attempts for incorrect answers
+        const newAttempts = { ...attempts };
+        const newLastChecked = { ...lastChecked };
+
+        day.exercises.forEach(ex => {
+            const currentVal = answers[ex.id]?.trim() || '';
+            const lastVal = lastChecked[ex.id]?.trim() || '';
+            const correct = isExerciseCorrect(ex, currentVal);
+
+            if (!correct && currentVal !== '' && currentVal !== lastVal) {
+                newAttempts[ex.id] = (newAttempts[ex.id] || 0) + 1;
+            }
+            newLastChecked[ex.id] = currentVal;
+        });
+
+        setAttempts(newAttempts);
+        setLastChecked(newLastChecked);
+
+        const allCorrect = day.exercises.every(ex =>
+            isExerciseCorrect(ex, answers[ex.id]?.trim() || '')
+        );
+
+        if (allCorrect) {
+            triggerCelebration();
+            setTimeout(() => onComplete(day.id, answers), 1500);
+        }
+    };
+
+    const handleTryAgain = () => {
+        setShowFeedback(false);
+    };
+
+    const correctCount = day.exercises.filter(ex =>
+        isExerciseCorrect(ex, answers[ex.id]?.trim() || '')
+    ).length;
 
     const allAnswered = day.exercises.every(ex => (answers[ex.id] || '').trim() !== '');
+    const allCorrect = correctCount === day.exercises.length;
     const progressPercent = Math.round((correctCount / day.exercises.length) * 100);
-
-    const handleComplete = () => {
-        triggerCelebration();
-        setTimeout(() => onComplete(day.id, answers), 800);
-    };
 
     return (
         <Box sx={{ maxWidth: 900, mx: 'auto', p: { xs: 1, md: 3 } }}>
@@ -293,7 +309,7 @@ export function GrammarPracticeLesson({
                             </Typography>
                         </Stack>
                         <Typography variant="body2" color="text.secondary" mb={2}>
-                            Complete all {day.exercises.length} exercises, then click "Check" for instant feedback.
+                            Fill in all {day.exercises.length} exercises, then click "Check Answers" at the bottom.
                         </Typography>
                         <Divider sx={{ mb: 4 }} />
 
@@ -304,19 +320,79 @@ export function GrammarPracticeLesson({
                                     exercise={ex}
                                     index={idx}
                                     answer={answers[ex.id] || ''}
-                                    isChecked={!!checked[ex.id]}
+                                    showFeedback={showFeedback}
                                     attemptCount={attempts[ex.id] || 0}
                                     onChange={handleChange}
-                                    onCheck={(overrideAnswer?: string) => checkExercise(ex, overrideAnswer)}
-                                    isCorrect={checked[ex.id] ? isExerciseCorrect(ex, answers[ex.id]?.trim() || '') : null}
+                                    isCorrect={showFeedback ? isExerciseCorrect(ex, answers[ex.id]?.trim() || '') : null}
                                 />
                             ))}
                         </Stack>
+
+                        {/* Single Check / Try Again button at the bottom */}
+                        <Box sx={{ mt: 5, textAlign: 'center' }}>
+                            {!showFeedback ? (
+                                <Button
+                                    variant="contained"
+                                    size="large"
+                                    onClick={handleCheckAll}
+                                    disabled={!allAnswered}
+                                    sx={{
+                                        px: 6,
+                                        py: 1.5,
+                                        fontWeight: 700,
+                                        fontSize: '1.1rem',
+                                        textTransform: 'none',
+                                        background: 'linear-gradient(135deg, #10b981, #059669)',
+                                        borderRadius: 3,
+                                        boxShadow: '0 4px 20px rgba(16,185,129,0.35)',
+                                        '&:hover': {
+                                            background: 'linear-gradient(135deg, #059669, #047857)',
+                                            transform: 'translateY(-2px)',
+                                            boxShadow: '0 6px 25px rgba(16,185,129,0.45)',
+                                        },
+                                        '&.Mui-disabled': {
+                                            background: 'rgba(255,255,255,0.1)',
+                                        },
+                                        transition: 'all 0.3s ease',
+                                    }}
+                                >
+                                    ✅ Check Answers
+                                </Button>
+                            ) : !allCorrect ? (
+                                <Stack spacing={2} alignItems="center">
+                                    <Typography variant="body1" color="text.secondary">
+                                        You got {correctCount} out of {day.exercises.length} correct. Fix the errors above and try again!
+                                    </Typography>
+                                    <Button
+                                        variant="contained"
+                                        size="large"
+                                        onClick={handleTryAgain}
+                                        sx={{
+                                            px: 6,
+                                            py: 1.5,
+                                            fontWeight: 700,
+                                            fontSize: '1.1rem',
+                                            textTransform: 'none',
+                                            background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                                            borderRadius: 3,
+                                            boxShadow: '0 4px 20px rgba(245,158,11,0.35)',
+                                            '&:hover': {
+                                                background: 'linear-gradient(135deg, #d97706, #b45309)',
+                                                transform: 'translateY(-2px)',
+                                            },
+                                            transition: 'all 0.3s ease',
+                                        }}
+                                    >
+                                        🔄 Try Again
+                                    </Button>
+                                </Stack>
+                            ) : null}
+                        </Box>
                     </CardContent>
                 </Card>
 
                 {/* Complete Day button */}
-                {allAnswered && (
+                {showFeedback && allCorrect && (
                     <Card
                         sx={{
                             p: 3,
@@ -328,7 +404,7 @@ export function GrammarPracticeLesson({
                         <Stack spacing={1.5} alignItems="center">
                             <TrophyIcon sx={{ fontSize: 40, color: '#34d399' }} />
                             <Typography variant="h6" fontWeight={700}>
-                                All exercises answered!
+                                All exercises correct!
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 You got {correctCount} out of {day.exercises.length} correct ({progressPercent}%)
@@ -336,7 +412,10 @@ export function GrammarPracticeLesson({
                             <Button
                                 variant="contained"
                                 size="large"
-                                onClick={handleComplete}
+                                onClick={() => {
+                                    triggerCelebration();
+                                    setTimeout(() => onComplete(day.id, answers), 800);
+                                }}
                                 sx={{
                                     mt: 1,
                                     px: 6,
@@ -371,22 +450,20 @@ interface ExerciseItemProps {
     exercise: GrammarExercise;
     index: number;
     answer: string;
-    isChecked: boolean;
+    showFeedback: boolean;
     attemptCount: number;
     isCorrect: boolean | null;
     onChange: (id: string, value: string) => void;
-    onCheck: (overrideAnswer?: string) => void;
 }
 
 function ExerciseItem({
     exercise,
     index,
     answer,
-    isChecked,
+    showFeedback,
     attemptCount,
     isCorrect,
     onChange,
-    onCheck,
 }: ExerciseItemProps) {
     if (exercise.type === 'multiple_choice') {
         const mcEx = exercise as MultipleChoiceExercise;
@@ -394,11 +471,10 @@ function ExerciseItem({
             exercise={mcEx}
             index={index}
             answer={answer}
-            isChecked={isChecked}
+            showFeedback={showFeedback}
             attemptCount={attemptCount}
             isCorrect={isCorrect}
             onChange={onChange}
-            onCheck={onCheck}
         />;
     }
 
@@ -407,11 +483,10 @@ function ExerciseItem({
         exercise={fiEx}
         index={index}
         answer={answer}
-        isChecked={isChecked}
+        showFeedback={showFeedback}
         attemptCount={attemptCount}
         isCorrect={isCorrect}
         onChange={onChange}
-        onCheck={onCheck}
     />;
 }
 
@@ -421,16 +496,15 @@ interface FillInItemProps {
     exercise: FillInExercise;
     index: number;
     answer: string;
-    isChecked: boolean;
+    showFeedback: boolean;
     attemptCount: number;
     isCorrect: boolean | null;
     onChange: (id: string, value: string) => void;
-    onCheck: (overrideAnswer?: string) => void;
 }
 
-function FillInItem({ exercise, index, answer, isChecked, attemptCount, isCorrect, onChange, onCheck }: FillInItemProps) {
+function FillInItem({ exercise, index, answer, showFeedback, attemptCount, isCorrect, onChange }: FillInItemProps) {
     const parts = exercise.sentence.split(/_{3,}/);
-    const showError = isChecked && isCorrect === false;
+    const showError = showFeedback && isCorrect === false;
 
     return (
         <Box>
@@ -454,7 +528,6 @@ function FillInItem({ exercise, index, answer, isChecked, attemptCount, isCorrec
                                     placeholder={`${exercise.answer[0]}...`}
                                     value={answer}
                                     onChange={e => onChange(exercise.id, e.target.value)}
-                                    onKeyDown={e => { if (e.key === 'Enter') onCheck(); }}
                                     sx={{
                                         width: 160,
                                         mx: 1,
@@ -462,7 +535,7 @@ function FillInItem({ exercise, index, answer, isChecked, attemptCount, isCorrec
                                             textAlign: 'center',
                                             fontWeight: 'bold',
                                             fontSize: '1.1rem',
-                                            color: isChecked
+                                            color: showFeedback
                                                 ? isCorrect
                                                     ? 'success.main'
                                                     : 'error.main'
@@ -479,7 +552,7 @@ function FillInItem({ exercise, index, answer, isChecked, attemptCount, isCorrec
                                         },
                                     }}
                                     InputProps={{
-                                        endAdornment: isChecked && (
+                                        endAdornment: showFeedback && (
                                             <Box sx={{ ml: 1 }}>
                                                 {isCorrect
                                                     ? <CheckIcon color="success" fontSize="small" />
@@ -495,28 +568,11 @@ function FillInItem({ exercise, index, answer, isChecked, attemptCount, isCorrec
                 })}
             </Typography>
 
-            <Stack direction="row" spacing={2} alignItems="center" mt={1} ml={{ xs: 2, md: 4 }}>
-                {!isChecked && answer.trim() && (
-                    <Button
-                        size="small"
-                        variant="outlined"
-                        onClick={() => onCheck()}
-                        sx={{
-                            textTransform: 'none',
-                            borderColor: 'rgba(16,185,129,0.4)',
-                            color: '#34d399',
-                            '&:hover': { borderColor: '#10b981', bgcolor: 'rgba(16,185,129,0.08)' },
-                        }}
-                    >
-                        Check
-                    </Button>
-                )}
-                {isChecked && isCorrect && (
-                    <Typography variant="body2" color="success.main" fontWeight={700}>
-                        Correct!
-                    </Typography>
-                )}
-            </Stack>
+            {showFeedback && isCorrect && (
+                <Typography variant="body2" color="success.main" fontWeight={700} sx={{ mt: 0.5, ml: { xs: 2, md: 4 } }}>
+                    Correct!
+                </Typography>
+            )}
 
             {showError && answer.trim() && (
                 <Alert
@@ -545,14 +601,13 @@ interface MultipleChoiceItemProps {
     exercise: MultipleChoiceExercise;
     index: number;
     answer: string;
-    isChecked: boolean;
+    showFeedback: boolean;
     attemptCount: number;
     isCorrect: boolean | null;
     onChange: (id: string, value: string) => void;
-    onCheck: (overrideAnswer?: string) => void;
 }
 
-function MultipleChoiceItem({ exercise, index, answer, isChecked, attemptCount, isCorrect, onChange, onCheck }: MultipleChoiceItemProps) {
+function MultipleChoiceItem({ exercise, index, answer, showFeedback, attemptCount, isCorrect, onChange }: MultipleChoiceItemProps) {
     const parts = exercise.sentence.split(/_{3,}/);
 
     return (
@@ -577,7 +632,7 @@ function MultipleChoiceItem({ exercise, index, answer, isChecked, attemptCount, 
                                     borderBottom: '2px solid #94a3b8',
                                     mx: 0.5,
                                     color: answer
-                                        ? isChecked
+                                        ? showFeedback
                                             ? isCorrect ? 'success.main' : 'error.main'
                                             : 'primary.main'
                                         : 'transparent',
@@ -585,7 +640,7 @@ function MultipleChoiceItem({ exercise, index, answer, isChecked, attemptCount, 
                                     textAlign: 'center',
                                 }}
                             >
-                                {answer || '      '}
+                                {answer || '      '}
                             </Box>
                         )}
                     </React.Fragment>
@@ -598,7 +653,7 @@ function MultipleChoiceItem({ exercise, index, answer, isChecked, attemptCount, 
                     let color: 'primary' | 'success' | 'error' = 'primary';
                     let variant: 'contained' | 'outlined' = isSelected ? 'contained' : 'outlined';
 
-                    if (isChecked) {
+                    if (showFeedback) {
                         if (option === exercise.answer) {
                             if (isSelected || attemptCount >= 2) {
                                 color = 'success';
@@ -615,11 +670,8 @@ function MultipleChoiceItem({ exercise, index, answer, isChecked, attemptCount, 
                             key={option}
                             variant={variant}
                             color={color}
-                            onClick={() => {
-                                onChange(exercise.id, option);
-                                // Pass the selected option directly so check sees the new value
-                                onCheck(option);
-                            }}
+                            onClick={() => onChange(exercise.id, option)}
+                            disabled={showFeedback && isCorrect === true}
                             sx={{
                                 minWidth: 100,
                                 textTransform: 'none',
@@ -633,18 +685,18 @@ function MultipleChoiceItem({ exercise, index, answer, isChecked, attemptCount, 
                 })}
             </Stack>
 
-            {isChecked && isCorrect === false && (
+            {showFeedback && isCorrect === false && (
                 <Alert severity="info" sx={{ mt: 2, ml: { xs: 3, md: 5 }, maxWidth: 440 }} variant="outlined">
                     {attemptCount >= 2 ? (
                         <span>
                             👀 The correct answer is: <strong>{exercise.answer}</strong>
                         </span>
                     ) : (
-                        <span>❌ Try again!</span>
+                        <span>❌ Not quite — try a different option!</span>
                     )}
                 </Alert>
             )}
-            {isChecked && isCorrect && (
+            {showFeedback && isCorrect && (
                 <Typography variant="body2" color="success.main" fontWeight={700} sx={{ mt: 1, ml: { xs: 3, md: 5 } }}>
                     Correct!
                 </Typography>
