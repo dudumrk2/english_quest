@@ -6,7 +6,6 @@ import { Layout } from './components/Layout';
 import { HomeScreen } from './components/HomeScreen';
 import { Dashboard } from './components/Dashboard';
 import { GrammarHub } from './components/GrammarHub';
-import { GrammarWeek13 } from './components/GrammarWeek13';
 import { TaskReading } from './components/TaskReading';
 import { TaskGrammar } from './components/TaskGrammar';
 import { TaskPronunciation } from './components/TaskPronunciation';
@@ -25,7 +24,7 @@ import type { GrammarDay } from './types/grammar-practice';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
-type ViewType = 'home' | 'dashboard' | 'lesson' | 'summary' | 'tests' | 'grammar-practice' | 'grammar-practice-lesson' | 'grammar-hub' | 'grammar-week13';
+type ViewType = 'home' | 'dashboard' | 'lesson' | 'summary' | 'tests' | 'grammar-practice' | 'grammar-practice-lesson' | 'grammar-hub';
 
 function AppContent() {
     const { user, isAuthenticated, logout } = useAuth();
@@ -52,6 +51,7 @@ function AppContent() {
                 return;
             }
 
+            // Check if this is the last lesson of the week
             const weekLessons = lessons.filter(l => l.week === activeLesson.week);
             const lastLesson = weekLessons.reduce((prev, current) => (prev.day > current.day) ? prev : current);
 
@@ -113,20 +113,8 @@ function AppContent() {
             return (
                 <GrammarHub
                     completedGrammarDays={state.completedGrammarDays || []}
-                    completedLessons={state.completedLessons}
                     onBack={() => setView('home')}
                     onNavigateToGrammarPractice={() => setView('grammar-practice')}
-                    onNavigateToWeek13={() => setView('grammar-week13')}
-                />
-            );
-        }
-
-        if (view === 'grammar-week13') {
-            return (
-                <GrammarWeek13
-                    completedLessons={state.completedLessons}
-                    onBack={() => setView('grammar-hub')}
-                    onStartLesson={handleStartLesson}
                 />
             );
         }
@@ -191,11 +179,7 @@ function AppContent() {
     };
 
     const handleBackToDashboard = () => {
-        if (activeLesson?.week === 13) {
-            setView('grammar-week13');
-        } else {
-            setView('dashboard');
-        }
+        setView('dashboard');
         setActiveLesson(null);
     };
 

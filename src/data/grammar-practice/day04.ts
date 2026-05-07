@@ -70,5 +70,37 @@ export const day04: GrammarDay = {
       options: ['do', 'are', 'is', 'does'],
       answer: 'is',
     },
+    {
+      id: 'd04-e09',
+      type: 'fill_in',
+      sentence: '___ your parents watching the news right now? (Is/Are)',
+      answer: 'Are',
+    },
+    {
+      id: 'd04-e10',
+      type: 'multiple_choice',
+      sentence: 'What ___ the dog doing in the garden?',
+      options: ['do', 'does', 'is', 'are'],
+      answer: 'is',
+    },
+    {
+      id: 'd04-e11',
+      type: 'fill_in',
+      sentence: 'Why ___ they running so fast? (is/are)',
+      answer: 'are',
+    },
+    {
+      id: 'd04-e12',
+      type: 'multiple_choice',
+      sentence: '___ the coach explaining the new strategy to the team?',
+      options: ['Do', 'Does', 'Is', 'Are'],
+      answer: 'Is',
+    },
+    {
+      id: 'd04-e13',
+      type: 'fill_in',
+      sentence: 'Where ___ she going with that big bag? (is/are)',
+      answer: 'is',
+    },
   ],
 };

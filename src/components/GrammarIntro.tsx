@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import {
     Box,
     Typography,
@@ -6,10 +6,14 @@ import {
     Stack,
     Chip,
     Fade,
+    Tooltip,
+    IconButton,
 } from '@mui/material';
 import {
     ArrowBack as BackIcon,
     ArrowForward as NextIcon,
+    VolumeUp as VolumeIcon,
+    VolumeOff as MuteIcon,
 } from '@mui/icons-material';
 import type { GrammarDay } from '../types/grammar-practice';
 
@@ -412,6 +416,94 @@ function Step4Examples({ day }: { day: GrammarDay }) {
     );
 }
 
+// ─── TTS helpers ─────────────────────────────────────────────────────────────
+
+/** Build a clean, speakable string for each intro step */
+function buildStepText(step: number, day: GrammarDay): string {
+    switch (step) {
+        case 0:
+            return [
+                `Day ${day.id} of 14.`,
+                `${day.tense}.`,
+                `${day.focus}.`,
+                day.explanation.usage,
+            ].join(' ');
+
+        case 1: {
+            // Make the formula readable by replacing symbols
+            const readable = day.explanation.formula
+                .replace(/\|/g, ' — or in the negative — ')
+                .replace(/→/g, ' becomes ')
+                .replace(/\+/g, ' plus ')
+                .replace(/\n/g, '. ');
+            return `The formula. ${readable}. When to use it: ${day.explanation.usage}`;
+        }
+
+        case 2:
+            if (day.explanation.signalWords.length === 0) {
+                return 'This tense has no specific signal words. Use context clues instead.';
+            }
+            return `Signal words. ${day.explanation.signalWords.join('. ')}.`;
+
+        case 3: {
+            const { positive, negative, yesNo, wh } = day.explanation.examples;
+            return [
+                'Examples.',
+                `Positive: ${positive}.`,
+                `Negative: ${negative}.`,
+                `Yes or no question: ${yesNo}.`,
+                `W H question: ${wh}.`,
+            ].join(' ');
+        }
+
+        default:
+            return '';
+    }
+}
+
+/** React hook: auto-speak when step changes, respects muted state */
+function useStepSpeech(step: number, day: GrammarDay, muted: boolean) {
+    const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+    const [speaking, setSpeaking] = useState(false);
+
+    const cancel = useCallback(() => {
+        window.speechSynthesis.cancel();
+        setSpeaking(false);
+    }, []);
+
+    useEffect(() => {
+        if (muted) { cancel(); return; }
+
+        // Small delay so the slide-in animation starts first
+        const timer = setTimeout(() => {
+            window.speechSynthesis.cancel();
+
+            const text = buildStepText(step, day);
+            if (!text) return;
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.88;
+            utterance.pitch = 1;
+
+            utterance.onstart = () => setSpeaking(true);
+            utterance.onend = () => setSpeaking(false);
+            utterance.onerror = () => setSpeaking(false);
+
+            utteranceRef.current = utterance;
+            window.speechSynthesis.speak(utterance);
+        }, 400);
+
+        return () => {
+            clearTimeout(timer);
+            window.speechSynthesis.cancel();
+            setSpeaking(false);
+        };
+    }, [step, day, muted, cancel]);
+
+    return { speaking, cancel };
+}
+
 // ─── Progress Dots ────────────────────────────────────────────────────────────
 
 function ProgressDots({ step, total }: { step: number; total: number }) {
@@ -439,8 +531,12 @@ const TOTAL_STEPS = 4;
 
 export function GrammarIntro({ day, onComplete, onBack }: GrammarIntroProps) {
     const [step, setStep] = useState(0);
+    const [muted, setMuted] = useState(false);
+
+    const { speaking, cancel } = useStepSpeech(step, day, muted);
 
     const goNext = () => {
+        cancel();
         if (step < TOTAL_STEPS - 1) {
             setStep(s => s + 1);
         } else {
@@ -449,6 +545,7 @@ export function GrammarIntro({ day, onComplete, onBack }: GrammarIntroProps) {
     };
 
     const goPrev = () => {
+        cancel();
         if (step > 0) setStep(s => s - 1);
     };
 
@@ -472,7 +569,7 @@ export function GrammarIntro({ day, onComplete, onBack }: GrammarIntroProps) {
                 ...bounceIn,
             }}
         >
-            {/* Top bar: back button + progress dots */}
+            {/* Top bar: back button + progress dots + mute */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
                 <Button
                     startIcon={<BackIcon />}
@@ -482,7 +579,31 @@ export function GrammarIntro({ day, onComplete, onBack }: GrammarIntroProps) {
                     Back
                 </Button>
                 <ProgressDots step={step} total={TOTAL_STEPS} />
-                <Box sx={{ width: 80 }} /> {/* spacer to center dots */}
+                <Stack direction="row" alignItems="center" spacing={0.5}>
+                    {/* Speaking pulse indicator */}
+                    {speaking && !muted && (
+                        <Box
+                            sx={{
+                                width: 8, height: 8, borderRadius: '50%',
+                                bgcolor: '#10b981',
+                                '@keyframes pulse': {
+                                    '0%, 100%': { transform: 'scale(1)', opacity: 1 },
+                                    '50%': { transform: 'scale(1.6)', opacity: 0.5 },
+                                },
+                                animation: 'pulse 1.2s ease-in-out infinite',
+                            }}
+                        />
+                    )}
+                    <Tooltip title={muted ? 'Turn on audio' : 'Mute audio'}>
+                        <IconButton
+                            onClick={() => setMuted(m => !m)}
+                            size="small"
+                            sx={{ color: muted ? 'text.disabled' : '#10b981' }}
+                        >
+                            {muted ? <MuteIcon fontSize="small" /> : <VolumeIcon fontSize="small" />}
+                        </IconButton>
+                    </Tooltip>
+                </Stack>
             </Stack>
 
             {/* Step label */}

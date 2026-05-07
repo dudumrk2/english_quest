@@ -70,5 +70,37 @@ export const day01: GrammarDay = {
       options: ["don't", "doesn't", "isn't", "aren't"],
       answer: "doesn't",
     },
+    {
+      id: 'd01-e09',
+      type: 'fill_in',
+      sentence: 'Our cat ___ (sleep) on the sofa every afternoon.',
+      answer: 'sleeps',
+    },
+    {
+      id: 'd01-e10',
+      type: 'multiple_choice',
+      sentence: 'I ___ tea in the morning. I prefer coffee.',
+      options: ["don't drink", "doesn't drink", "am not drinking", "isn't drinking"],
+      answer: "don't drink",
+    },
+    {
+      id: 'd01-e11',
+      type: 'fill_in',
+      sentence: 'The school library ___ (close) at five o\'clock every day.',
+      answer: 'closes',
+    },
+    {
+      id: 'd01-e12',
+      type: 'multiple_choice',
+      sentence: 'My best friend ___ live near me, so we travel to school together.',
+      options: ['lives', "doesn't live", "don't live", 'living'],
+      answer: 'lives',
+    },
+    {
+      id: 'd01-e13',
+      type: 'fill_in',
+      sentence: 'They ___ (not / speak) English at home — they speak Hebrew.',
+      answer: "don't speak",
+    },
   ],
 };

@@ -85,5 +85,24 @@ export const day13: GrammarDay = {
       options: ['did', 'does', 'will', 'is'],
       answer: 'does',
     },
+    {
+      id: 'd13-e11',
+      type: 'fill_in',
+      sentence: '___ your family visit relatives next summer? (Will/Does)',
+      answer: 'Will',
+    },
+    {
+      id: 'd13-e12',
+      type: 'multiple_choice',
+      sentence: '___ she eating lunch when you called her?',
+      options: ['Did', 'Does', 'Was', 'Will'],
+      answer: 'Was',
+    },
+    {
+      id: 'd13-e13',
+      type: 'fill_in',
+      sentence: 'How often ___ your PE teacher give you homework? (does/did)',
+      answer: 'does',
+    },
   ],
 };
