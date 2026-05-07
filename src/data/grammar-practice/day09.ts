@@ -17,6 +17,11 @@ export const day09: GrammarDay = {
       yesNo: 'Will they visit us next summer?',
       wh: 'What will you do after the exam?',
     },
+    narration: {
+      formula: 'The Future Simple uses will for all subjects — no changes needed. For positive sentences, just say the subject, then will, then the base verb. For negative, use won\'t, which is the short form of will not, followed by the base verb.',
+      signalWords: 'Future time words include tomorrow, next week, next year, soon, and in the future. You\'ll also see phrases like I think and I believe, which often introduce predictions.',
+      examples: 'Here are some examples. Positive: I will help you with your homework tonight. Negative: She won\'t be late for school tomorrow. Yes-no question: Will they visit us next summer? WH question: What will you do after the exam?',
+    },
   },
   exercises: [
     {

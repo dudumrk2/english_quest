@@ -1,15 +1,14 @@
 import React from 'react';
 import { Tooltip, Typography } from '@mui/material';
+import type { HighlightRange } from '../hooks/useSpeechSynthesis';
 
 export interface VocabularyWord {
     word: string;
     translation: string;
 }
 
-/**
- * Renders text with vocabulary words highlighted and showing translations on hover.
- * Vocabulary words are matched case-insensitively and longest words are matched first.
- */
+export type { HighlightRange };
+
 export const renderTextWithTooltips = (
     text: string | undefined,
     vocabulary: VocabularyWord[] | undefined
@@ -80,15 +79,6 @@ export const renderTextWithTooltips = (
     });
 };
 
-export interface HighlightRange {
-    start: number;
-    end: number;
-}
-
-/**
- * Renders text with vocabulary tooltips and an optional highlighted range.
- * Used for read-aloud functionality to show current word being spoken.
- */
 export const renderTextWithHighlight = (
     text: string | undefined,
     vocabulary: VocabularyWord[] | undefined,

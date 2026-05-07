@@ -3,14 +3,9 @@ export interface Lesson {
     id: number;
     week: number;
     day: number;
-    type: 'reading' | 'grammar' | 'pronunciation' | 'vocabulary' | 'vocabulary_matching' | 'chat';
+    type: 'reading' | 'grammar' | 'pronunciation' | 'vocabulary' | 'vocabulary_matching';
     title: string;
-    content: ReadingContent | GrammarContent | PronunciationContent | VocabularyContent | VocabularyMatchingContent | ChatContent;
-}
-
-export interface ChatContent {
-    initialMessage: string;
-    topic: string;
+    content: ReadingContent | GrammarContent | PronunciationContent | VocabularyContent | VocabularyMatchingContent;
 }
 
 export interface VocabularyContent {

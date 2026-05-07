@@ -17,6 +17,11 @@ export const day05: GrammarDay = {
       yesNo: 'Do you travel often? / Are you travelling this summer?',
       wh: 'Where does she go after school? / Where is she going right now?',
     },
+    narration: {
+      formula: 'This is where you learn to choose between Present Simple and Present Progressive. Present Simple uses the base verb, with s or es for he, she, and it. Present Progressive uses am, is, or are, plus the verb with i-n-g.',
+      signalWords: 'The time clue tells you which tense to pick. Every day, usually, and always mean Present Simple. Now, right now, and at the moment mean Present Progressive. Also remember: state verbs like know, like, love, and want never use the i-n-g form.',
+      examples: 'Compare these pairs. She reads every night — that\'s a habit, so it\'s Present Simple. But She is reading right now — that\'s happening now, so it\'s Present Progressive.',
+    },
   },
   exercises: [
     {

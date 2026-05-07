@@ -14,6 +14,8 @@ import {
     Save as SaveIcon,
 } from '@mui/icons-material';
 
+import { exactMatch, wordOverlapMatch } from '../utils/validation';
+
 const DRAFT_PREFIX = 'nadav-english-test-draft-';
 import type {
     Test, TestSection, MCQuestion, FillSentence, VerbPair,
@@ -22,36 +24,6 @@ import type {
     MultipleChoiceSection, FillFromBankSection, VerbTableSection,
     SentenceCompletionSection, QuestionFormationSection, PassageFillSection,
 } from '../types/test';
-
-// ─── Validation helpers ────────────────────────────────────────────────────
-
-const normalizeStr = (s: string) =>
-    s.toLowerCase()
-        .replace(/‘|’/g, "'")
-        .replace(/didn't/g, 'did not')
-        .replace(/wasn't/g, 'was not')
-        .replace(/isn't/g, 'is not')
-        .replace(/weren't/g, 'were not')
-        .replace(/[.,!?]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-
-function exactMatch(user: string, correct: string, acceptAlso?: string[]): boolean {
-    const u = normalizeStr(user);
-    if (u === normalizeStr(correct)) return true;
-    if (acceptAlso) {
-        return acceptAlso.some(alt => u === normalizeStr(alt));
-    }
-    return false;
-}
-
-function wordOverlapMatch(user: string, correct: string, threshold = 0.65): boolean {
-    const userWords = new Set(normalizeStr(user).split(/\s+/).filter(w => w.length > 1));
-    const correctWords = normalizeStr(correct).split(/\s+/).filter(w => w.length > 1);
-    if (correctWords.length === 0) return true;
-    const matched = correctWords.filter(w => userWords.has(w)).length;
-    return matched / correctWords.length >= threshold;
-}
 
 function computeScore(test: Test, answers: Record<string, string>): { resultsMap: Record<string, boolean>; sectionScores: { earned: number; total: number }[]; totalScore: number } {
     const map: Record<string, boolean> = {};

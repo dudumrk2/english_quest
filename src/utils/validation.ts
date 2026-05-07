@@ -1,48 +1,54 @@
-/**
- * Normalizes a string by converting to lowercase and removing punctuation.
- */
-export const normalize = (s: string) => 
+export const normalize = (s: string) =>
     s.toLowerCase()
      .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
+     .replace(/'/g, "'")
      .replace(/\s+/g, " ")
      .trim();
 
-/**
- * Checks if the user answer matches the correct answer based on 80% word overlap.
- * This is useful for long sentences where the user might miss a small word or punctuation.
- */
 export const isAnswerCorrect = (user: string, correct: string): boolean => {
     if (!user) return false;
-    
-    // Normalize both
+
     const userNorm = normalize(user);
     const correctNorm = normalize(correct);
-    
-    // If exact match (after normalization), return true immediately
+
     if (userNorm === correctNorm) return true;
-    
-    // Split into words
+
     const userWords = userNorm.split(/\s+/).filter(w => w.length > 0);
     const correctWords = correctNorm.split(/\s+/).filter(w => w.length > 0);
-    
+
     if (correctWords.length === 0) return true;
-    
-    // Count how many words from 'correct' are present in 'user'
+
     const userWordsSet = new Set(userWords);
     let matchedCount = 0;
-    
+
     correctWords.forEach(word => {
         if (userWordsSet.has(word)) {
             matchedCount++;
         }
     });
-    
+
     const score = matchedCount / correctWords.length;
-    
-    // Special handling for very short answers
+
     if (correctWords.length <= 2) {
         return userNorm === correctNorm;
     }
-    
+
     return score >= 0.8;
 };
+
+export function exactMatch(user: string, correct: string, acceptAlso?: string[]): boolean {
+    const u = normalize(user);
+    if (u === normalize(correct)) return true;
+    if (acceptAlso) {
+        return acceptAlso.some(alt => u === normalize(alt));
+    }
+    return false;
+}
+
+export function wordOverlapMatch(user: string, correct: string, threshold = 0.65): boolean {
+    const userWords = new Set(normalize(user).split(/\s+/).filter(w => w.length > 1));
+    const correctWords = normalize(correct).split(/\s+/).filter(w => w.length > 1);
+    if (correctWords.length === 0) return true;
+    const matched = correctWords.filter(w => userWords.has(w)).length;
+    return matched / correctWords.length >= threshold;
+}

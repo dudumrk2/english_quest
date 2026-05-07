@@ -17,6 +17,11 @@ export const day08: GrammarDay = {
       yesNo: 'Did she go to the library yesterday?',
       wh: 'Where did he go after school?',
     },
+    narration: {
+      formula: 'To ask a question in Past Simple, use Did at the beginning for yes-no questions. For WH questions, start with the question word, then add did, the subject, and the base verb. The key rule: the main verb always stays in its base form after did — never add e-d.',
+      signalWords: 'The same past time clues apply: yesterday, last week, ago, and last night. When you see them in a question, use did.',
+      examples: 'Let\'s look at some examples. Positive: She went to the library yesterday. Negative: He didn\'t take the bus. Yes-no question: Did she go to the library yesterday? WH question: Where did he go after school?',
+    },
   },
   exercises: [
     {

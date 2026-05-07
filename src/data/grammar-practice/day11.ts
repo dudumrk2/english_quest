@@ -17,6 +17,11 @@ export const day11: GrammarDay = {
       yesNo: 'Does she read? / Is she reading? / Did she read? / Will she read?',
       wh: 'What does she read? / What is she reading? / What did she read? / What will she read?',
     },
+    narration: {
+      formula: 'Now we bring all four tenses together for positive sentences. Present Simple uses the base verb with s or es. Present Progressive uses am, is, or are plus verb i-n-g. Past Simple uses the verb with e-d or an irregular form. And Future Simple uses will plus the base verb.',
+      signalWords: 'The secret to choosing the right tense is reading the time clue. Every day and usually mean Present Simple. Right now and at the moment mean Present Progressive. Yesterday, last week, and ago mean Past Simple. Tomorrow, next week, and soon mean Future Simple.',
+      examples: 'Watch how the same verb changes across tenses. She reads every night — Present Simple. She is reading now — Present Progressive. She read last night — Past Simple. She will read tomorrow — Future Simple.',
+    },
   },
   exercises: [
     {

@@ -20,7 +20,6 @@ import {
     Cancel as CancelIcon,
     MenuBook as BookIcon,
     QuestionAnswer as QuestionIcon,
-    Create as WriteIcon,
     VolumeUp,
     Stop,
     Edit as EditIcon,
@@ -29,6 +28,10 @@ import {
 import { triggerCelebration } from '../utils/confetti';
 import { renderTextWithHighlight } from '../utils/textRenderer';
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
+import { useExerciseAttempts } from '../hooks/useExerciseAttempts';
+import { TaskHeader } from './common/TaskHeader';
+import { TaskActionButtons } from './common/TaskActionButtons';
+import { HebrewSummary } from './common/HebrewSummary';
 import type { TaskReadingProps, MatchPair } from '../types';
 import { isAnswerCorrect } from '../utils/validation';
 
@@ -52,9 +55,7 @@ export function TaskReading({
     const [showFeedback, setShowFeedback] = useState(false);
     const [summary, setSummary] = useState(initialAnswers.summary || '');
 
-    const [attempts, setAttempts] = useState<Record<string, number>>({});
-    const [lastCheckedAnswers, setLastCheckedAnswers] = useState<Record<string, string>>({});
-    const [lastCheckedFillInTheBlankAnswers, setLastCheckedFillInTheBlankAnswers] = useState<Record<string, string>>({});
+    const { trackAttempt, getAttemptCount } = useExerciseAttempts();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -97,17 +98,13 @@ export function TaskReading({
         }
 
         const parts = lesson.content.text.split(/(\[\[.*?\]\])/g);
-        let currentTextIndex = 0;
 
         return (
             <span>
                 {parts.map((part, index) => {
                     if (part.startsWith('[[') && part.endsWith(']]')) {
-                        const id = part.slice(2, -2); // Remove [[ and ]]
+                        const id = part.slice(2, -2);
                         const exercise = lesson.content.inlineChoices?.exercises.find(e => e.id === id);
-
-                        // Increment index for the placeholder length
-                        currentTextIndex += part.length;
 
                         if (!exercise) return part;
 
@@ -172,17 +169,11 @@ export function TaskReading({
                             </span>
                         );
                     } else {
-                        // For text parts, we render them with highlight support
-                        // We need to adjust the highlight range logic if we want strict highlighting, 
-                        // but for now we'll pass null to avoid offset mismatch issues since we are splitting the DOM
-                        const chunkLength = part.length;
-                        const elem = renderTextWithHighlight(
-                            part,
-                            lesson.content.vocabulary,
-                            null // highlightRange // Disable highlight for split text for now to avoid complexity
+                        return (
+                            <span key={index}>
+                                {renderTextWithHighlight(part, lesson.content.vocabulary, null)}
+                            </span>
                         );
-                        currentTextIndex += chunkLength;
-                        return <span key={index}>{elem}</span>;
                     }
                 })}
             </span>
@@ -253,65 +244,27 @@ export function TaskReading({
         // if (onSaveAnswers) { ... }
     };
 
-    const handleSummaryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-        const value = e.target.value;
+    const handleSummaryChange = (value: string): void => {
         setSummary(value);
         if (onSaveAnswers) {
-            // Exclude inlineChoiceAnswers from save as requested
             onSaveAnswers({ answers, fillInTheBlankAnswers, matchDefinitionsAnswers, summary: value });
         }
     };
 
-    // Clear logic moved to Dashboard
-
     const handleSubmit = () => {
         setShowFeedback(true);
 
-        // Track attempts for incorrect answers
-        const newAttempts = { ...attempts };
-        let attemptsChanged = false;
-
-        // Current answers for comparison next time
-        const currentCheckedAnswers = { ...lastCheckedAnswers };
-        const currentCheckedFitb = { ...lastCheckedFillInTheBlankAnswers };
-
         lesson.content.questions.forEach(q => {
             const currentVal = answers[q.id]?.trim() || '';
-            const lastVal = lastCheckedAnswers[q.id]?.trim() || '';
-            const isCorrect = isAnswerCorrect(currentVal, q.answer);
-
-            // Only increment attempt if:
-            // 1. It's incorrect
-            // 2. It's not empty
-            // 3. It's different from the last checked value
-            if (!isCorrect && currentVal !== '' && currentVal !== lastVal) {
-                newAttempts[q.id] = (newAttempts[q.id] || 0) + 1;
-                attemptsChanged = true;
-            }
-            currentCheckedAnswers[q.id] = currentVal;
+            trackAttempt(q.id, currentVal, isAnswerCorrect(currentVal, q.answer));
         });
 
-        // Track attempts for fill-in-the-blank
         if (lesson.content.fillInTheBlanks) {
             lesson.content.fillInTheBlanks.exercises.forEach(ex => {
                 const currentVal = fillInTheBlankAnswers[ex.id] || '';
-                const lastVal = lastCheckedFillInTheBlankAnswers[ex.id] || '';
-                const isCorrect = currentVal === ex.answer;
-
-                if (!isCorrect && currentVal !== '' && currentVal !== lastVal) {
-                    newAttempts[ex.id] = (newAttempts[ex.id] || 0) + 1;
-                    attemptsChanged = true;
-                }
-                currentCheckedFitb[ex.id] = currentVal;
+                trackAttempt(ex.id, currentVal, currentVal === ex.answer);
             });
         }
-
-        if (attemptsChanged) {
-            setAttempts(newAttempts);
-        }
-
-        setLastCheckedAnswers(currentCheckedAnswers);
-        setLastCheckedFillInTheBlankAnswers(currentCheckedFitb);
 
         const questionsCorrect = lesson.content.questions.every(
             (q) => isAnswerCorrect(answers[q.id], q.answer)
@@ -349,33 +302,12 @@ export function TaskReading({
 
     return (
         <Box sx={{ maxWidth: 1200, mx: 'auto', p: { xs: 1, md: 3 } }}>
-            {/* Header */}
-            <Box
-                sx={{
-                    p: { xs: 2, md: 3 },
-                    mb: 4,
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white',
-                    borderRadius: 2,
-                    boxShadow: 2
-                }}
-            >
-                <Stack direction="row" spacing={2} alignItems="center">
-                    <BookIcon sx={{ fontSize: { xs: 32, md: 40 } }} />
-                    <Box>
-                        <Typography variant="h4" fontWeight={700} sx={{ fontSize: { xs: '1.5rem', md: '2.125rem' } }}>
-                            {lesson.title}
-                        </Typography>
-                        <Typography variant="subtitle1" sx={{ opacity: 0.9, fontSize: { xs: '0.9rem', md: '1rem' } }}>
-                            Reading Comprehension
-                        </Typography>
-                    </Box>
-                </Stack>
-            </Box>
-
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-                {/* Clear logic moved to Dashboard */}
-            </Box>
+            <TaskHeader
+                icon={<BookIcon sx={{ fontSize: { xs: 32, md: 40 } }} />}
+                title={lesson.title}
+                subtitle="Reading Comprehension"
+                gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+            />
 
             <Stack spacing={3}>
                 {/* Reading Text */}
@@ -464,7 +396,7 @@ export function TaskReading({
                                         />
                                         {showError && answers[q.id]?.trim() && (
                                             <Alert severity="info" sx={{ mt: 1 }} variant="outlined">
-                                                {(attempts[q.id] || 0) >= 3 ? (
+                                                {getAttemptCount(q.id) >= 3 ? (
                                                     <span>
                                                         👀 The correct answer is: <strong>{q.answer}</strong>
                                                     </span>
@@ -533,8 +465,8 @@ export function TaskReading({
                                                             control={<Radio size="small" />}
                                                             label={option}
                                                             sx={{
-                                                                color: showResult && option === ex.answer && ((attempts[ex.id] || 0) >= 3 || userAnswer === ex.answer) ? 'green' : 'inherit',
-                                                                '& .MuiTypography-root': { fontWeight: showResult && option === ex.answer && ((attempts[ex.id] || 0) >= 3 || userAnswer === ex.answer) ? 'bold' : 'normal' }
+                                                                color: showResult && option === ex.answer && (getAttemptCount(ex.id) >= 3 || userAnswer === ex.answer) ? 'green' : 'inherit',
+                                                                '& .MuiTypography-root': { fontWeight: showResult && option === ex.answer && (getAttemptCount(ex.id) >= 3 || userAnswer === ex.answer) ? 'bold' : 'normal' }
                                                             }}
                                                         />
                                                     ))}
@@ -775,82 +707,17 @@ export function TaskReading({
                     </Card>
                 )}
 
-                {/* Hebrew Summary Section */}
-                <Card elevation={2}>
-                    <CardContent sx={{ p: 3 }}>
-                        <Stack direction="row" spacing={1} alignItems="center" mb={2}>
-                            <WriteIcon color="warning" />
-                            <Typography variant="h6" fontWeight={600}>
-                                Summary in Hebrew - סיכום בעברית
-                            </Typography>
-                        </Stack>
-                        <Divider sx={{ mb: 2 }} />
-                        <Typography variant="body2" color="text.secondary" mb={2} dir="rtl">
-                            סכם את הקטע שקראת בעברית (לפחות 2-3 משפטים)
-                        </Typography>
-                        <TextField
-                            fullWidth
-                            multiline
-                            rows={4}
-                            value={summary}
-                            onChange={handleSummaryChange}
-                            placeholder="כתוב את הסיכום שלך כאן..."
-                            dir="rtl"
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    fontFamily: '"Arial", sans-serif',
-                                    fontSize: '1rem',
-                                    lineHeight: 1.6,
-                                },
-                            }}
-                        />
-                        {showFeedback && summary.trim().length === 0 && (
-                            <Alert severity="warning" sx={{ mt: 2 }} variant="outlined">
-                                Please write a summary in Hebrew to complete the lesson.
-                            </Alert>
-                        )}
-                    </CardContent>
-                </Card>
+                <HebrewSummary
+                    value={summary}
+                    onChange={handleSummaryChange}
+                    showError={showFeedback && summary.trim().length === 0}
+                />
 
-                {/* Submit Button */}
-                <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={2} sx={{ mt: 2 }}>
-                    <Button
-                        fullWidth
-                        variant="outlined"
-                        size="large"
-                        onClick={() => onComplete(true)}
-                        sx={{
-                            py: 1.5,
-                            fontSize: '1.1rem',
-                            fontWeight: 600,
-                            color: 'text.secondary',
-                            borderWidth: 2,
-                            '&:hover': {
-                                borderWidth: 2,
-                                bgcolor: 'rgba(0,0,0,0.05)'
-                            }
-                        }}
-                    >
-                        Skip Lesson
-                    </Button>
-                    <Button
-                        fullWidth
-                        variant="contained"
-                        size="large"
-                        onClick={handleSubmit}
-                        sx={{
-                            py: 1.5,
-                            fontSize: '1.1rem',
-                            fontWeight: 600,
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                            '&:hover': {
-                                background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
-                            },
-                        }}
-                    >
-                        Check Answers & Complete Lesson
-                    </Button>
-                </Stack>
+                <TaskActionButtons
+                    onSkip={() => onComplete(true)}
+                    onSubmit={handleSubmit}
+                    submitLabel="Check Answers & Complete Lesson"
+                />
             </Stack>
         </Box >
     );

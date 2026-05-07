@@ -17,6 +17,11 @@ export const day01: GrammarDay = {
       yesNo: 'Do you study English every night?',
       wh: 'What does she do after school?',
     },
+    narration: {
+      formula: 'In the Present Simple, for a positive sentence, you take the subject and add the base verb. But be careful — if the subject is he, she, or it, you need to add s or es to the verb. For a negative sentence, use don\'t for I, you, we, and they, or doesn\'t for he, she, and it, followed by the base verb.',
+      signalWords: 'These are the time words that tell you to use Present Simple. Words like always, usually, often, sometimes, and every day all point to habits and routines.',
+      examples: 'Let\'s look at some examples. In the positive: She goes to school every day. In the negative: He doesn\'t play basketball on Sundays. For a yes-no question: Do you study English every night? And for a WH question: What does she do after school?',
+    },
   },
   exercises: [
     {
