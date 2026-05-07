@@ -69,6 +69,7 @@ function useNarration() {
             'Microsoft David',        // Windows
         ];
 
+        // Exact name match first
         for (const name of preferred) {
             const match = voices.find(v => v.name === name);
             if (match) {
@@ -77,9 +78,17 @@ function useNarration() {
             }
         }
 
-        // Fallback: any en voice that is not the default robotic one
-        const enVoice = voices.find(v => v.lang.startsWith('en') && v.name !== 'Google US English')
-            || voices.find(v => v.lang.startsWith('en'));
+        // Partial name match (Windows voices often have long names like "Microsoft Zira - English (United States)")
+        for (const name of preferred) {
+            const match = voices.find(v => v.name.includes(name) && v.lang.startsWith('en'));
+            if (match) {
+                voiceRef.current = match;
+                return;
+            }
+        }
+
+        // Fallback: any en voice
+        const enVoice = voices.find(v => v.lang.startsWith('en'));
         if (enVoice) voiceRef.current = enVoice;
     }, []);
 
@@ -121,7 +130,7 @@ function useNarration() {
         }
     }, [isPlaying, speak, stop]);
 
-    return { isPlaying, toggle, stop };
+    return { isPlaying, toggle, stop, speak };
 }
 
 // ─── Formula token colorizer ─────────────────────────────────────────────────
@@ -479,6 +488,17 @@ export function GrammarIntro({ day, onComplete, onBack }: GrammarIntroProps) {
         narration.stop();
         if (step > 0) setStep(s => s - 1);
     };
+
+    // Auto-play narration when slide changes
+    useEffect(() => {
+        const text = day.explanation.narration?.[NARRATION_KEYS[step]];
+        if (text) {
+            // Small delay so animations start first
+            const timer = setTimeout(() => narration.speak(text), 600);
+            return () => clearTimeout(timer);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [step, day.id]);
 
     // Stop narration on unmount
     useEffect(() => {
