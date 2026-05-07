@@ -17,6 +17,11 @@ export const day13: GrammarDay = {
       yesNo: 'Does she travel every summer?',
       wh: 'When does she travel?',
     },
+    narration: {
+      formula: 'Each tense forms questions differently. In Present Simple, use Do or Does. In Present Progressive, move Am, Is, or Are to the front. In Past Simple, use Did. And in Future Simple, move Will to the front. The main verb always stays in its base form after do, does, did, and will.',
+      signalWords: 'Use the time clue to choose the right question helper. Every day means use do or does. Right now means use am, is, or are. Yesterday means use did. And tomorrow means use will.',
+      examples: 'Let\'s see how to turn a statement into a question. She travels every summer becomes: Does she travel every summer? And for a WH question: When does she travel? Notice the base verb stays the same.',
+    },
   },
   exercises: [
     {

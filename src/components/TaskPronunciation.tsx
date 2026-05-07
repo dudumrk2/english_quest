@@ -28,12 +28,11 @@ import {
 import { triggerCelebration } from '../utils/confetti';
 import { renderTextWithHighlight } from '../utils/textRenderer';
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
-import {
-    CHALLENGE_WORDS_COUNT,
-} from '../data/constants';
+import { TaskHeader } from './common/TaskHeader';
+import { TaskActionButtons } from './common/TaskActionButtons';
+import { HebrewSummary } from './common/HebrewSummary';
+import { CHALLENGE_WORDS_COUNT } from '../data/constants';
 import { PronunciationFeedback, TaskPronunciationProps } from '../types';
-
-// Uses shared utilities from utils/textRenderer.tsx and hooks/useSpeechSynthesis.ts
 
 // Helper to calculate accuracy
 const calculateAccuracy = (original: string, transcript: string) => {
@@ -190,9 +189,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
         }
     };
 
-    // Handler for summary text
-    const handleSummaryChange = (e: any) => {
-        const val = e.target.value;
+    const handleSummaryChange = (val: string) => {
         setSummary(val);
         if (onSaveAnswers) {
             onSaveAnswers({ summary: val, sentences: writtenSentences });
@@ -247,29 +244,13 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
 
     return (
         <Box sx={{ maxWidth: 800, mx: 'auto', p: { xs: 1, md: 3 } }}>
-            {/* Header */}
-            <Box
-                sx={{
-                    p: { xs: 2, md: 3 },
-                    mb: 4,
-                    background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-                    color: '#1a4731',
-                    borderRadius: 2,
-                    boxShadow: 2,
-                }}
-            >
-                <Stack direction="row" spacing={2} alignItems="center">
-                    <PronunciationIcon sx={{ fontSize: { xs: 32, md: 40 } }} />
-                    <Box>
-                        <Typography variant="h4" fontWeight={700} sx={{ textShadow: '0 1px 2px rgba(255,255,255,0.5)', fontSize: { xs: '1.5rem', md: '2.125rem' } }}>
-                            {lesson.title}
-                        </Typography>
-                        <Typography variant="subtitle1" fontWeight={500} sx={{ fontSize: { xs: '0.9rem', md: '1rem' } }}>
-                            Read Aloud Mission
-                        </Typography>
-                    </Box>
-                </Stack>
-            </Box>
+            <TaskHeader
+                icon={<PronunciationIcon sx={{ fontSize: { xs: 32, md: 40 } }} />}
+                title={lesson.title}
+                subtitle="Read Aloud Mission"
+                gradient="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"
+                textColor="#1a4731"
+            />
 
             <Stack spacing={4}>
                 {/* Reading Text Card */}
@@ -298,12 +279,12 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                             sx={{
                                 fontFamily: '"Georgia", serif',
                                 lineHeight: 1.8,
-                                color: '#1a202c',
+                                color: 'text.primary',
                                 my: 2,
                                 p: 2,
-                                bgcolor: '#f8fafc',
+                                bgcolor: 'rgba(255,255,255,0.05)',
                                 borderRadius: 2,
-                                border: '1px solid #e2e8f0'
+                                border: '1px solid rgba(255,255,255,0.1)',
                             }}
                             component="div"
                         >
@@ -403,7 +384,7 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                         sx={{
                             borderLeft: '6px solid',
                             borderColor: (feedback?.accuracy || 0) > 70 ? 'success.main' : 'warning.main',
-                            bgcolor: (feedback?.accuracy || 0) > 70 ? '#f0fdf4' : '#fffbeb'
+                            bgcolor: (feedback?.accuracy || 0) > 70 ? 'rgba(16,185,129,0.08)' : 'rgba(245,158,11,0.08)',
                         }}
                     >
                         <CardContent>
@@ -444,37 +425,12 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                     </Card>
                 </Fade>
 
-                {/* Hebrew Summary Section */}
-                <Card elevation={2} sx={{ mt: 4 }}>
-                    <CardContent sx={{ p: { xs: 2, md: 3 } }}>
-                        <Stack direction="row" spacing={1} alignItems="center" mb={2}>
-                            <WriteIcon color="warning" />
-                            <Typography variant="h6" fontWeight={600}>
-                                Summary in Hebrew - סיכום בעברית
-                            </Typography>
-                        </Stack>
-                        <Divider sx={{ mb: 2 }} />
-                        <Typography variant="body2" color="text.secondary" mb={2} dir="rtl">
-                            תרגם או סכם את הקטע שקראת בעברית
-                        </Typography>
-                        <TextField
-                            fullWidth
-                            multiline
-                            rows={4}
-                            value={summary}
-                            onChange={handleSummaryChange}
-                            placeholder="כתוב את התרגום/סיכום שלך כאן..."
-                            dir="rtl"
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    fontFamily: '"Arial", sans-serif',
-                                    fontSize: '1rem',
-                                    lineHeight: 1.6,
-                                },
-                            }}
-                        />
-                    </CardContent>
-                </Card>
+                <HebrewSummary
+                    value={summary}
+                    onChange={handleSummaryChange}
+                    description="תרגם או סכם את הקטע שקראת בעברית"
+                    placeholder="כתוב את התרגום/סיכום שלך כאן..."
+                />
 
                 {/* Writing Challenge Section */}
                 <Card elevation={2}>
@@ -543,52 +499,15 @@ export function TaskPronunciation({ lesson, onComplete, initialAnswers = {}, onS
                     </CardContent>
                 </Card>
 
-                {/* Complete Button */}
                 <Box mt={4}>
-                    <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={2}>
-                        <Button
-                            fullWidth
-                            variant="outlined"
-                            size="large"
-                            onClick={() => onComplete(true)}
-                            sx={{
-                                py: 1.5,
-                                fontSize: '1.1rem',
-                                fontWeight: 600,
-                                color: 'text.secondary',
-                                borderWidth: 2,
-                                '&:hover': {
-                                    borderWidth: 2,
-                                    bgcolor: 'rgba(0,0,0,0.05)'
-                                }
-                            }}
-                        >
-                            Skip Lesson
-                        </Button>
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            size="large"
-                            onClick={handleComplete}
-                            disabled={!readingComplete || summary.trim().length === 0 || !validateSentences()}
-                            sx={{
-                                py: 1.5,
-                                fontSize: '1.1rem',
-                                fontWeight: 600,
-                                background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-                                color: '#1a4731',
-                                '&:hover': {
-                                    background: 'linear-gradient(135deg, #36c96a 0%, #2ec7ab 100%)',
-                                },
-                                '&.Mui-disabled': {
-                                    background: '#e2e8f0',
-                                    color: '#94a3b8'
-                                }
-                            }}
-                        >
-                            {readingComplete && summary && validateSentences() ? "Complete Lesson" : "Finish All Tasks"}
-                        </Button>
-                    </Stack>
+                    <TaskActionButtons
+                        onSkip={() => onComplete(true)}
+                        onSubmit={handleComplete}
+                        submitLabel={readingComplete && summary && validateSentences() ? "Complete Lesson" : "Finish All Tasks"}
+                        submitGradient="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"
+                        submitHoverGradient="linear-gradient(135deg, #36c96a 0%, #2ec7ab 100%)"
+                        disabled={!readingComplete || summary.trim().length === 0 || !validateSentences()}
+                    />
                 </Box>
             </Stack>
         </Box >

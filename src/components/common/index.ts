@@ -9,3 +9,12 @@ export type { StatChipProps } from './StatChip';
 
 export { GradientText } from './GradientText';
 export type { GradientTextProps } from './GradientText';
+
+export { TaskHeader } from './TaskHeader';
+export type { TaskHeaderProps } from './TaskHeader';
+
+export { TaskActionButtons } from './TaskActionButtons';
+export type { TaskActionButtonsProps } from './TaskActionButtons';
+
+export { HebrewSummary } from './HebrewSummary';
+export type { HebrewSummaryProps } from './HebrewSummary';

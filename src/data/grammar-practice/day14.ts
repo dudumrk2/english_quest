@@ -17,6 +17,11 @@ export const day14: GrammarDay = {
       yesNo: 'Does she read? / Is she reading? / Did she read? / Will she read?',
       wh: 'What does she read? / What is she reading? / What did she read? / What will she read?',
     },
+    narration: {
+      formula: 'This is your complete review of all four tenses. Present Simple for habits, Present Progressive for right now, Past Simple for finished actions, and Future Simple with will for the future. Each one has its own formula, and the key is matching the time clue to the right tense.',
+      signalWords: 'Here are all the signal words together. Always, every day, and usually point to Present Simple. Now and at the moment point to Present Progressive. Yesterday, ago, and last week point to Past Simple. Tomorrow, next year, and soon point to Future Simple.',
+      examples: 'Let\'s review with the same verb across all four tenses. She reads every night. She is reading now. She read last night. She will read tomorrow. Each sentence uses a different form of the verb read — and the time clue tells you which one to choose.',
+    },
   },
   exercises: [
     {

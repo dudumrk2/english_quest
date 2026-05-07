@@ -17,6 +17,11 @@ export const day06: GrammarDay = {
       yesNo: 'Did you watch the game yesterday?',
       wh: 'What did she study last night?',
     },
+    narration: {
+      formula: 'In Past Simple with regular verbs, you add e-d to the verb for positive sentences. For negative sentences, use didn\'t followed by the base verb — not the past form. Watch out for spelling changes: stop becomes stopped with double p, dance becomes danced, and study becomes studied.',
+      signalWords: 'Past Simple time words include yesterday, last week, last year, ago, and last night. They all tell you the action is finished and in the past.',
+      examples: 'Here are some examples. Positive: She walked to school yesterday. Negative: He didn\'t finish his homework last night. Yes-no question: Did you watch the game yesterday? WH question: What did she study last night?',
+    },
   },
   exercises: [
     {

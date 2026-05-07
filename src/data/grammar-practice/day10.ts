@@ -17,6 +17,11 @@ export const day10: GrammarDay = {
       yesNo: 'Will she travel abroad next summer?',
       wh: 'Where will you go for the school trip?',
     },
+    narration: {
+      formula: 'To ask a yes-no question with will, move will to the front — before the subject. For a WH question, start with the question word, then will, then the subject, and then the base verb. The verb always stays in its base form.',
+      signalWords: 'The same future time words apply: tomorrow, next week, soon, and in the future. When you see these words in a question, use will.',
+      examples: 'Let\'s look at some examples. Positive: She will travel abroad next summer. Negative: He won\'t take the exam again. Yes-no question: Will she travel abroad next summer? WH question: Where will you go for the school trip?',
+    },
   },
   exercises: [
     {

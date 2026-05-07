@@ -17,6 +17,11 @@ export const day07: GrammarDay = {
       yesNo: 'Did they see the new film?',
       wh: 'Where did you go last summer?',
     },
+    narration: {
+      formula: 'Some verbs don\'t follow the regular e-d pattern. These are irregular verbs, and you need to learn their past forms by heart. For example, go becomes went, and see becomes saw. Important: in negative sentences, use didn\'t plus the base verb — not the irregular form. So you say didn\'t come, not didn\'t came.',
+      signalWords: 'The same past time words apply: yesterday, last week, ago, and last night. The difference is just that the verb form is irregular.',
+      examples: 'Here are some examples. Positive: She went to the park yesterday. Negative: He didn\'t come to school last Monday. Yes-no question: Did they see the new film? WH question: Where did you go last summer?',
+    },
   },
   exercises: [
     {

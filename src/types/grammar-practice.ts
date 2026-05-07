@@ -8,6 +8,12 @@ export interface GrammarExplanation {
     yesNo: string;
     wh: string;
   };
+  /** Free-form narration for each intro slide, read aloud by TTS */
+  narration?: {
+    formula: string;
+    signalWords: string;
+    examples: string;
+  };
 }
 
 export type GrammarExerciseType = 'fill_in' | 'multiple_choice';

@@ -10,26 +10,27 @@ interface AuthState {
     logout: () => void;
 }
 
+function decodeJwtPayload(token: string): Record<string, any> {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+        atob(base64)
+            .split('')
+            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+    );
+    return JSON.parse(jsonPayload);
+}
+
 export const useAuth = create<AuthState>()(
     persist(
         (set) => ({
             user: null,
             isAuthenticated: false,
 
-            // Login with Google
             loginWithGoogle: (credential: string) => {
                 try {
-                    // Decode JWT token to get user info
-                    const base64Url = credential.split('.')[1];
-                    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                    const jsonPayload = decodeURIComponent(
-                        atob(base64)
-                            .split('')
-                            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-                            .join('')
-                    );
-                    const payload = JSON.parse(jsonPayload);
-
+                    const payload = decodeJwtPayload(credential);
                     set({
                         user: {
                             email: payload.email,
@@ -38,17 +39,11 @@ export const useAuth = create<AuthState>()(
                         },
                         isAuthenticated: true,
                     });
-
-                    // Force a small delay to ensure state persistence completes
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 100);
                 } catch (error) {
                     console.error('Failed to decode credential:', error);
                 }
             },
 
-            // Demo mode login
             loginDemo: () => {
                 set({
                     user: {
@@ -58,24 +53,13 @@ export const useAuth = create<AuthState>()(
                     },
                     isAuthenticated: true,
                 });
-
-                // Force a small delay to ensure state persistence completes
-                setTimeout(() => {
-                    window.location.reload();
-                }, 100);
             },
 
-            // Logout
             logout: () => {
                 set({
                     user: null,
                     isAuthenticated: false,
                 });
-
-                // Force a small delay to ensure state persistence completes
-                setTimeout(() => {
-                    window.location.reload();
-                }, 100);
             },
         }),
         {

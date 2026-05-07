@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import {
     Box,
     Typography,
@@ -6,14 +6,13 @@ import {
     Stack,
     Chip,
     Fade,
-    Tooltip,
     IconButton,
 } from '@mui/material';
 import {
     ArrowBack as BackIcon,
     ArrowForward as NextIcon,
-    VolumeUp as VolumeIcon,
-    VolumeOff as MuteIcon,
+    VolumeUp as VolumeUpIcon,
+    VolumeOff as VolumeOffIcon,
 } from '@mui/icons-material';
 import type { GrammarDay } from '../types/grammar-practice';
 
@@ -47,6 +46,84 @@ const bounceIn = {
     },
 };
 
+// ─── TTS hook with natural voice selection ──────────────────────────────────
+
+function useNarration() {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const voiceRef = useRef<SpeechSynthesisVoice | null>(null);
+
+    // Pick the best available English voice
+    const pickVoice = useCallback(() => {
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length === 0) return;
+
+        // Prefer natural-sounding voices in priority order
+        const preferred = [
+            'Google UK English Female',
+            'Google UK English Male',
+            'Google US English',
+            'Samantha',               // macOS
+            'Karen',                  // macOS Australian
+            'Daniel',                 // macOS UK
+            'Microsoft Zira',         // Windows
+            'Microsoft David',        // Windows
+        ];
+
+        for (const name of preferred) {
+            const match = voices.find(v => v.name === name);
+            if (match) {
+                voiceRef.current = match;
+                return;
+            }
+        }
+
+        // Fallback: any en voice that is not the default robotic one
+        const enVoice = voices.find(v => v.lang.startsWith('en') && v.name !== 'Google US English')
+            || voices.find(v => v.lang.startsWith('en'));
+        if (enVoice) voiceRef.current = enVoice;
+    }, []);
+
+    useEffect(() => {
+        pickVoice();
+        // Voices may load asynchronously
+        window.speechSynthesis.onvoiceschanged = pickVoice;
+        return () => {
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.onvoiceschanged = null;
+        };
+    }, [pickVoice]);
+
+    const speak = useCallback((text: string) => {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.92;
+        utterance.pitch = 1.05;
+        if (voiceRef.current) utterance.voice = voiceRef.current;
+
+        utterance.onend = () => setIsPlaying(false);
+        utterance.onerror = () => setIsPlaying(false);
+
+        window.speechSynthesis.speak(utterance);
+        setIsPlaying(true);
+    }, []);
+
+    const stop = useCallback(() => {
+        window.speechSynthesis.cancel();
+        setIsPlaying(false);
+    }, []);
+
+    const toggle = useCallback((text: string) => {
+        if (isPlaying) {
+            stop();
+        } else {
+            speak(text);
+        }
+    }, [isPlaying, speak, stop]);
+
+    return { isPlaying, toggle, stop };
+}
+
 // ─── Formula token colorizer ─────────────────────────────────────────────────
 
 const SUBJECTS = /^(subject|i|we|they|he|she|it|you)$/i;
@@ -71,7 +148,6 @@ function classifyToken(token: string): TokenType {
 }
 
 function parseFormulaTokens(formula: string): FormulaToken[] {
-    // Split on lines first, then tokens within each line
     const lines = formula.split('\n');
     const tokens: FormulaToken[] = [];
 
@@ -79,7 +155,6 @@ function parseFormulaTokens(formula: string): FormulaToken[] {
         if (lineIdx > 0) {
             tokens.push({ text: '\n', type: 'separator' });
         }
-        // Split by + | → keeping delimiters
         const parts = line.split(/(\s*\+\s*|\s*\|\s*|\s*→\s*|\s*->\s*)/);
         parts.forEach(part => {
             const trimmed = part.trim();
@@ -99,86 +174,29 @@ const TOKEN_COLORS: Record<TokenType, { bg: string; color: string; border: strin
     other: { bg: 'rgba(100,116,139,0.15)', color: '#94a3b8', border: '1px solid rgba(100,116,139,0.25)' },
 };
 
-// ─── Step 1: Welcome ─────────────────────────────────────────────────────────
+// ─── Narration Button ────────────────────────────────────────────────────────
 
-function Step1Welcome({ day }: { day: GrammarDay }) {
+function NarrationButton({ text, narration }: { text: string | undefined; narration: ReturnType<typeof useNarration> }) {
+    if (!text) return null;
     return (
-        <Box
+        <IconButton
+            onClick={() => narration.toggle(text)}
             sx={{
-                ...scaleIn,
-                minHeight: 360,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                p: { xs: 3, md: 5 },
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                borderRadius: 3,
-                color: 'white',
-                gap: 2,
+                color: narration.isPlaying ? '#10b981' : 'text.secondary',
+                transition: 'color 0.2s ease',
+                '&:hover': { color: '#10b981' },
             }}
         >
-            <Chip
-                label={`Day ${day.id} of 14`}
-                sx={{
-                    bgcolor: 'rgba(255,255,255,0.2)',
-                    color: 'white',
-                    fontWeight: 700,
-                    fontSize: '0.85rem',
-                    animation: 'fadeSlideIn 0.4s ease forwards',
-                    animationDelay: '0.1s',
-                    opacity: 0,
-                }}
-            />
-            <Typography
-                variant="h3"
-                fontWeight={800}
-                sx={{
-                    textShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                    fontSize: { xs: '2rem', md: '2.8rem' },
-                    animation: 'scaleIn 0.6s ease forwards',
-                    animationDelay: '0.2s',
-                    opacity: 0,
-                }}
-            >
-                {day.tense}
-            </Typography>
-            <Typography
-                variant="h5"
-                sx={{
-                    opacity: 0,
-                    animation: 'fadeSlideIn 0.5s ease forwards',
-                    animationDelay: '0.5s',
-                    fontWeight: 600,
-                    color: 'rgba(255,255,255,0.9)',
-                }}
-            >
-                {day.focus}
-            </Typography>
-            <Typography
-                variant="body1"
-                sx={{
-                    opacity: 0,
-                    animation: 'fadeSlideIn 0.5s ease forwards',
-                    animationDelay: '0.8s',
-                    mt: 1,
-                    fontSize: '1.1rem',
-                    color: 'rgba(255,255,255,0.85)',
-                }}
-            >
-                Let's master this tense! 💪
-            </Typography>
-        </Box>
+            {narration.isPlaying ? <VolumeOffIcon /> : <VolumeUpIcon />}
+        </IconButton>
     );
 }
 
-// ─── Step 2: Formula ─────────────────────────────────────────────────────────
+// ─── Step 1: Formula ─────────────────────────────────────────────────────────
 
-function Step2Formula({ day }: { day: GrammarDay }) {
+function Step1Formula({ day }: { day: GrammarDay }) {
     const tokens = parseFormulaTokens(day.explanation.formula);
 
-    // Group tokens into lines for rendering
     const lines: FormulaToken[][] = [];
     let current: FormulaToken[] = [];
     tokens.forEach(t => {
@@ -232,7 +250,6 @@ function Step2Formula({ day }: { day: GrammarDay }) {
                             const delay = `${0.1 + idx * 0.1}s`;
 
                             if (!styles) {
-                                // Separator — plain text
                                 return (
                                     <Typography
                                         key={idx}
@@ -291,9 +308,9 @@ function Step2Formula({ day }: { day: GrammarDay }) {
     );
 }
 
-// ─── Step 3: Signal Words ────────────────────────────────────────────────────
+// ─── Step 2: Signal Words ────────────────────────────────────────────────────
 
-function Step3SignalWords({ day }: { day: GrammarDay }) {
+function Step2SignalWords({ day }: { day: GrammarDay }) {
     return (
         <Box sx={{ p: { xs: 2, md: 3 } }}>
             <Typography
@@ -354,7 +371,7 @@ function Step3SignalWords({ day }: { day: GrammarDay }) {
     );
 }
 
-// ─── Step 4: Examples ────────────────────────────────────────────────────────
+// ─── Step 3: Examples ────────────────────────────────────────────────────────
 
 const EXAMPLE_CONFIG = [
     { label: 'Positive', emoji: '✅', borderColor: '#10b981', labelColor: '#34d399', key: 'positive' as const },
@@ -363,7 +380,7 @@ const EXAMPLE_CONFIG = [
     { label: 'WH Question', emoji: '🔍', borderColor: '#a855f7', labelColor: '#d8b4fe', key: 'wh' as const },
 ];
 
-function Step4Examples({ day }: { day: GrammarDay }) {
+function Step3Examples({ day }: { day: GrammarDay }) {
     return (
         <Box sx={{ p: { xs: 2, md: 3 } }}>
             <Typography
@@ -416,94 +433,6 @@ function Step4Examples({ day }: { day: GrammarDay }) {
     );
 }
 
-// ─── TTS helpers ─────────────────────────────────────────────────────────────
-
-/** Build a clean, speakable string for each intro step */
-function buildStepText(step: number, day: GrammarDay): string {
-    switch (step) {
-        case 0:
-            return [
-                `Day ${day.id} of 14.`,
-                `${day.tense}.`,
-                `${day.focus}.`,
-                day.explanation.usage,
-            ].join(' ');
-
-        case 1: {
-            // Make the formula readable by replacing symbols
-            const readable = day.explanation.formula
-                .replace(/\|/g, ' — or in the negative — ')
-                .replace(/→/g, ' becomes ')
-                .replace(/\+/g, ' plus ')
-                .replace(/\n/g, '. ');
-            return `The formula. ${readable}. When to use it: ${day.explanation.usage}`;
-        }
-
-        case 2:
-            if (day.explanation.signalWords.length === 0) {
-                return 'This tense has no specific signal words. Use context clues instead.';
-            }
-            return `Signal words. ${day.explanation.signalWords.join('. ')}.`;
-
-        case 3: {
-            const { positive, negative, yesNo, wh } = day.explanation.examples;
-            return [
-                'Examples.',
-                `Positive: ${positive}.`,
-                `Negative: ${negative}.`,
-                `Yes or no question: ${yesNo}.`,
-                `W H question: ${wh}.`,
-            ].join(' ');
-        }
-
-        default:
-            return '';
-    }
-}
-
-/** React hook: auto-speak when step changes, respects muted state */
-function useStepSpeech(step: number, day: GrammarDay, muted: boolean) {
-    const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-    const [speaking, setSpeaking] = useState(false);
-
-    const cancel = useCallback(() => {
-        window.speechSynthesis.cancel();
-        setSpeaking(false);
-    }, []);
-
-    useEffect(() => {
-        if (muted) { cancel(); return; }
-
-        // Small delay so the slide-in animation starts first
-        const timer = setTimeout(() => {
-            window.speechSynthesis.cancel();
-
-            const text = buildStepText(step, day);
-            if (!text) return;
-
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.88;
-            utterance.pitch = 1;
-
-            utterance.onstart = () => setSpeaking(true);
-            utterance.onend = () => setSpeaking(false);
-            utterance.onerror = () => setSpeaking(false);
-
-            utteranceRef.current = utterance;
-            window.speechSynthesis.speak(utterance);
-        }, 400);
-
-        return () => {
-            clearTimeout(timer);
-            window.speechSynthesis.cancel();
-            setSpeaking(false);
-        };
-    }, [step, day, muted, cancel]);
-
-    return { speaking, cancel };
-}
-
 // ─── Progress Dots ────────────────────────────────────────────────────────────
 
 function ProgressDots({ step, total }: { step: number; total: number }) {
@@ -527,16 +456,18 @@ function ProgressDots({ step, total }: { step: number; total: number }) {
 
 // ─── Main component ──────────────────────────────────────────────────────────
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 3;
+
+/** Maps step index to narration key */
+const NARRATION_KEYS = ['formula', 'signalWords', 'examples'] as const;
 
 export function GrammarIntro({ day, onComplete, onBack }: GrammarIntroProps) {
     const [step, setStep] = useState(0);
-    const [muted, setMuted] = useState(false);
+    const narration = useNarration();
 
-    const { speaking, cancel } = useStepSpeech(step, day, muted);
-
+    // Stop narration when changing slides
     const goNext = () => {
-        cancel();
+        narration.stop();
         if (step < TOTAL_STEPS - 1) {
             setStep(s => s + 1);
         } else {
@@ -545,17 +476,24 @@ export function GrammarIntro({ day, onComplete, onBack }: GrammarIntroProps) {
     };
 
     const goPrev = () => {
-        cancel();
+        narration.stop();
         if (step > 0) setStep(s => s - 1);
     };
 
+    // Stop narration on unmount
+    useEffect(() => {
+        return () => narration.stop();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const isLastStep = step === TOTAL_STEPS - 1;
 
+    const narrationText = day.explanation.narration?.[NARRATION_KEYS[step]];
+
     const stepContent = [
-        <Step1Welcome key={`step-0-${day.id}`} day={day} />,
-        <Step2Formula key={`step-1-${day.id}`} day={day} />,
-        <Step3SignalWords key={`step-2-${day.id}`} day={day} />,
-        <Step4Examples key={`step-3-${day.id}`} day={day} />,
+        <Step1Formula key={`step-0-${day.id}`} day={day} />,
+        <Step2SignalWords key={`step-1-${day.id}`} day={day} />,
+        <Step3Examples key={`step-2-${day.id}`} day={day} />,
     ];
 
     return (
@@ -569,7 +507,7 @@ export function GrammarIntro({ day, onComplete, onBack }: GrammarIntroProps) {
                 ...bounceIn,
             }}
         >
-            {/* Top bar: back button + progress dots + mute */}
+            {/* Top bar: back button + progress dots + narration button */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
                 <Button
                     startIcon={<BackIcon />}
@@ -579,31 +517,7 @@ export function GrammarIntro({ day, onComplete, onBack }: GrammarIntroProps) {
                     Back
                 </Button>
                 <ProgressDots step={step} total={TOTAL_STEPS} />
-                <Stack direction="row" alignItems="center" spacing={0.5}>
-                    {/* Speaking pulse indicator */}
-                    {speaking && !muted && (
-                        <Box
-                            sx={{
-                                width: 8, height: 8, borderRadius: '50%',
-                                bgcolor: '#10b981',
-                                '@keyframes pulse': {
-                                    '0%, 100%': { transform: 'scale(1)', opacity: 1 },
-                                    '50%': { transform: 'scale(1.6)', opacity: 0.5 },
-                                },
-                                animation: 'pulse 1.2s ease-in-out infinite',
-                            }}
-                        />
-                    )}
-                    <Tooltip title={muted ? 'Turn on audio' : 'Mute audio'}>
-                        <IconButton
-                            onClick={() => setMuted(m => !m)}
-                            size="small"
-                            sx={{ color: muted ? 'text.disabled' : '#10b981' }}
-                        >
-                            {muted ? <MuteIcon fontSize="small" /> : <VolumeIcon fontSize="small" />}
-                        </IconButton>
-                    </Tooltip>
-                </Stack>
+                <NarrationButton text={narrationText} narration={narration} />
             </Stack>
 
             {/* Step label */}
@@ -615,13 +529,13 @@ export function GrammarIntro({ day, onComplete, onBack }: GrammarIntroProps) {
                 Step {step + 1} of {TOTAL_STEPS}
             </Typography>
 
-            {/* Slide content — key changes force remount + re-animation */}
+            {/* Slide content */}
             <Box
                 sx={{
                     borderRadius: 3,
                     overflow: 'hidden',
-                    border: step === 0 ? 'none' : '1px solid rgba(16,185,129,0.2)',
-                    bgcolor: step === 0 ? 'transparent' : 'rgba(255,255,255,0.02)',
+                    border: '1px solid rgba(16,185,129,0.2)',
+                    bgcolor: 'rgba(255,255,255,0.02)',
                     minHeight: 360,
                     mb: 3,
                 }}
