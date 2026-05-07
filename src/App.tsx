@@ -47,7 +47,7 @@ function AppContent() {
             completeLesson(activeLesson.id, 100, skipped);
 
             if (activeLesson.week === 13) {
-                setView('grammar-week13');
+                setView('grammar-practice');
                 return;
             }
 
