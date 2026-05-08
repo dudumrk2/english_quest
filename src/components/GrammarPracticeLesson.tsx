@@ -125,7 +125,11 @@ export function GrammarPracticeLesson({
 
     const allAnswered = day.exercises.every(ex => (answers[ex.id] || '').trim() !== '');
     const allCorrect = correctCount === day.exercises.length;
-    const progressPercent = Math.round((correctCount / day.exercises.length) * 100);
+    // Don't reveal correctness in the header until the user clicks "Check Answers" —
+    // otherwise they may see "13/13 correct" while typing and exit without checking,
+    // which leaves the day unmarked and the next day locked.
+    const displayedCount = showFeedback ? correctCount : 0;
+    const progressPercent = Math.round((displayedCount / day.exercises.length) * 100);
 
     return (
         <Box sx={{ maxWidth: 900, mx: 'auto', p: { xs: 1, md: 3 } }}>
@@ -179,7 +183,7 @@ export function GrammarPracticeLesson({
                     </Box>
                     <Box textAlign="center">
                         <Typography variant="h4" fontWeight={800}>
-                            {correctCount}/{day.exercises.length}
+                            {displayedCount}/{day.exercises.length}
                         </Typography>
                         <Typography variant="caption" sx={{ opacity: 0.9 }}>correct</Typography>
                     </Box>
