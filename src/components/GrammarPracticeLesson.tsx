@@ -71,6 +71,9 @@ export function GrammarPracticeLesson({
         onSaveAnswers?.(updated);
     };
 
+    // Multi-blank fill-ins store one value per blank under compound keys: `${ex.id}__${i}`.
+    const blankKey = (id: string, i: number) => `${id}__${i}`;
+
     const isExerciseCorrect = (ex: GrammarExercise, userAnswer: string): boolean => {
         if (!userAnswer) return false;
         const correct = isAnswerCorrect(userAnswer, ex.answer);
@@ -84,6 +87,29 @@ export function GrammarPracticeLesson({
         return false;
     };
 
+    const isExerciseFullyCorrect = (ex: GrammarExercise): boolean => {
+        if (ex.type === 'fill_in') {
+            const fiEx = ex as FillInExercise;
+            if (fiEx.answers && fiEx.answers.length > 0) {
+                return fiEx.answers.every((expected, i) => {
+                    const userVal = answers[blankKey(ex.id, i)]?.trim() || '';
+                    return !!userVal && isAnswerCorrect(userVal, expected);
+                });
+            }
+        }
+        return isExerciseCorrect(ex, answers[ex.id]?.trim() || '');
+    };
+
+    const isExerciseAnswered = (ex: GrammarExercise): boolean => {
+        if (ex.type === 'fill_in') {
+            const fiEx = ex as FillInExercise;
+            if (fiEx.answers && fiEx.answers.length > 0) {
+                return fiEx.answers.every((_, i) => (answers[blankKey(ex.id, i)] || '').trim() !== '');
+            }
+        }
+        return (answers[ex.id] || '').trim() !== '';
+    };
+
     const handleCheckAll = () => {
         setShowFeedback(true);
 
@@ -92,9 +118,18 @@ export function GrammarPracticeLesson({
         const newLastChecked = { ...lastChecked };
 
         day.exercises.forEach(ex => {
-            const currentVal = answers[ex.id]?.trim() || '';
+            // For tracking, summarize the user's answer(s) into a single string.
+            let currentVal = answers[ex.id]?.trim() || '';
+            if (ex.type === 'fill_in') {
+                const fiEx = ex as FillInExercise;
+                if (fiEx.answers && fiEx.answers.length > 0) {
+                    currentVal = fiEx.answers
+                        .map((_, i) => answers[blankKey(ex.id, i)]?.trim() || '')
+                        .join(' | ');
+                }
+            }
             const lastVal = lastChecked[ex.id]?.trim() || '';
-            const correct = isExerciseCorrect(ex, currentVal);
+            const correct = isExerciseFullyCorrect(ex);
 
             if (!correct && currentVal !== '' && currentVal !== lastVal) {
                 newAttempts[ex.id] = (newAttempts[ex.id] || 0) + 1;
@@ -105,9 +140,7 @@ export function GrammarPracticeLesson({
         setAttempts(newAttempts);
         setLastChecked(newLastChecked);
 
-        const allCorrect = day.exercises.every(ex =>
-            isExerciseCorrect(ex, answers[ex.id]?.trim() || '')
-        );
+        const allCorrect = day.exercises.every(ex => isExerciseFullyCorrect(ex));
 
         if (allCorrect) {
             triggerCelebration();
@@ -119,11 +152,9 @@ export function GrammarPracticeLesson({
         setShowFeedback(false);
     };
 
-    const correctCount = day.exercises.filter(ex =>
-        isExerciseCorrect(ex, answers[ex.id]?.trim() || '')
-    ).length;
+    const correctCount = day.exercises.filter(ex => isExerciseFullyCorrect(ex)).length;
 
-    const allAnswered = day.exercises.every(ex => (answers[ex.id] || '').trim() !== '');
+    const allAnswered = day.exercises.every(ex => isExerciseAnswered(ex));
     const allCorrect = correctCount === day.exercises.length;
     // Don't reveal correctness in the header until the user clicks "Check Answers" —
     // otherwise they may see "13/13 correct" while typing and exit without checking,
@@ -328,10 +359,11 @@ export function GrammarPracticeLesson({
                                     exercise={ex}
                                     index={idx}
                                     answer={answers[ex.id] || ''}
+                                    answers={answers}
                                     showFeedback={showFeedback}
                                     attemptCount={attempts[ex.id] || 0}
                                     onChange={handleChange}
-                                    isCorrect={showFeedback ? isExerciseCorrect(ex, answers[ex.id]?.trim() || '') : null}
+                                    isCorrect={showFeedback ? isExerciseFullyCorrect(ex) : null}
                                 />
                             ))}
                         </Stack>
@@ -458,6 +490,7 @@ interface ExerciseItemProps {
     exercise: GrammarExercise;
     index: number;
     answer: string;
+    answers: Record<string, string>;
     showFeedback: boolean;
     attemptCount: number;
     isCorrect: boolean | null;
@@ -468,6 +501,7 @@ function ExerciseItem({
     exercise,
     index,
     answer,
+    answers,
     showFeedback,
     attemptCount,
     isCorrect,
@@ -491,6 +525,7 @@ function ExerciseItem({
         exercise={fiEx}
         index={index}
         answer={answer}
+        answers={answers}
         showFeedback={showFeedback}
         attemptCount={attemptCount}
         isCorrect={isCorrect}
@@ -504,15 +539,31 @@ interface FillInItemProps {
     exercise: FillInExercise;
     index: number;
     answer: string;
+    answers: Record<string, string>;
     showFeedback: boolean;
     attemptCount: number;
     isCorrect: boolean | null;
     onChange: (id: string, value: string) => void;
 }
 
-function FillInItem({ exercise, index, answer, showFeedback, attemptCount, isCorrect, onChange }: FillInItemProps) {
+function FillInItem({ exercise, index, answer, answers, showFeedback, attemptCount, isCorrect, onChange }: FillInItemProps) {
     const parts = exercise.sentence.split(/_{3,}/);
     const showError = showFeedback && isCorrect === false;
+    const isMulti = !!exercise.answers && exercise.answers.length > 0;
+    const expectedPerBlank: string[] = isMulti
+        ? exercise.answers!
+        : [exercise.answer];
+
+    // For each blank, get the user's value and per-blank correctness for visual feedback.
+    const blankValueFor = (blankIndex: number): string => {
+        if (isMulti) return answers[`${exercise.id}__${blankIndex}`] || '';
+        return answer;
+    };
+    const blankIsCorrect = (blankIndex: number): boolean => {
+        const val = blankValueFor(blankIndex).trim();
+        if (!val) return false;
+        return isAnswerCorrect(val, expectedPerBlank[blankIndex]);
+    };
 
     return (
         <Box>
@@ -526,51 +577,61 @@ function FillInItem({ exercise, index, answer, showFeedback, attemptCount, isCor
                 </Box>
                 {parts.map((part, i) => {
                     const hasBlankAfter = i < parts.length - 1;
+                    if (!hasBlankAfter) {
+                        return (
+                            <React.Fragment key={i}>
+                                <span>{part}</span>
+                            </React.Fragment>
+                        );
+                    }
+                    const blankIndex = i;
+                    const blankValue = blankValueFor(blankIndex);
+                    const blankCorrect = showFeedback ? blankIsCorrect(blankIndex) : null;
+                    const expected = expectedPerBlank[blankIndex] || '';
+                    const fieldKey = isMulti ? `${exercise.id}__${blankIndex}` : exercise.id;
                     return (
                         <React.Fragment key={i}>
                             <span>{part}</span>
-                            {hasBlankAfter && (
-                                <TextField
-                                    variant="standard"
-                                    size="small"
-                                    placeholder={`${exercise.answer[0]}...`}
-                                    value={answer}
-                                    onChange={e => onChange(exercise.id, e.target.value)}
-                                    sx={{
-                                        width: 160,
-                                        mx: 1,
-                                        '& .MuiInputBase-input': {
-                                            textAlign: 'center',
-                                            fontWeight: 'bold',
-                                            fontSize: '1.1rem',
-                                            color: showFeedback
-                                                ? isCorrect
-                                                    ? 'success.main'
-                                                    : 'error.main'
-                                                : '#ffffff',
-                                        },
-                                        '& .MuiInput-underline:before': {
-                                            borderBottom: '2px solid #94a3b8 !important',
-                                        },
-                                        '& .MuiInput-underline:hover:before': {
-                                            borderBottom: '2px solid #64748b !important',
-                                        },
-                                        '& .MuiInput-underline:after': {
-                                            borderBottom: '3px solid #10b981',
-                                        },
-                                    }}
-                                    InputProps={{
-                                        endAdornment: showFeedback && (
-                                            <Box sx={{ ml: 1 }}>
-                                                {isCorrect
-                                                    ? <CheckIcon color="success" fontSize="small" />
-                                                    : <CancelIcon color="error" fontSize="small" />
-                                                }
-                                            </Box>
-                                        ),
-                                    }}
-                                />
-                            )}
+                            <TextField
+                                variant="standard"
+                                size="small"
+                                placeholder={expected ? `${expected[0]}...` : ''}
+                                value={blankValue}
+                                onChange={e => onChange(fieldKey, e.target.value)}
+                                sx={{
+                                    width: 160,
+                                    mx: 1,
+                                    '& .MuiInputBase-input': {
+                                        textAlign: 'center',
+                                        fontWeight: 'bold',
+                                        fontSize: '1.1rem',
+                                        color: showFeedback
+                                            ? blankCorrect
+                                                ? 'success.main'
+                                                : 'error.main'
+                                            : '#ffffff',
+                                    },
+                                    '& .MuiInput-underline:before': {
+                                        borderBottom: '2px solid #94a3b8 !important',
+                                    },
+                                    '& .MuiInput-underline:hover:before': {
+                                        borderBottom: '2px solid #64748b !important',
+                                    },
+                                    '& .MuiInput-underline:after': {
+                                        borderBottom: '3px solid #10b981',
+                                    },
+                                }}
+                                InputProps={{
+                                    endAdornment: showFeedback && (
+                                        <Box sx={{ ml: 1 }}>
+                                            {blankCorrect
+                                                ? <CheckIcon color="success" fontSize="small" />
+                                                : <CancelIcon color="error" fontSize="small" />
+                                            }
+                                        </Box>
+                                    ),
+                                }}
+                            />
                         </React.Fragment>
                     );
                 })}
@@ -582,7 +643,7 @@ function FillInItem({ exercise, index, answer, showFeedback, attemptCount, isCor
                 </Typography>
             )}
 
-            {showError && answer.trim() && (
+            {showError && (
                 <Alert
                     severity="info"
                     sx={{ mt: 1.5, ml: { xs: 2, md: 4 }, maxWidth: 440 }}
@@ -590,11 +651,13 @@ function FillInItem({ exercise, index, answer, showFeedback, attemptCount, isCor
                 >
                     {attemptCount >= 3 ? (
                         <span>
-                            👀 The correct answer is: <strong>{exercise.answer}</strong>
+                            👀 The correct answer{isMulti ? 's are' : ' is'}: <strong>{expectedPerBlank.join(' / ')}</strong>
                         </span>
                     ) : (
                         <span>
-                            💡 Hint: The answer starts with &ldquo;{exercise.answer[0]}&rdquo; — check the formula above!
+                            💡 Hint: {isMulti
+                                ? `Each blank starts with "${expectedPerBlank.map(a => a[0]).join('", "')}"`
+                                : `The answer starts with "${expectedPerBlank[0][0]}"`} — check the formula above!
                         </span>
                     )}
                 </Alert>

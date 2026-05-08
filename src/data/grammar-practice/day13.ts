@@ -57,24 +57,28 @@ export const day13: GrammarDay = {
       type: 'fill_in',
       sentence: 'What ___ you (do) ___ right now? (Present Progressive question)',
       answer: 'are you doing',
+      answers: ['are', 'doing'],
     },
     {
       id: 'd13-e06',
       type: 'fill_in',
       sentence: 'Where ___ they (go) ___ for the school trip last year? (Past Simple question)',
       answer: 'did they go',
+      answers: ['did', 'go'],
     },
     {
       id: 'd13-e07',
       type: 'fill_in',
       sentence: 'How often ___ your class (have) ___ PE lessons? (Present Simple question)',
       answer: 'does your class have',
+      answers: ['does', 'have'],
     },
     {
       id: 'd13-e08',
       type: 'fill_in',
       sentence: 'Who ___ (win) ___ the tournament next weekend? (Future Simple question)',
       answer: 'will win',
+      answers: ['will', 'win'],
     },
     {
       id: 'd13-e09',
