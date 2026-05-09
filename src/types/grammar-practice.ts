@@ -23,7 +23,10 @@ export interface FillInExercise {
   type: 'fill_in';
   sentence: string;
   hint?: string;
+  /** Single-blank answer. Use `answers` instead when the sentence has multiple ___ blanks. */
   answer: string;
+  /** One expected answer per ___ blank, in left-to-right order. Takes precedence over `answer`. */
+  answers?: string[];
   acceptAlso?: string[];
 }
 
