@@ -4,6 +4,7 @@ import { persist } from 'zustand/middleware';
 import { lessons } from '../data/lessons';
 import { AppState, Lesson } from '../types';
 import { saveToCloud as saveToCloudService, loadFromCloud as loadFromCloudService } from '../services/cloudSync';
+import type { TestResult } from '../types/test';
 
 const DEFAULT_STATE: AppState = {
     completedLessons: [],
@@ -15,6 +16,7 @@ const DEFAULT_STATE: AppState = {
     lessonAnswers: {},
     completedGrammarDays: [],
     grammarAnswers: {},
+    testResults: {},
 };
 
 function migrateState(state: Partial<AppState>): AppState {
@@ -24,6 +26,7 @@ function migrateState(state: Partial<AppState>): AppState {
         lessonAnswers: state.lessonAnswers ?? {},
         completedGrammarDays: state.completedGrammarDays ?? [],
         grammarAnswers: state.grammarAnswers ?? {},
+        testResults: state.testResults ?? {},
     };
 }
 
@@ -36,6 +39,7 @@ interface AppStoreState {
     resetAllProgress: () => void;
     completeGrammarDay: (dayId: number) => void;
     saveGrammarAnswers: (dayId: number, answers: Record<string, string>) => void;
+    saveTestResult: (result: TestResult) => void;
 }
 
 /**
@@ -148,6 +152,19 @@ const createStore = (userEmail: string) => {
                         },
                     }));
                 },
+
+                saveTestResult: (result: TestResult) => {
+                    set((store) => {
+                        const existing = store.state.testResults?.[result.testId];
+                        if (existing && existing.score >= result.score) return store;
+                        return {
+                            state: {
+                                ...store.state,
+                                testResults: { ...store.state.testResults, [result.testId]: result },
+                            },
+                        };
+                    });
+                },
             }),
             {
                 name: storageName,
@@ -192,6 +209,7 @@ interface AppStoreReturn {
     resetAllProgress: () => void;
     completeGrammarDay: (dayId: number) => void;
     saveGrammarAnswers: (dayId: number, answers: Record<string, string>) => void;
+    saveTestResult: (result: TestResult) => void;
     isSyncing: boolean;
     lastSyncedAt: string | null;
     saveToCloud: () => Promise<void>;
@@ -209,6 +227,7 @@ export function useAppStore(userEmail?: string): AppStoreReturn {
         resetAllProgress,
         completeGrammarDay,
         saveGrammarAnswers,
+        saveTestResult,
     } = store();
 
     const [isSyncing, setIsSyncing] = useState(false);
@@ -263,6 +282,7 @@ export function useAppStore(userEmail?: string): AppStoreReturn {
         resetAllProgress,
         completeGrammarDay,
         saveGrammarAnswers,
+        saveTestResult,
         isSyncing,
         lastSyncedAt,
         saveToCloud,

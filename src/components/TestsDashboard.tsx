@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
     Box, Typography, Card, CardContent, CardActionArea,
-    Stack, Chip, Button, Tooltip,
+    Stack, Chip, Button, Tooltip, CircularProgress,
 } from '@mui/material';
 import {
     Quiz as QuizIcon,
@@ -10,31 +10,13 @@ import {
     ArrowBack as BackIcon,
     Lock as LockIcon,
     LockOpen as UnlockIcon,
+    CloudUpload as CloudUploadIcon,
+    CloudDownload as CloudDownloadIcon,
 } from '@mui/icons-material';
 import { tests } from '../data/tests';
 import { TestRunner } from './TestRunner';
 import type { Test, TestResult } from '../types/test';
 import { GradientText } from './common/GradientText';
-
-const RESULTS_KEY = 'nadav-english-test-results';
-
-function loadResults(): Record<string, TestResult> {
-    try {
-        const raw = localStorage.getItem(RESULTS_KEY);
-        return raw ? JSON.parse(raw) : {};
-    } catch {
-        return {};
-    }
-}
-
-function saveResult(result: TestResult) {
-    const all = loadResults();
-    const existing = all[result.testId];
-    if (!existing || result.score > existing.score) {
-        all[result.testId] = result;
-        localStorage.setItem(RESULTS_KEY, JSON.stringify(all));
-    }
-}
 
 function isTestLocked(test: Test, results: Record<string, TestResult>): boolean {
     if (!test.lockedUntil) return false;
@@ -44,15 +26,33 @@ function isTestLocked(test: Test, results: Record<string, TestResult>): boolean 
 
 interface TestsDashboardProps {
     onBack: () => void;
+    initialResults?: Record<string, TestResult>;
+    onSaveTestResult?: (result: TestResult) => void;
+    isGoogleUser?: boolean;
+    isSyncing?: boolean;
+    onSaveToCloud?: () => void;
+    onLoadFromCloud?: () => void;
 }
 
-export function TestsDashboard({ onBack }: TestsDashboardProps) {
+export function TestsDashboard({
+    onBack,
+    initialResults = {},
+    onSaveTestResult,
+    isGoogleUser,
+    isSyncing,
+    onSaveToCloud,
+    onLoadFromCloud,
+}: TestsDashboardProps) {
     const [selectedTest, setSelectedTest] = useState<Test | null>(null);
-    const [results, setResults] = useState<Record<string, TestResult>>(loadResults);
+    const [results, setResults] = useState<Record<string, TestResult>>(initialResults);
 
     const handleComplete = (result: TestResult) => {
-        saveResult(result);
-        setResults(loadResults());
+        const existing = results[result.testId];
+        if (!existing || result.score > existing.score) {
+            const updated = { ...results, [result.testId]: result };
+            setResults(updated);
+            onSaveTestResult?.(result);
+        }
     };
 
     if (selectedTest) {
@@ -68,13 +68,40 @@ export function TestsDashboard({ onBack }: TestsDashboardProps) {
     return (
         <Box>
             {/* Header */}
-            <Button
-                startIcon={<BackIcon />}
-                onClick={onBack}
-                sx={{ mb: 2, color: 'text.secondary', textTransform: 'none' }}
-            >
-                חזרה לדף הבית
-            </Button>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                <Button
+                    startIcon={<BackIcon />}
+                    onClick={onBack}
+                    sx={{ color: 'text.secondary', textTransform: 'none' }}
+                >
+                    חזרה לדף הבית
+                </Button>
+
+                {isGoogleUser && (
+                    <Stack direction="row" spacing={1}>
+                        <Button
+                            startIcon={isSyncing ? <CircularProgress size={16} /> : <CloudUploadIcon />}
+                            variant="outlined"
+                            size="small"
+                            onClick={onSaveToCloud}
+                            disabled={isSyncing}
+                            sx={{ textTransform: 'none', borderColor: 'rgba(99,102,241,0.4)', color: 'primary.light' }}
+                        >
+                            שמור בענן
+                        </Button>
+                        <Button
+                            startIcon={isSyncing ? <CircularProgress size={16} /> : <CloudDownloadIcon />}
+                            variant="outlined"
+                            size="small"
+                            onClick={onLoadFromCloud}
+                            disabled={isSyncing}
+                            sx={{ textTransform: 'none', borderColor: 'rgba(99,102,241,0.4)', color: 'primary.light' }}
+                        >
+                            טען מהענן
+                        </Button>
+                    </Stack>
+                )}
+            </Stack>
 
             <Box textAlign="center" mb={5}>
                 <GradientText variant="h3" gutterBottom sx={{ fontSize: { xs: '2rem', md: '2.5rem' } }}>

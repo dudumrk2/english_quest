@@ -108,6 +108,7 @@ export interface AppState {
     lessonAnswers: Record<number, any>;
     completedGrammarDays: number[];
     grammarAnswers: Record<number, Record<string, string>>;
+    testResults: Record<string, import('./test').TestResult>;
 }
 
 // Message Types

@@ -27,7 +27,7 @@ type ViewType = 'home' | 'dashboard' | 'lesson' | 'summary' | 'tests' | 'grammar
 
 function AppContent() {
     const { user, isAuthenticated, logout } = useAuth();
-    const { state, completeLesson, saveLessonAnswers, clearLessonAnswers, resetAllProgress, completeGrammarDay, saveGrammarAnswers, isSyncing, lastSyncedAt, saveToCloud, loadFromCloud } = useAppStore(user?.email);
+    const { state, completeLesson, saveLessonAnswers, clearLessonAnswers, resetAllProgress, completeGrammarDay, saveGrammarAnswers, saveTestResult, isSyncing, lastSyncedAt, saveToCloud, loadFromCloud } = useAppStore(user?.email);
     const [view, setView] = useState<ViewType>('home');
     const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
     const [activeGrammarDay, setActiveGrammarDay] = useState<GrammarDay | null>(null);
@@ -131,7 +131,17 @@ function AppContent() {
         }
 
         if (view === 'tests') {
-            return <TestsDashboard onBack={() => setView('home')} />;
+            return (
+                <TestsDashboard
+                    onBack={() => setView('home')}
+                    initialResults={state.testResults ?? {}}
+                    onSaveTestResult={saveTestResult}
+                    isGoogleUser={user?.email !== 'demo@nadav-english.com'}
+                    isSyncing={isSyncing}
+                    onSaveToCloud={saveToCloud}
+                    onLoadFromCloud={loadFromCloud}
+                />
+            );
         }
 
         if (view === 'grammar-practice') {
