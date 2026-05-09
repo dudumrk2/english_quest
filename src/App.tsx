@@ -170,6 +170,10 @@ function AppContent() {
                         saveGrammarAnswers(dayId, answers);
                         setView('grammar-practice');
                     }}
+                    isGoogleUser={user?.email !== 'demo@nadav-english.com'}
+                    isSyncing={isSyncing}
+                    onSaveToCloud={saveToCloud}
+                    onLoadFromCloud={loadFromCloud}
                 />
             );
         }

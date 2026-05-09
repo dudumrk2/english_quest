@@ -15,6 +15,7 @@ import {
     TableBody,
     TableRow,
     TableCell,
+    CircularProgress,
 } from '@mui/material';
 import {
     ArrowBack as BackIcon,
@@ -24,6 +25,8 @@ import {
     Assignment as PracticeIcon,
     EmojiEvents as TrophyIcon,
     MenuBook as ReviewIcon,
+    CloudUpload as CloudUploadIcon,
+    CloudDownload as CloudDownloadIcon,
 } from '@mui/icons-material';
 import type { GrammarDay, GrammarExercise, FillInExercise, MultipleChoiceExercise } from '../types/grammar-practice';
 import { isAnswerCorrect } from '../utils/validation';
@@ -36,6 +39,10 @@ interface GrammarPracticeLessonProps {
     onBack: () => void;
     onComplete: (dayId: number, answers: Record<string, string>) => void;
     onSaveAnswers?: (answers: Record<string, string>) => void;
+    isGoogleUser?: boolean;
+    isSyncing?: boolean;
+    onSaveToCloud?: () => void;
+    onLoadFromCloud?: () => void;
 }
 
 export function GrammarPracticeLesson({
@@ -44,6 +51,10 @@ export function GrammarPracticeLesson({
     onBack,
     onComplete,
     onSaveAnswers,
+    isGoogleUser,
+    isSyncing,
+    onSaveToCloud,
+    onLoadFromCloud,
 }: GrammarPracticeLessonProps) {
     const [phase, setPhase] = useState<'intro' | 'practice'>('intro');
     const [answers, setAnswers] = useState<Record<string, string>>(initialAnswers);
@@ -133,7 +144,7 @@ export function GrammarPracticeLesson({
 
     return (
         <Box sx={{ maxWidth: 900, mx: 'auto', p: { xs: 1, md: 3 } }}>
-            {/* Back + Review buttons */}
+            {/* Back + Review + Cloud buttons */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2} flexWrap="wrap" gap={1}>
                 <Button
                     startIcon={<BackIcon />}
@@ -142,20 +153,46 @@ export function GrammarPracticeLesson({
                 >
                     Back to Grammar Practice
                 </Button>
-                <Button
-                    startIcon={<ReviewIcon />}
-                    onClick={() => setPhase('intro')}
-                    variant="outlined"
-                    size="small"
-                    sx={{
-                        textTransform: 'none',
-                        borderColor: 'rgba(16,185,129,0.4)',
-                        color: '#34d399',
-                        '&:hover': { borderColor: '#10b981', bgcolor: 'rgba(16,185,129,0.08)' },
-                    }}
-                >
-                    📖 Review Explanation
-                </Button>
+                <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
+                    {isGoogleUser && (
+                        <>
+                            <Button
+                                startIcon={isSyncing ? <CircularProgress size={16} /> : <CloudUploadIcon />}
+                                variant="outlined"
+                                size="small"
+                                onClick={onSaveToCloud}
+                                disabled={isSyncing}
+                                sx={{ textTransform: 'none', borderColor: 'rgba(99,102,241,0.4)', color: 'primary.light' }}
+                            >
+                                שמור בענן
+                            </Button>
+                            <Button
+                                startIcon={isSyncing ? <CircularProgress size={16} /> : <CloudDownloadIcon />}
+                                variant="outlined"
+                                size="small"
+                                onClick={onLoadFromCloud}
+                                disabled={isSyncing}
+                                sx={{ textTransform: 'none', borderColor: 'rgba(99,102,241,0.4)', color: 'primary.light' }}
+                            >
+                                טען מהענן
+                            </Button>
+                        </>
+                    )}
+                    <Button
+                        startIcon={<ReviewIcon />}
+                        onClick={() => setPhase('intro')}
+                        variant="outlined"
+                        size="small"
+                        sx={{
+                            textTransform: 'none',
+                            borderColor: 'rgba(16,185,129,0.4)',
+                            color: '#34d399',
+                            '&:hover': { borderColor: '#10b981', bgcolor: 'rgba(16,185,129,0.08)' },
+                        }}
+                    >
+                        📖 Review Explanation
+                    </Button>
+                </Stack>
             </Stack>
 
             {/* Header */}
