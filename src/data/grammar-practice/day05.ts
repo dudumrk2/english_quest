@@ -49,7 +49,8 @@ export const day05: GrammarDay = {
       id: 'd05-e04',
       type: 'fill_in',
       sentence: 'My dad usually ___ (drive) to work, but today he ___ (take) the train.',
-      answer: "drives / is taking",
+      answer: 'drives / is taking',
+      answers: ['drives', 'is taking'],
     },
     {
       id: 'd05-e05',
@@ -76,6 +77,7 @@ export const day05: GrammarDay = {
       type: 'fill_in',
       sentence: 'Why ___ you (cry) ___? What happened?',
       answer: 'are you crying',
+      answers: ['are', 'crying'],
     },
     {
       id: 'd05-e09',
