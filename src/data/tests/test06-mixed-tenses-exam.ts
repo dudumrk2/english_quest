@@ -5,7 +5,6 @@ export const test06MixedTensesExam: Test = {
     title: "Mixed Tenses — Teacher's Example Test",
     subtitle: 'Present Simple · Present Progressive · Past Simple · Future Simple',
     totalPoints: 59,
-    lockedUntil: 'test05-mixed-tenses-harder',
     sections: [
         {
             type: 'sentence_completion',
