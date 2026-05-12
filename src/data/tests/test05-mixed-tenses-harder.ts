@@ -1,0 +1,213 @@
+import type { Test } from '../../types/test';
+
+export const test05MixedTensesHarder: Test = {
+    id: 'test05-mixed-tenses-harder',
+    title: 'Mixed Tenses — Practice 4',
+    subtitle: 'Present Simple · Present Progressive · Past Simple · Future Simple',
+    totalPoints: 59,
+    lockedUntil: 'test04-mixed-tenses-3',
+    sections: [
+        {
+            type: 'sentence_completion',
+            title: 'A. Fill in the correct form of the verb',
+            pointsNote: '(10 × 2)',
+            pointsPerAnswer: 2,
+            instructions: 'Use Present Simple, Present Progressive, Past Simple, or Future Simple. Positive or negative.',
+            sentences: [
+                {
+                    id: 'a1',
+                    text: 'Look! The children ___ (swim) in the pool.',
+                    answer: 'are swimming',
+                },
+                {
+                    id: 'a2',
+                    text: 'My sister ___ (not / eat) meat. She is a vegetarian.',
+                    answer: "doesn't eat",
+                    acceptAlso: ['does not eat'],
+                },
+                {
+                    id: 'a3',
+                    text: 'Last night we ___ (watch) an amazing film at the cinema.',
+                    answer: 'watched',
+                },
+                {
+                    id: 'a4',
+                    text: 'They ___ (practice) every day for the championship.',
+                    answer: 'practice',
+                },
+                {
+                    id: 'a5',
+                    text: 'I ___ (not / understand) what the teacher explained yesterday.',
+                    answer: "didn't understand",
+                    acceptAlso: ['did not understand'],
+                },
+                {
+                    id: 'a6',
+                    text: 'The baby ___ (sleep) right now. Please be quiet.',
+                    answer: 'is sleeping',
+                },
+                {
+                    id: 'a7',
+                    text: 'My parents ___ (buy) a new car last month.',
+                    answer: 'bought',
+                },
+                {
+                    id: 'a8',
+                    text: 'We ___ (not / have) school tomorrow because of the holiday.',
+                    answer: "won't have",
+                    acceptAlso: ['will not have'],
+                },
+                {
+                    id: 'a9',
+                    text: 'Listen! Someone ___ (knock) on the door.',
+                    answer: 'is knocking',
+                },
+                {
+                    id: 'a10',
+                    text: 'My family ___ (travel) to Europe next summer.',
+                    answer: 'will travel',
+                },
+            ],
+        },
+        {
+            type: 'passage_fill',
+            title: 'B. Complete the passage — write the correct verb form',
+            pointsNote: '(9 × 1 + 2 × 3)',
+            pointsPerBlank: 1,
+            pointsPerQuestion: 3,
+            instructions: 'Fill in each blank with the correct form of the verb in brackets. Then answer the comprehension questions in full sentences.',
+            segments: [
+                { type: 'text', content: 'Noa always ' },
+                { type: 'blank', id: 'b1', hint: 'love', answer: 'loves' },
+                { type: 'text', content: ' music. She ' },
+                { type: 'blank', id: 'b2', hint: 'practice', answer: 'practices' },
+                { type: 'text', content: ' the piano for one hour every evening. Last week, her music teacher ' },
+                { type: 'blank', id: 'b3', hint: 'tell', answer: 'told' },
+                { type: 'text', content: ' her about a big school concert. Noa ' },
+                { type: 'blank', id: 'b4', hint: 'not / be', answer: "wasn't", acceptAlso: ['was not'] },
+                { type: 'text', content: ' nervous at first, but then she ' },
+                { type: 'blank', id: 'b5', hint: 'begin', answer: 'began' },
+                { type: 'text', content: ' to worry. She ' },
+                { type: 'blank', id: 'b6', hint: 'know', answer: 'knows' },
+                { type: 'text', content: ' that many parents ' },
+                { type: 'blank', id: 'b7', hint: 'be', answer: 'will be' },
+                { type: 'text', content: ' there. Now she ' },
+                { type: 'blank', id: 'b8', hint: 'practice', answer: 'is practicing' },
+                { type: 'text', content: ' a special piece every day. Her family ' },
+                { type: 'blank', id: 'b9', hint: 'come', answer: 'will come' },
+                { type: 'text', content: ' to the concert next month and support her.' },
+            ],
+            questions: [
+                {
+                    id: 'bq1',
+                    text: 'What did Noa\'s music teacher tell her last week?',
+                    answer: 'Her music teacher told her about a big school concert.',
+                },
+                {
+                    id: 'bq2',
+                    text: 'What is Noa doing now to prepare for the concert?',
+                    answer: 'She is practicing a special piece every day.',
+                },
+            ],
+        },
+        {
+            type: 'multiple_choice',
+            title: 'F. Choose the correct question word or form',
+            pointsNote: '(7 × 1)',
+            pointsPerAnswer: 1,
+            questions: [
+                {
+                    id: 'f1',
+                    text: '___ your friends like sushi?',
+                    options: ['Do', 'Are', 'Does'],
+                    answer: 'Do',
+                },
+                {
+                    id: 'f2',
+                    text: 'What time ___ she wake up?',
+                    options: ['does she wake', 'do she wake', 'does she wakes'],
+                    answer: 'does she wake',
+                },
+                {
+                    id: 'f3',
+                    text: '___ your father travel a lot for work?',
+                    options: ['Do', 'Is', 'Does'],
+                    answer: 'Does',
+                },
+                {
+                    id: 'f4',
+                    text: '___ they studying right now?',
+                    options: ['Do', 'Are', 'Does'],
+                    answer: 'Are',
+                },
+                {
+                    id: 'f5',
+                    text: '___ he have a sister?',
+                    options: ['Does he have', 'Do he have', 'Does he has'],
+                    answer: 'Does he have',
+                },
+                {
+                    id: 'f6',
+                    text: '___ it snowing outside?',
+                    options: ['Is', 'Do', 'Are'],
+                    answer: 'Is',
+                },
+                {
+                    id: 'f7',
+                    text: '___ your parents at home last night?',
+                    options: ['Was', 'Were', 'Did'],
+                    answer: 'Were',
+                },
+            ],
+        },
+        {
+            type: 'question_formation',
+            title: 'H. Write a suitable question for each answer',
+            pointsNote: '(8 × 2)',
+            pointsPerAnswer: 2,
+            instructions: 'Pay attention to Yes/No or WH questions. Use the correct tense.',
+            items: [
+                {
+                    id: 'h1',
+                    givenAnswer: 'She goes to school by bike.',
+                    correctQuestion: 'How does she go to school?',
+                },
+                {
+                    id: 'h2',
+                    givenAnswer: "No, he isn't watching TV now.",
+                    correctQuestion: 'Is he watching TV now?',
+                },
+                {
+                    id: 'h3',
+                    givenAnswer: 'They visited their grandparents last weekend.',
+                    correctQuestion: 'Who did they visit last weekend?',
+                },
+                {
+                    id: 'h4',
+                    givenAnswer: "She didn't come to school because she had a fever.",
+                    correctQuestion: 'Why didn\'t she come to school?',
+                },
+                {
+                    id: 'h5',
+                    givenAnswer: 'We practice swimming three times a week.',
+                    correctQuestion: 'How many times a week do you practice swimming?',
+                },
+                {
+                    id: 'h6',
+                    givenAnswer: 'Yes, I will join the school trip tomorrow.',
+                    correctQuestion: 'Will you join the school trip tomorrow?',
+                },
+                {
+                    id: 'h7',
+                    givenAnswer: 'He finished his project two days ago.',
+                    correctQuestion: 'When did he finish his project?',
+                },
+                {
+                    id: 'h8',
+                    givenAnswer: "They didn't go out because it was cold.",
+                    correctQuestion: "Why didn't they go out?",
+                },
+            ],
+        },
+    ],
+};
