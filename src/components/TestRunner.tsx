@@ -20,9 +20,10 @@ const DRAFT_PREFIX = 'nadav-english-test-draft-';
 import type {
     Test, TestSection, MCQuestion, FillSentence, VerbPair,
     SentenceFill, QuestionFormItem, PassageQuestion, PassageSegment,
-    TestResult,
+    ReadingQuestion, TestResult,
     MultipleChoiceSection, FillFromBankSection, VerbTableSection,
     SentenceCompletionSection, QuestionFormationSection, PassageFillSection,
+    ReadingComprehensionSection,
 } from '../types/test';
 
 function computeScore(test: Test, answers: Record<string, string>): { resultsMap: Record<string, boolean>; sectionScores: { earned: number; total: number }[]; totalScore: number } {
@@ -70,6 +71,14 @@ function computeScore(test: Test, answers: Record<string, string>): { resultsMap
             section.items.forEach((item: QuestionFormItem) => {
                 const key = `${si}_${item.id}`;
                 const ok = wordOverlapMatch(answers[key] || '', item.correctQuestion);
+                map[key] = ok;
+                if (ok) earned += section.pointsPerAnswer;
+                total += section.pointsPerAnswer;
+            });
+        } else if (section.type === 'reading_comprehension') {
+            section.questions.forEach((q: ReadingQuestion) => {
+                const key = `${si}_${q.id}`;
+                const ok = wordOverlapMatch(answers[key] || '', q.answer, 0.5);
                 map[key] = ok;
                 if (ok) earned += section.pointsPerAnswer;
                 total += section.pointsPerAnswer;
@@ -448,6 +457,8 @@ function renderSection(
                     renderQuestionFormation(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
                 {section.type === 'passage_fill' &&
                     renderPassageFill(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
+                {section.type === 'reading_comprehension' &&
+                    renderReadingComprehension(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
             </CardContent>
         </Card>
     );
@@ -823,6 +834,71 @@ function renderQuestionFormation(section: QuestionFormationSection, si: number, 
                 );
             })}
         </Stack>
+    );
+}
+
+// ── G: Reading Comprehension ──────────────────────────────────────────────
+
+function renderReadingComprehension(section: ReadingComprehensionSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>) {
+    return (
+        <Box>
+            <Paper
+                elevation={0}
+                sx={{
+                    p: 3,
+                    mb: 3,
+                    bgcolor: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: 2,
+                    lineHeight: 2,
+                }}
+            >
+                <Typography variant="body1" sx={{ lineHeight: 1.9, whiteSpace: 'pre-line' }}>
+                    {section.passage}
+                </Typography>
+            </Paper>
+
+            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 2 }}>
+                Answer the questions in full sentences:
+            </Typography>
+            <Stack spacing={2}>
+                {section.questions.map((q: ReadingQuestion, idx: number) => {
+                    const key = `${si}_${q.id}`;
+                    const isLocked = lockedCorrect.has(key);
+                    const isCorrect = resultsMap[key];
+                    return (
+                        <Box key={q.id}>
+                            <Typography variant="body2" sx={{ mb: 0.5 }}>
+                                <strong>{idx + 1}.</strong> {q.text}
+                            </Typography>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                value={answers[key] || ''}
+                                onChange={e => setAnswer(key, e.target.value)}
+                                disabled={isLocked}
+                                placeholder="Write your answer here..."
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        bgcolor: isLocked ? answerBg(true, true) : answerBg(showingResults, isCorrect),
+                                    },
+                                }}
+                            />
+                            {isLocked && (
+                                <Typography variant="caption" color="success.main" sx={{ mt: 0.5, display: 'block' }}>
+                                    ✓ Correct!
+                                </Typography>
+                            )}
+                            {showingResults && !isLocked && !isCorrect && (
+                                <Typography variant="caption" color="error.main" sx={{ mt: 0.5, display: 'block' }}>
+                                    Try again!
+                                </Typography>
+                            )}
+                        </Box>
+                    );
+                })}
+            </Stack>
+        </Box>
     );
 }
 

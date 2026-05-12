@@ -13,7 +13,8 @@ export type TestSection =
     | VerbTableSection
     | SentenceCompletionSection
     | QuestionFormationSection
-    | PassageFillSection;
+    | PassageFillSection
+    | ReadingComprehensionSection;
 
 export interface MultipleChoiceSection {
     type: 'multiple_choice';
@@ -106,6 +107,21 @@ export type PassageSegment =
     | { type: 'blank'; id: string; hint: string; answer: string; acceptAlso?: string[] };
 
 export interface PassageQuestion {
+    id: string;
+    text: string;
+    answer: string;
+}
+
+export interface ReadingComprehensionSection {
+    type: 'reading_comprehension';
+    title: string;
+    pointsNote: string;
+    pointsPerAnswer: number;
+    passage: string;
+    questions: ReadingQuestion[];
+}
+
+export interface ReadingQuestion {
     id: string;
     text: string;
     answer: string;

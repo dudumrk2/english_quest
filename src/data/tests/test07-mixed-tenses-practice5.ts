@@ -4,9 +4,42 @@ export const test07MixedTensesPractice5: Test = {
     id: 'test07-mixed-tenses-practice5',
     title: 'Mixed Tenses — Practice 5',
     subtitle: 'Present Simple · Present Progressive · Past Simple · Future Simple',
-    totalPoints: 59,
+    totalPoints: 71,
     lockedUntil: 'test06-mixed-tenses-exam',
     sections: [
+        {
+            type: 'reading_comprehension',
+            title: 'Reading Comprehension',
+            pointsNote: '(4 × 3)',
+            pointsPerAnswer: 3,
+            passage: `Mia is fourteen years old and she loves photography. Every weekend, she takes her camera and goes to different places in her city to photograph interesting things. Last month, she entered a school photography competition. She worked very hard and took hundreds of photos before choosing her best one.
+
+When the teacher announced the results, Mia couldn't believe it — she won first place! Her winning photo showed an old man reading a newspaper in a park. "I took this photo early in the morning," Mia explained. "The light was perfect and everything looked so peaceful."
+
+Next month, Mia will exhibit her photos in the school library. She hopes that other students will discover their love of photography too. Her parents are very proud of her, and her mother already bought her a new camera lens as a gift.`,
+            questions: [
+                {
+                    id: 'r1',
+                    text: 'What does Mia do every weekend?',
+                    answer: 'She takes her camera and goes to different places to photograph interesting things.',
+                },
+                {
+                    id: 'r2',
+                    text: 'What happened at the school photography competition?',
+                    answer: 'She won first place.',
+                },
+                {
+                    id: 'r3',
+                    text: 'What did Mia\'s winning photo show?',
+                    answer: 'It showed an old man reading a newspaper in a park.',
+                },
+                {
+                    id: 'r4',
+                    text: 'What will Mia do next month?',
+                    answer: 'She will exhibit her photos in the school library.',
+                },
+            ],
+        },
         {
             type: 'sentence_completion',
             title: 'A. Fill in the correct form of the verb',
