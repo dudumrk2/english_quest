@@ -1,11 +1,11 @@
 import type { Test } from '../../types/test';
 
-export const test05MixedTensesExam: Test = {
-    id: 'test05-mixed-tenses-exam',
-    title: 'Mixed Tenses — Final Practice',
+export const test06MixedTensesExam: Test = {
+    id: 'test06-mixed-tenses-exam',
+    title: "Mixed Tenses — Teacher's Example Test",
     subtitle: 'Present Simple · Present Progressive · Past Simple · Future Simple',
     totalPoints: 59,
-    lockedUntil: 'test04-mixed-tenses-3',
+    lockedUntil: 'test05-mixed-tenses-harder',
     sections: [
         {
             type: 'sentence_completion',
