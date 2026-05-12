@@ -135,6 +135,8 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
     });
     // Keys that have been checked and are correct — these are locked and cannot be edited
     const [lockedCorrect, setLockedCorrect] = useState<Set<string>>(new Set());
+    // Per-key failed attempt count — show correct answer after 3 failures
+    const [attempts, setAttempts] = useState<Record<string, number>>({});
     // Whether we're currently showing check feedback (between check and user editing)
     const [showFeedback, setShowFeedback] = useState(false);
     // Final submission — all answers correct, score reported
@@ -178,20 +180,23 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
     const handleCheck = () => {
         const { resultsMap: currentResults } = computeScore(test, answers);
 
-        // Lock correct answers, clear wrong ones
+        // Lock correct answers, clear wrong ones, track attempts
         const newLocked = new Set(lockedCorrect);
         const updatedAnswers = { ...answers };
+        const newAttempts = { ...attempts };
 
         Object.entries(currentResults).forEach(([key, isCorrect]) => {
             if (isCorrect) {
                 newLocked.add(key);
             } else {
+                newAttempts[key] = (newAttempts[key] || 0) + 1;
                 // Clear wrong answer so user can retry
                 delete updatedAnswers[key];
             }
         });
 
         setLockedCorrect(newLocked);
+        setAttempts(newAttempts);
         setAnswers(updatedAnswers);
         setShowFeedback(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -220,6 +225,7 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
     const handleRetry = () => {
         setAnswers({});
         setLockedCorrect(new Set());
+        setAttempts({});
         setShowFeedback(false);
         setSubmitted(false);
         localStorage.removeItem(draftKey);
@@ -344,7 +350,7 @@ export function TestRunner({ test, onBack, onComplete }: TestRunnerProps) {
             {/* Sections */}
             <Stack spacing={4}>
                 {test.sections.map((section, si) =>
-                    renderSection(section, si, answers, setAnswer, showFeedback || submitted, resultsMap, lockedCorrect)
+                    renderSection(section, si, answers, setAnswer, showFeedback || submitted, resultsMap, lockedCorrect, attempts)
                 )}
             </Stack>
 
@@ -421,6 +427,7 @@ function renderSection(
     showingResults: boolean,
     resultsMap: Record<string, boolean>,
     lockedCorrect: Set<string>,
+    attempts: Record<string, number>,
 ) {
     return (
         <Card key={si} sx={{ bgcolor: 'background.paper', border: '1px solid rgba(255,255,255,0.08)' }}>
@@ -437,17 +444,17 @@ function renderSection(
                 <Divider sx={{ mb: 2.5, borderColor: 'rgba(255,255,255,0.08)' }} />
 
                 {section.type === 'multiple_choice' &&
-                    renderMultipleChoice(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
+                    renderMultipleChoice(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect, attempts)}
                 {section.type === 'fill_from_bank' &&
-                    renderFillFromBank(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
+                    renderFillFromBank(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect, attempts)}
                 {section.type === 'verb_table' &&
-                    renderVerbTable(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
+                    renderVerbTable(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect, attempts)}
                 {section.type === 'sentence_completion' &&
-                    renderSentenceCompletion(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
+                    renderSentenceCompletion(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect, attempts)}
                 {section.type === 'question_formation' &&
-                    renderQuestionFormation(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
+                    renderQuestionFormation(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect, attempts)}
                 {section.type === 'passage_fill' &&
-                    renderPassageFill(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect)}
+                    renderPassageFill(section, si, answers, setAnswer, showingResults, resultsMap, lockedCorrect, attempts)}
             </CardContent>
         </Card>
     );
@@ -456,13 +463,14 @@ function renderSection(
 
 // ── A: Multiple Choice ────────────────────────────────────────────────────
 
-function renderMultipleChoice(section: MultipleChoiceSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>) {
+function renderMultipleChoice(section: MultipleChoiceSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>, attempts: Record<string, number>) {
     return (
         <Stack spacing={2}>
             {section.questions.map((q: MCQuestion, qi: number) => {
                 const key = `${si}_${q.id}`;
                 const isLocked = lockedCorrect.has(key);
                 const isCorrect = resultsMap[key];
+                const failCount = attempts[key] || 0;
                 return (
                     <Box
                         key={q.id}
@@ -527,8 +535,10 @@ function renderMultipleChoice(section: MultipleChoiceSection, si: number, answer
                             </Box>
                         )}
                         {showingResults && !isLocked && !isCorrect && (
-                            <Alert severity="warning" icon={<WrongIcon />} sx={{ mt: 1, py: 0.5 }}>
-                                Try again!
+                            <Alert severity={failCount >= 3 ? 'info' : 'warning'} icon={<WrongIcon />} sx={{ mt: 1, py: 0.5 }}>
+                                {failCount >= 3
+                                    ? <>The correct answer is: <strong>{q.answer}</strong></>
+                                    : 'Try again!'}
                             </Alert>
                         )}
                     </Box>
@@ -540,7 +550,7 @@ function renderMultipleChoice(section: MultipleChoiceSection, si: number, answer
 
 // ── B: Fill from Bank ─────────────────────────────────────────────────────
 
-function renderFillFromBank(section: FillFromBankSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>) {
+function renderFillFromBank(section: FillFromBankSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>, attempts: Record<string, number>) {
     const usedWords = new Set(Object.entries(answers)
         .filter(([k]) => k.startsWith(`${si}_`))
         .map(([, v]) => (v as string).toLowerCase()));
@@ -578,6 +588,7 @@ function renderFillFromBank(section: FillFromBankSection, si: number, answers: R
                     const key = `${si}_${s.id}`;
                     const isLocked = lockedCorrect.has(key);
                     const isCorrect = resultsMap[key];
+                    const failCount = attempts[key] || 0;
                     const parts = s.text.split('___');
                     return (
                         <Box
@@ -611,6 +622,9 @@ function renderFillFromBank(section: FillFromBankSection, si: number, answers: R
                                 <Typography variant="body1">{parts[1]}</Typography>
                             )}
                             {isLocked && <CheckIcon fontSize="small" sx={{ color: 'success.main', ml: 0.5 }} />}
+                            {showingResults && !isLocked && !isCorrect && failCount >= 3 && (
+                                <Chip label={`✓ ${s.answer}`} size="small" color="success" sx={{ ml: 1 }} />
+                            )}
                         </Box>
                     );
                 })}
@@ -621,7 +635,7 @@ function renderFillFromBank(section: FillFromBankSection, si: number, answers: R
 
 // ── C: Verb Table ─────────────────────────────────────────────────────────
 
-function renderVerbTable(section: VerbTableSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>) {
+function renderVerbTable(section: VerbTableSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>, attempts: Record<string, number>) {
     const verbs: VerbPair[] = section.verbs;
     const half = Math.ceil(verbs.length / 2);
     const leftVerbs = verbs.slice(0, half);
@@ -660,6 +674,7 @@ function renderVerbTable(section: VerbTableSection, si: number, answers: Record<
                                         locked={lLocked}
                                         showingResults={showingResults}
                                         correct={lOk}
+                                        correctAnswer={showingResults && !lLocked && lOk === false && (attempts[lKey] || 0) >= 3 ? lv.v2 : undefined}
                                     />
                                 </TableCell>
                                 <TableCell>
@@ -673,6 +688,7 @@ function renderVerbTable(section: VerbTableSection, si: number, answers: Record<
                                             locked={rLocked}
                                             showingResults={showingResults}
                                             correct={rOk}
+                                            correctAnswer={showingResults && !rLocked && rOk === false && (attempts[rKey] || 0) >= 3 ? rv.v2 : undefined}
                                         />
                                     )}
                                 </TableCell>
@@ -685,12 +701,13 @@ function renderVerbTable(section: VerbTableSection, si: number, answers: Record<
     );
 }
 
-function VerbInput({ value, onChange, locked, showingResults, correct }: {
+function VerbInput({ value, onChange, locked, showingResults, correct, correctAnswer }: {
     value: string;
     onChange: (v: string) => void;
     locked: boolean;
     showingResults: boolean;
     correct: boolean | undefined;
+    correctAnswer?: string;
 }) {
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -714,19 +731,23 @@ function VerbInput({ value, onChange, locked, showingResults, correct }: {
             />
             {locked && <CheckIcon fontSize="small" sx={{ color: 'success.main' }} />}
             {showingResults && !locked && correct === false && <WrongIcon fontSize="small" sx={{ color: 'error.main' }} />}
+            {correctAnswer && (
+                <Chip label={`✓ ${correctAnswer}`} size="small" color="success" />
+            )}
         </Box>
     );
 }
 
 // ── D: Sentence Completion ────────────────────────────────────────────────
 
-function renderSentenceCompletion(section: SentenceCompletionSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>) {
+function renderSentenceCompletion(section: SentenceCompletionSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>, attempts: Record<string, number>) {
     return (
         <Stack spacing={2}>
             {section.sentences.map((s: SentenceFill, idx: number) => {
                 const key = `${si}_${s.id}`;
                 const isLocked = lockedCorrect.has(key);
                 const isCorrect = resultsMap[key];
+                const failCount = attempts[key] || 0;
                 const parts = s.text.split('___');
                 return (
                     <Box
@@ -758,6 +779,9 @@ function renderSentenceCompletion(section: SentenceCompletionSection, si: number
                         />
                         {parts[1] && <Typography variant="body1">{parts[1]}</Typography>}
                         {isLocked && <CheckIcon fontSize="small" sx={{ color: 'success.main', ml: 0.5 }} />}
+                        {showingResults && !isLocked && !isCorrect && failCount >= 3 && (
+                            <Chip label={`✓ ${s.answer}`} size="small" color="success" sx={{ ml: 1 }} />
+                        )}
                     </Box>
                 );
             })}
@@ -767,13 +791,14 @@ function renderSentenceCompletion(section: SentenceCompletionSection, si: number
 
 // ── E: Question Formation ─────────────────────────────────────────────────
 
-function renderQuestionFormation(section: QuestionFormationSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>) {
+function renderQuestionFormation(section: QuestionFormationSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>, attempts: Record<string, number>) {
     return (
         <Stack spacing={2.5}>
             {section.items.map((item: QuestionFormItem, idx: number) => {
                 const key = `${si}_${item.id}`;
                 const isLocked = lockedCorrect.has(key);
                 const isCorrect = resultsMap[key];
+                const failCount = attempts[key] || 0;
                 return (
                     <Box key={item.id}>
                         <Box
@@ -814,10 +839,11 @@ function renderQuestionFormation(section: QuestionFormationSection, si: number, 
                             </Box>
                         )}
                         {showingResults && !isLocked && !isCorrect && (
-                            <Typography variant="caption" color="error.main" sx={{ mt: 0.5, display: 'block' }}>
-                                <WrongIcon fontSize="inherit" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
-                                Try again!
-                            </Typography>
+                            <Alert severity={failCount >= 3 ? 'info' : 'warning'} icon={<WrongIcon />} sx={{ mt: 1, py: 0.5 }}>
+                                {failCount >= 3
+                                    ? <>The correct answer is: <strong>{item.correctQuestion}</strong></>
+                                    : 'Try again!'}
+                            </Alert>
                         )}
                     </Box>
                 );
@@ -828,7 +854,7 @@ function renderQuestionFormation(section: QuestionFormationSection, si: number, 
 
 // ── F: Passage Fill ───────────────────────────────────────────────────────
 
-function renderPassageFill(section: PassageFillSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>) {
+function renderPassageFill(section: PassageFillSection, si: number, answers: Record<string, string>, setAnswer: (key: string, value: string) => void, showingResults: boolean, resultsMap: Record<string, boolean>, lockedCorrect: Set<string>, attempts: Record<string, number>) {
     return (
         <Box>
             {/* Passage */}
@@ -851,6 +877,8 @@ function renderPassageFill(section: PassageFillSection, si: number, answers: Rec
                         const key = `${si}_${seg.id}`;
                         const isLocked = lockedCorrect.has(key);
                         const isCorrect = resultsMap[key];
+                        const blankSeg = seg as Extract<PassageSegment, { type: 'blank' }>;
+                        const failCount = attempts[key] || 0;
                         return (
                             <Fragment key={idx}>
                                 <Box
@@ -881,6 +909,11 @@ function renderPassageFill(section: PassageFillSection, si: number, answers: Rec
                                     {isLocked && (
                                         <CheckIcon sx={{ fontSize: 14, color: 'success.main' }} />
                                     )}
+                                    {showingResults && !isLocked && !isCorrect && failCount >= 3 && (
+                                        <Typography variant="caption" color="success.main" sx={{ fontSize: '0.65rem', fontWeight: 700 }}>
+                                            ✓ {blankSeg.answer}
+                                        </Typography>
+                                    )}
                                 </Box>
                             </Fragment>
                         );
@@ -897,6 +930,7 @@ function renderPassageFill(section: PassageFillSection, si: number, answers: Rec
                     const key = `${si}_${q.id}`;
                     const isLocked = lockedCorrect.has(key);
                     const isCorrect = resultsMap[key];
+                    const failCount = attempts[key] || 0;
                     return (
                         <Box key={q.id}>
                             <Typography variant="body2" sx={{ mb: 0.5 }}>
@@ -921,9 +955,11 @@ function renderPassageFill(section: PassageFillSection, si: number, answers: Rec
                                 </Typography>
                             )}
                             {showingResults && !isLocked && !isCorrect && (
-                                <Typography variant="caption" color="error.main" sx={{ mt: 0.5, display: 'block' }}>
-                                    Try again!
-                                </Typography>
+                                <Alert severity={failCount >= 3 ? 'info' : 'warning'} icon={<WrongIcon />} sx={{ mt: 1, py: 0.5 }}>
+                                    {failCount >= 3
+                                        ? <>The correct answer is: <strong>{q.answer}</strong></>
+                                        : 'Try again!'}
+                                </Alert>
                             )}
                         </Box>
                     );
